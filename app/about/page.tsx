@@ -2,6 +2,8 @@
 import Link from "next/link";
 import { ArrowRight, Download, Award, Globe, BookOpen, Users } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const milestones = [
   { year: "2006", title: "Founded Leadership Lab", desc: "Launched boutique coaching firm focused on executive transformation." },
@@ -15,6 +17,7 @@ const milestones = [
 export default function AboutPage() {
   return (
     <>
+       <Navbar />
       <section style={{ paddingTop: "140px", paddingBottom: "80px", background: "var(--bg)" }}>
         <div className="container">
           <AnimatedSection>
@@ -97,6 +100,7 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+        < Footer/>
     </>
   );
 }

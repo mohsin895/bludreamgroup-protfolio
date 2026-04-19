@@ -2,10 +2,13 @@
 import Link from "next/link";
 import { Star, ShoppingCart, ArrowRight, BookOpen } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const books = [
   {
     title: "The Sovereign Leader",
+      slug:'the-quiet-hours',
     subtitle: "A Framework for Fearless Authority",
     year: "2024", pages: "312", tag: "Bestseller",
     desc: "The definitive guide to leading from a place of wholeness and conviction. Drawing on neuroscience, philosophy, and thousands of coaching hours, Voss reveals the path to unshakeable leadership presence.",
@@ -33,6 +36,7 @@ const books = [
 export default function BooksPage() {
   return (
     <>
+        <Navbar />
       <section style={{ paddingTop: "140px", paddingBottom: "60px", background: "var(--bg)" }}>
         <div className="container">
           <AnimatedSection>
@@ -73,7 +77,7 @@ export default function BooksPage() {
 
                     <div style={{ display: "flex", gap: "14px", marginTop: "32px", flexWrap: "wrap" }}>
                       <a href="#" className="btn-primary"><ShoppingCart size={14} /> Buy on Amazon</a>
-                      <Link href={`/books/${book.title.toLowerCase().replace(/ /g, '-')}`} className="btn-outline">Read Sample <ArrowRight size={13} /></Link>
+                      <Link href={`/books/${book.slug}`} className="btn-outline">Read Sample <ArrowRight size={13} /></Link>
                     </div>
                   </div>
                 </div>
@@ -83,6 +87,7 @@ export default function BooksPage() {
         </div>
         <style>{`@media(max-width:768px){.card{grid-template-columns:1fr!important;} .card > div:first-child{aspect-ratio:unset!important;padding:40px 40px 20px!important;}}`}</style>
       </section>
+        <Footer />
     </>
   );
 }
