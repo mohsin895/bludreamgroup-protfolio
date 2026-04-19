@@ -3,7 +3,6 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight, Star, BookOpen, Users, Mic, Award, ChevronRight, Play, Quote } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
-import AnimatedHeader from "@/components/AnimatedHeader";
 
 const books = [
     { title: "The Sovereign Leader", subtitle: "A Framework for Fearless Authority", year: "2024", tag: "Bestseller", color: "#1a1210" },
