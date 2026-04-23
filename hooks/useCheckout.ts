@@ -82,10 +82,6 @@ export function useCheckout({ agree }: { agree: boolean }) {
         if (enabled.length > 0 && !enabled.includes(payMethod)) setPayMethod(enabled[0])
     }, [settingsLoading, settings.cod_enabled, settings.bkash_enabled, settings.sslcommerz_enabled])
 
-    // ── Coupon local state ────────────────────────────────────────────────────
-    const [couponInput,   setCouponInput]   = useState("")
-    const [couponLoading, setCouponLoading] = useState(false)
-    const [couponError,   setCouponError]   = useState<string | null>(null)
 
     // ── Sync couponInput from Redux (handles rehydration + cross-page nav) ────
 
@@ -268,10 +264,6 @@ export function useCheckout({ agree }: { agree: boolean }) {
         address,           setAddress,
         selectedZoneIndex, setSelectedZoneIndex,
         payMethod,         setPayMethod,
-        couponInput,       setCouponInput,
-
-        couponLoading,
-        couponError,
 
 
         cardForm,          setCardForm,
