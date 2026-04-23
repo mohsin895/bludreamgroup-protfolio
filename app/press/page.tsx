@@ -3,6 +3,8 @@ import AnimatedSection from "@/components/AnimatedSection";
 import Link from "next/link";
 import { useState } from "react";
 import { ExternalLink, Quote, Download, Star } from "lucide-react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -387,6 +389,7 @@ export default function PressPage() {
 
     return (
         <>
+            <Navbar />
             {/* ── Hero ── */}
             <section
                 style={{
@@ -851,6 +854,7 @@ export default function PressPage() {
                     </AnimatedSection>
                 </div>
             </section>
+            <Footer/>
         </>
     );
 }

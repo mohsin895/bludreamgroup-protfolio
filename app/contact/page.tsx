@@ -374,23 +374,23 @@ export default function ContactPage() {
             </section>
 
             {/* ── Channels Grid ── */}
-            <section style={{ background: "#0a0a0a", paddingTop: "0", paddingBottom: "80px" }}>
-                <div className="container">
-                    <AnimatedSection>
-                        <div style={{ display: "inline-flex", alignItems: "center", gap: "10px", marginBottom: "36px" }}>
-                            <span style={{ display: "inline-block", width: "20px", height: "1px", background: "rgba(255,255,255,0.2)" }} />
-                            <span style={{ fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)" }}>
-                Choose a Channel
-              </span>
-                        </div>
-                    </AnimatedSection>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "20px" }}>
-                        {channels.map((c, i) => (
-                            <ChannelCard key={c.id} c={c} i={i} />
-                        ))}
-                    </div>
-                </div>
-            </section>
+            {/*<section style={{ background: "#0a0a0a", paddingTop: "0", paddingBottom: "80px" }}>*/}
+            {/*    <div className="container">*/}
+            {/*        <AnimatedSection>*/}
+            {/*            <div style={{ display: "inline-flex", alignItems: "center", gap: "10px", marginBottom: "36px" }}>*/}
+            {/*                <span style={{ display: "inline-block", width: "20px", height: "1px", background: "rgba(255,255,255,0.2)" }} />*/}
+            {/*                <span style={{ fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)" }}>*/}
+            {/*    Choose a Channel*/}
+            {/*  </span>*/}
+            {/*            </div>*/}
+            {/*        </AnimatedSection>*/}
+            {/*        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "20px" }}>*/}
+            {/*            {channels.map((c, i) => (*/}
+            {/*                <ChannelCard key={c.id} c={c} i={i} />*/}
+            {/*            ))}*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*</section>*/}
 
             {/* ── Contact Form + FAQ ── */}
             <section

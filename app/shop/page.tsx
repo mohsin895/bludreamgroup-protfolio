@@ -2,6 +2,8 @@
 import { useState } from "react";
 import AnimatedSection from "@/components/AnimatedSection";
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 /* ─── Data ─────────────────────────────────────────────────── */
 const featured = {
@@ -404,6 +406,7 @@ export default function ShopPage() {
 
     return (
         <>
+            <Navbar />
             {/* ── Hero ── */}
             <section
                 style={{
@@ -598,6 +601,8 @@ export default function ShopPage() {
                     </AnimatedSection>
                 </div>
             </section>
+
+            <Footer/>
         </>
     );
 }

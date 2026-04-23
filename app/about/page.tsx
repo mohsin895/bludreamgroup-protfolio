@@ -1,106 +1,357 @@
 "use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Download, Award, Globe, BookOpen, Users } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight, Download, Award, Globe, BookOpen, Users, AlertCircle } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import {
+    fetchAboutPageData,
+    type MappedAbout,
+    type MappedMilestone,
+} from "@/lib/api/about";
 
-const milestones = [
-  { year: "2006", title: "Founded Leadership Lab", desc: "Launched boutique coaching firm focused on executive transformation." },
-  { year: "2010", title: "First Book Published", desc: "'The Quiet Revolution' became a sleeper hit, selling 200k copies in year one." },
-  { year: "2015", title: "TEDx Talk Goes Viral", desc: "'The Leadership Myth' accumulated 8M+ views in 60 days." },
-  { year: "2019", title: "WSJ Bestseller #1", desc: "'Unwritten Rules' debuted at number one, cementing global authority." },
-  { year: "2022", title: "UN Advisory Role", desc: "Appointed advisor to the United Nations Leadership Initiative." },
-  { year: "2024", title: "The Sovereign Leader", desc: "Third book published; fastest debut in publisher's history." },
+// ─── Skeletons ────────────────────────────────────────────────────────────────
+
+function SkeletonBio() {
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            {/* Title */}
+            <div style={{ width: "70%", height: "32px", borderRadius: "4px", background: "rgba(255,255,255,0.06)", animation: "shimmer 1.5s ease-in-out infinite" }} />
+            {/* Description lines */}
+            {[100, 90, 95, 80, 85, 70].map((w, i) => (
+                <div key={i} style={{ width: `${w}%`, height: "14px", borderRadius: "3px", background: "rgba(255,255,255,0.04)", animation: `shimmer 1.5s ease-in-out ${i * 0.07}s infinite` }} />
+            ))}
+            {/* Buttons */}
+            <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>
+                <div style={{ width: "160px", height: "44px", borderRadius: "4px", background: "rgba(255,255,255,0.06)", animation: "shimmer 1.5s ease-in-out infinite" }} />
+                <div style={{ width: "120px", height: "44px", borderRadius: "4px", background: "rgba(255,255,255,0.04)", animation: "shimmer 1.5s ease-in-out infinite 0.1s" }} />
+            </div>
+            {/* Stat grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginTop: "16px" }}>
+                {[1, 2, 3, 4].map((n) => (
+                    <div key={n} style={{ height: "48px", borderRadius: "4px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", animation: `shimmer 1.5s ease-in-out ${n * 0.08}s infinite` }} />
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function SkeletonTimeline() {
+    return (
+        <div style={{ position: "relative", maxWidth: "700px", margin: "0 auto" }}>
+            <div style={{ position: "absolute", left: "80px", top: 0, bottom: 0, width: "1px", background: "linear-gradient(to bottom, transparent, rgba(201,168,76,0.3), transparent)" }} />
+            {[1, 2, 3].map((n) => (
+                <div key={n} style={{ display: "flex", gap: "40px", marginBottom: "48px", position: "relative" }}>
+                    <div style={{ minWidth: "60px", display: "flex", justifyContent: "flex-end", alignItems: "flex-start" }}>
+                        <div style={{ width: "44px", height: "22px", borderRadius: "3px", background: "rgba(201,168,76,0.15)", animation: `shimmer 1.5s ease-in-out ${n * 0.1}s infinite` }} />
+                    </div>
+                    <div style={{ paddingLeft: "24px", flex: 1, display: "flex", flexDirection: "column", gap: "10px" }}>
+                        <div style={{ width: "55%", height: "20px", borderRadius: "3px", background: "rgba(255,255,255,0.07)", animation: `shimmer 1.5s ease-in-out ${n * 0.1}s infinite` }} />
+                        <div style={{ width: "85%", height: "13px", borderRadius: "3px", background: "rgba(255,255,255,0.04)", animation: `shimmer 1.5s ease-in-out ${n * 0.12}s infinite` }} />
+                        <div style={{ width: "70%", height: "13px", borderRadius: "3px", background: "rgba(255,255,255,0.03)", animation: `shimmer 1.5s ease-in-out ${n * 0.14}s infinite` }} />
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+// ─── Logo / portrait ──────────────────────────────────────────────────────────
+
+function Portrait({ logoUrl, initials }: { logoUrl: string | null; initials: string }) {
+    const [err, setErr] = useState(false);
+    const showImg = logoUrl && !err;
+
+    return (
+        <div
+            style={{
+                background:     showImg ? "transparent" : "#111",
+                border:         "1px solid rgba(201,168,76,0.12)",
+                borderRadius:   "6px",
+                aspectRatio:    "4/5",
+                overflow:       "hidden",
+                display:        "flex",
+                alignItems:     "center",
+                justifyContent: "center",
+            }}
+        >
+            {showImg ? (
+                <Image
+                    src={logoUrl!}
+                    alt="Portrait"
+                    width={480}
+                    height={600}
+                    style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                    onError={() => setErr(true)}
+                    priority
+                />
+            ) : (
+                <div style={{ textAlign: "center", color: "var(--text-muted)", fontSize: "14px" }}>
+                    <div
+                        style={{
+                            width: "80px", height: "80px", borderRadius: "50%",
+                            background: "rgba(201,168,76,0.1)", margin: "0 auto 12px",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            fontFamily: "var(--font-display)", fontSize: "28px", color: "var(--gold)",
+                        }}
+                    >
+                        {initials}
+                    </div>
+                    Portrait Photo
+                </div>
+            )}
+        </div>
+    );
+}
+
+// ─── Stat badges ─────────────────────────────────────────────────────────────
+
+const STAT_BADGES = [
+    { icon: Award,    label: "3 Bestselling Books"      },
+    { icon: Users,    label: "2,000+ Executives Coached" },
+    { icon: Globe,    label: "47 Countries"              },
+    { icon: BookOpen, label: "8M+ TED Views"             },
 ];
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default function AboutPage() {
-  return (
-    <>
-       <Navbar />
-      <section style={{ paddingTop: "140px", paddingBottom: "80px", background: "var(--bg)" }}>
-        <div className="container">
-          <AnimatedSection>
-            <div className="section-label">My Story</div>
-            <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(52px, 6vw, 84px)", maxWidth: "700px", marginTop: "8px" }}>
-              The Woman<br />Behind the Work
-            </h1>
-          </AnimatedSection>
-        </div>
-      </section>
+    const [about,      setAbout]      = useState<MappedAbout | null>(null);
+    const [milestones, setMilestones] = useState<MappedMilestone[]>([]);
+    const [loading,    setLoading]    = useState(true);
+    const [error,      setError]      = useState<string | null>(null);
 
-      <section style={{ background: "#0c0c0c", padding: "80px 0" }}>
-        <div className="container" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "80px" }}>
-          <AnimatedSection direction="left">
-            <div style={{ background: "#111", border: "1px solid rgba(201,168,76,0.12)", borderRadius: "6px", aspectRatio: "4/5", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ textAlign: "center", color: "var(--text-muted)", fontSize: "14px" }}>
-                <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: "rgba(201,168,76,0.1)", margin: "0 auto 12px", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-display)", fontSize: "28px", color: "var(--gold)" }}>AV</div>
-                Portrait Photo
-              </div>
-            </div>
-          </AnimatedSection>
+    async function loadData() {
+        try {
+            setLoading(true);
+            setError(null);
+            const { about: a, milestones: m } = await fetchAboutPageData();
+            setAbout(a);
+            setMilestones(m);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Failed to load about page.");
+        } finally {
+            setLoading(false);
+        }
+    }
 
-          <AnimatedSection direction="right" delay={0.1}>
-            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "38px", marginBottom: "24px" }}>Eighteen Years. One Mission.</h2>
-            <p style={{ color: "var(--text-muted)", lineHeight: 1.8, marginBottom: "16px" }}>
-              Born in Vienna and educated at Oxford and Harvard Business School, Alexandra Voss began her career as a management consultant before discovering her true calling: helping leaders unlock their full potential.
-            </p>
-            <p style={{ color: "var(--text-muted)", lineHeight: 1.8, marginBottom: "16px" }}>
-              She has coached over 2,000 executives across 47 countries, authored three international bestsellers, and delivered keynotes at organizations including Google, the United Nations, and the World Economic Forum.
-            </p>
-            <p style={{ color: "var(--text-muted)", lineHeight: 1.8, marginBottom: "32px" }}>
-              Her work is grounded in a simple belief: that great leadership begins with radical self-knowledge and the courage to act from that knowledge every day.
-            </p>
+    useEffect(() => { loadData(); }, []);
 
-            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-              <Link href="/contact" className="btn-primary">Work With Alexandra <ArrowRight size={14} /></Link>
-              <a href="#" className="btn-outline"><Download size={14} /> Press Kit</a>
-            </div>
+    // Derive initials from about title (first letters of first two words)
+    const initials = about?.aboutTitle
+        ?.split(" ").slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("") ?? "AV";
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginTop: "40px" }}>
-              {[
-                { icon: Award, label: "3 Bestselling Books" },
-                { icon: Users, label: "2,000+ Executives Coached" },
-                { icon: Globe, label: "47 Countries" },
-                { icon: BookOpen, label: "8M+ TED Views" },
-              ].map(({ icon: Icon, label }) => (
-                <div key={label} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "14px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "4px" }}>
-                  <Icon size={16} style={{ color: "var(--gold)", flexShrink: 0 }} />
-                  <span style={{ fontSize: "13px", color: "var(--text-muted)" }}>{label}</span>
+    return (
+        <>
+            <Navbar />
+
+            {/* ── Hero ── */}
+            <section style={{ paddingTop: "140px", paddingBottom: "80px", background: "var(--bg)" }}>
+                <div className="container">
+                    <AnimatedSection>
+                        <div className="section-label">My Story</div>
+                        <h1
+                            style={{
+                                fontFamily: "var(--font-display)",
+                                fontSize:   "clamp(52px, 6vw, 84px)",
+                                maxWidth:   "700px",
+                                marginTop:  "8px",
+                            }}
+                        >
+                            {loading
+                                ? <span style={{ opacity: 0.3 }}>Loading…</span>
+                                : (about?.pageTitle ?? "The Woman Behind the Work")}
+                        </h1>
+                    </AnimatedSection>
                 </div>
-              ))}
-            </div>
-          </AnimatedSection>
-        </div>
-        <style>{`@media(max-width:768px){section > .container{grid-template-columns:1fr!important;}}`}</style>
-      </section>
+            </section>
 
-      {/* Timeline */}
-      <section className="section" style={{ background: "var(--bg)" }}>
-        <div className="container">
-          <AnimatedSection style={{ textAlign: "center", marginBottom: "60px" }}>
-            <div className="section-label" style={{ justifyContent: "center" }}>Career Journey</div>
-            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(38px, 4vw, 52px)" }}>A Life Well Built</h2>
-          </AnimatedSection>
+            {/* ── Bio section ── */}
+            <section style={{ background: "#0c0c0c", padding: "80px 0" }}>
+                <div
+                    className="container"
+                    style={{
+                        display:             "grid",
+                        gridTemplateColumns: "1fr 1fr",
+                        gap:                 "80px",
+                        alignItems:          "start",
+                    }}
+                >
+                    {/* Portrait */}
+                    <AnimatedSection direction="left">
+                        <Portrait logoUrl={about?.logoUrl ?? null} initials={initials} />
+                    </AnimatedSection>
 
-          <div style={{ position: "relative", maxWidth: "700px", margin: "0 auto" }}>
-            <div style={{ position: "absolute", left: "80px", top: 0, bottom: 0, width: "1px", background: "linear-gradient(to bottom, transparent, var(--gold), transparent)" }} />
-            {milestones.map((m, i) => (
-              <AnimatedSection key={m.year} delay={i * 0.08} style={{ display: "flex", gap: "40px", marginBottom: "48px", position: "relative" }}>
-                <div style={{ minWidth: "60px", textAlign: "right" }}>
-                  <span style={{ fontFamily: "var(--font-display)", fontSize: "20px", color: "var(--gold)" }}>{m.year}</span>
+                    {/* Bio content */}
+                    <AnimatedSection direction="right" delay={0.1}>
+                        {loading && <SkeletonBio />}
+
+                        {!loading && error && (
+                            <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", color: "rgba(255,255,255,0.35)", fontSize: "14px" }}>
+                                <AlertCircle size={16} style={{ color: "#C47C5A", flexShrink: 0, marginTop: "2px" }} />
+                                <div>
+                                    <p style={{ margin: "0 0 12px" }}>{error}</p>
+                                    <button
+                                        onClick={loadData}
+                                        style={{ padding: "7px 18px", background: "transparent", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "4px", color: "rgba(255,255,255,0.4)", fontSize: "12px", cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.06em" }}
+                                    >
+                                        Retry
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {!loading && !error && about && (
+                            <>
+                                <h2 style={{ fontFamily: "var(--font-display)", fontSize: "38px", marginBottom: "24px" }}>
+                                    {about.aboutTitle}
+                                </h2>
+
+                                {/* Rich text description from API */}
+                                <div
+                                    style={{ color: "var(--text-muted)", lineHeight: 1.8, marginBottom: "32px", fontSize: "15px" }}
+                                    dangerouslySetInnerHTML={{ __html: about.description }}
+                                />
+
+                                <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+                                    <Link href="/contact" className="btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                                        Work With Me <ArrowRight size={14} />
+                                    </Link>
+                                    {about.resumeUrl ? (
+                                        <a href={about.resumeUrl} target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                                            <Download size={14} /> Press Kit
+                                        </a>
+                                    ) : (
+                                        <a href="#" className="btn-outline" style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                                            <Download size={14} /> Press Kit
+                                        </a>
+                                    )}
+                                </div>
+
+                                {/* Stat badges */}
+                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginTop: "40px" }}>
+                                    {STAT_BADGES.map(({ icon: Icon, label }) => (
+                                        <div
+                                            key={label}
+                                            style={{
+                                                display:    "flex",
+                                                alignItems: "center",
+                                                gap:        "10px",
+                                                padding:    "14px",
+                                                background: "rgba(255,255,255,0.02)",
+                                                border:     "1px solid rgba(255,255,255,0.05)",
+                                                borderRadius:"4px",
+                                            }}
+                                        >
+                                            <Icon size={16} style={{ color: "var(--gold)", flexShrink: 0 }} />
+                                            <span style={{ fontSize: "13px", color: "var(--text-muted)" }}>{label}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+                        )}
+                    </AnimatedSection>
                 </div>
-                <div style={{ position: "absolute", left: "76px", top: "6px", width: "9px", height: "9px", background: "var(--gold)", borderRadius: "50%", border: "2px solid var(--bg)" }} />
-                <div style={{ paddingLeft: "24px" }}>
-                  <h3 style={{ fontFamily: "var(--font-display)", fontSize: "22px", color: "var(--text)" }}>{m.title}</h3>
-                  <p style={{ fontSize: "14px", color: "var(--text-muted)", marginTop: "6px" }}>{m.desc}</p>
+
+                <style>{`@media(max-width:768px){section > .container{grid-template-columns:1fr!important;}}`}</style>
+            </section>
+
+            {/* ── Timeline ── */}
+            <section className="section" style={{ background: "var(--bg)" }}>
+                <div className="container">
+                    <AnimatedSection style={{ textAlign: "center", marginBottom: "60px" }}>
+                        <div className="section-label" style={{ justifyContent: "center" }}>Career Journey</div>
+                        <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(38px, 4vw, 52px)" }}>
+                            A Life Well Built
+                        </h2>
+                    </AnimatedSection>
+
+                    {/* Loading skeleton */}
+                    {loading && <SkeletonTimeline />}
+
+                    {/* Error */}
+                    {!loading && error && (
+                        <div style={{ textAlign: "center", padding: "40px 0", color: "rgba(255,255,255,0.25)", fontSize: "14px" }}>
+                            Could not load career milestones.
+                        </div>
+                    )}
+
+                    {/* Timeline */}
+                    {!loading && !error && milestones.length > 0 && (
+                        <div style={{ position: "relative", maxWidth: "700px", margin: "0 auto" }}>
+                            {/* Vertical line */}
+                            <div
+                                style={{
+                                    position:   "absolute",
+                                    left:       "80px",
+                                    top:        0,
+                                    bottom:     0,
+                                    width:      "1px",
+                                    background: "linear-gradient(to bottom, transparent, var(--gold), transparent)",
+                                }}
+                            />
+
+                            {milestones.map((m, i) => (
+                                <AnimatedSection
+                                    key={m.id}
+                                    delay={i * 0.08}
+                                    style={{ display: "flex", gap: "40px", marginBottom: "48px", position: "relative" }}
+                                >
+                                    {/* Year */}
+                                    <div style={{ minWidth: "60px", textAlign: "right" }}>
+                    <span style={{ fontFamily: "var(--font-display)", fontSize: "20px", color: "var(--gold)" }}>
+                      {m.year}
+                    </span>
+                                    </div>
+
+                                    {/* Dot */}
+                                    <div
+                                        style={{
+                                            position:     "absolute",
+                                            left:         "76px",
+                                            top:          "6px",
+                                            width:        "9px",
+                                            height:       "9px",
+                                            background:   "var(--gold)",
+                                            borderRadius: "50%",
+                                            border:       "2px solid var(--bg)",
+                                        }}
+                                    />
+
+                                    {/* Content */}
+                                    <div style={{ paddingLeft: "24px" }}>
+                                        <h3 style={{ fontFamily: "var(--font-display)", fontSize: "22px", color: "var(--text)" }}>
+                                            {m.title}
+                                        </h3>
+                                        <p style={{ fontSize: "14px", color: "var(--text-muted)", marginTop: "6px", lineHeight: 1.7 }}>
+                                            {m.description}
+                                        </p>
+                                    </div>
+                                </AnimatedSection>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Empty */}
+                    {!loading && !error && milestones.length === 0 && (
+                        <p style={{ textAlign: "center", color: "rgba(255,255,255,0.2)", fontSize: "14px", padding: "40px 0" }}>
+                            No milestones available yet.
+                        </p>
+                    )}
                 </div>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </section>
-        < Footer/>
-    </>
-  );
+            </section>
+
+            <style>{`
+        @keyframes shimmer {
+          0%, 100% { opacity: 0.5; }
+          50%       { opacity: 1;   }
+        }
+      `}</style>
+
+            <Footer />
+        </>
+    );
 }
