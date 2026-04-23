@@ -27,9 +27,9 @@ export interface CartItem {
     quantity: number;
 }
 
-interface CartState {
-    items:        CartItem[];
-    isDrawerOpen: boolean;
+export interface CartState {
+    items: CartItem[]
+    isDrawerOpen: boolean
 }
 
 // ─── Persist helpers ──────────────────────────────────────────────────────────

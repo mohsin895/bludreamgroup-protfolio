@@ -5,7 +5,7 @@ import {
     type PersistConfig,
 } from "redux-persist"
 import storage from "redux-persist/lib/storage"
-import cartReducer,     { type CartState }     from "./cartSlice"
+import cartReducer, { type CartState } from "./cartSlice"
 import authReducer,     { type AuthState }     from "./authSlice"
 
 
