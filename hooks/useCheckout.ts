@@ -57,7 +57,7 @@ export function useCheckout({ agree }: { agree: boolean }) {
     const dispatch   = useAppDispatch()
     const cartItems  = useAppSelector(selectCartItems)
     const totalPrice = useAppSelector(selectTotalPrice)
-    const promo      = useAppSelector(selectPromo)
+
 
     const { settings, loading: settingsLoading } = useCartSettings()
 
@@ -90,14 +90,6 @@ export function useCheckout({ agree }: { agree: boolean }) {
     const [couponError,   setCouponError]   = useState<string | null>(null)
 
     // ── Sync couponInput from Redux (handles rehydration + cross-page nav) ────
-    useEffect(() => {
-        if (promo?.applied && promo.code) {
-            setCouponInput(promo.code)
-        } else if (!promo?.applied) {
-            setCouponInput("")
-            setCouponError(null)
-        }
-    }, [promo?.applied, promo?.code])
 
     // ── Other form state ──────────────────────────────────────────────────────
 
@@ -135,11 +127,9 @@ export function useCheckout({ agree }: { agree: boolean }) {
             : 0
         const codFee        = 0
         // ── guard: only apply discount when promo is actually applied ─────────
-        const promoDiscount = (promo?.applied === true && Number(promo?.discount) > 0)
-            ? Number(promo.discount)
-            : 0
 
-        const fullOrderTotal = subtotal + shipping + tax + codFee - promoDiscount
+
+        const fullOrderTotal = subtotal + shipping + tax + codFee
         const isPreOrder     = settings.pre_order_enabled && settings.cod_enabled && payMethod === "cod"
         const preOrderFee    = isPreOrder ? Math.round(fullOrderTotal * (settings.pre_order_amount / 100)) : 0
         const dueOnDelivery  = isPreOrder ? fullOrderTotal - preOrderFee : 0
@@ -147,11 +137,11 @@ export function useCheckout({ agree }: { agree: boolean }) {
 
         return {
             subtotal, shipping, tax, codFee,
-            couponDiscount: promoDiscount,
+
             fullOrderTotal, preOrderFee, dueOnDelivery,
             isPreOrder, total, baseCharge,
         }
-    }, [totalPrice, selectedZoneIndex, payMethod, settings, promo?.applied, promo?.discount, promo?.code,])
+    }, [totalPrice, selectedZoneIndex, payMethod, settings,])
 
     // ── Order amount guard ────────────────────────────────────────────────────
     const orderAmountError = useMemo(() => {
@@ -237,18 +227,17 @@ export function useCheckout({ agree }: { agree: boolean }) {
                 items: cartItems.map(({ product, quantity }) => ({
                     product_id: product.id,
                     quantity,
-                    color_id:   product.colorId ?? undefined,
-                    size_id:    product.sizeId  ?? undefined,
+
                 })),
                 payment_method:  payMethod,
                 payment_payload: buildPayload(),
-                coupon_code:     promo?.applied && promo?.code ? promo.code : undefined,
+
                 pricing: {
                     subtotal:         pricing.subtotal,
                     shipping:         pricing.shipping,
                     tax:              pricing.tax,
                     cod_fee:          pricing.codFee,
-                    coupon_discount:  pricing.couponDiscount,
+
                     full_order_total: pricing.fullOrderTotal,
                     total:            pricing.total,
                     ...(pricing.isPreOrder ? {
@@ -293,7 +282,7 @@ export function useCheckout({ agree }: { agree: boolean }) {
     }, [
         agree, cartItems, contact, address,
         selectedZoneIndex, payMethod,
-        promo, pricing, buildPayload,
+       pricing, buildPayload,
         dispatch, orderAmountError, settings,
     ])
 
@@ -303,9 +292,7 @@ export function useCheckout({ agree }: { agree: boolean }) {
         selectedZoneIndex, setSelectedZoneIndex,
         payMethod,         setPayMethod,
         couponInput,       setCouponInput,
-        couponApplied:     promo?.applied   ?? false,
-        couponCode:        promo?.code      ?? "",
-        couponDiscount:    Number(promo?.applied ? (promo?.discount ?? 0) : 0),
+
         couponLoading,
         couponError,
         applyPromo,
