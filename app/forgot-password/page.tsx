@@ -4,8 +4,8 @@ import { useState } from "react"
 import Link from "next/link"
 import { Mail, AlertCircle, Loader2, ShoppingBag, ArrowRight, CheckCircle2 } from "lucide-react"
 import { authApi } from "@/lib/api/authApi"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
+
+import Navbar from "@/components/Navbar";
 
 
 export default function ForgotPasswordPage() {
@@ -33,7 +33,7 @@ export default function ForgotPasswordPage() {
     return (
         <main className="min-h-screen bg-background">
 
-                <Header />
+              <Navbar/>
         <div className=" bg-gray-50 flex items-center justify-center px-4 py-8">
             <div className="w-full max-w-md">
 
@@ -122,7 +122,7 @@ export default function ForgotPasswordPage() {
                 </div>
             </div>
         </div>
-                <Footer />
+          
 
         </main>
     )
