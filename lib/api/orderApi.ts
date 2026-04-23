@@ -33,7 +33,7 @@ export interface OrderPricing {
     shipping:         number
     tax:              number
     cod_fee:          number
-    coupon_discount:  number
+
     full_order_total: number
     total:            number
     pre_order_fee?:   number
