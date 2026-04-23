@@ -5,12 +5,12 @@ import { Menu, Search, Heart, User, X, ChevronDown, ShoppingCart, Plus, Minus } 
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { toggleDrawer, selectTotalItems, selectIsDrawerOpen } from "@/store/cartSlice"
 import { selectIsAuth, selectUser } from "@/store/authSlice"
-import { selectWishlistCount } from "@/store/wishlistSlice"
+
 import { CartDrawer } from "@/components/CartDrawer"
-import { Logo } from "@/components/Logo"
+
 import { useSetting } from "@/hooks/useSetting"
-import { apiUrl } from "@/lib/config"
-import { useRouter, useSearchParams, usePathname } from "next/navigation"
+
+import {  usePathname } from "next/navigation"
 
 const primaryNav = [
     { label: "Home", href: "/" },
@@ -64,9 +64,7 @@ export default function Navbar() {
     const solidNav = scrolled || isDrawerOpen;
 
     // ── Hydration guard ───────────────────────────────────────────────────────
-    useEffect(() => {
-        setMounted(true);
-    }, []);
+
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 40);
@@ -74,10 +72,7 @@ export default function Navbar() {
         return () => window.removeEventListener("scroll", onScroll);
     }, []);
 
-    useEffect(() => {
-        setMobileOpen(false);
-        setActiveDropdown(null);
-    }, [pathname]);
+
 
     useEffect(() => {
         const handler = (e: MouseEvent) => {

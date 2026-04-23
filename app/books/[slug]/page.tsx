@@ -251,7 +251,7 @@ export default function BookDetailPage() {
                 slug:        product.slug,
                 name:        product.title,
                 image:       product.main_image?.small ?? null,
-                price:       selectedFormat.price,
+                price:       Number(selectedFormat.price),
                 formatId:    selectedFormat.id,
                 formatLabel: selectedFormat.label,
                 stock:       product.stock,
