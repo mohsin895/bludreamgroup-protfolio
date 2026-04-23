@@ -2,10 +2,8 @@
 
 import { useState, useCallback, useMemo, useEffect } from "react"
 import { orderApi, type PaymentMethod, type PlaceOrderResponse } from "@/lib/api/orderApi"
-import { promoApi } from "@/lib/api/promoApi"
 import { useAppSelector, useAppDispatch } from "@/store/hooks"
 import { selectCartItems, selectTotalPrice, clearCart } from "@/store/cartSlice"
-import { selectPromo, setPromo, clearPromo } from "@/store/promoSlice"
 import { useCartSettings } from "@/hooks/useCartSettings"
 
 export interface ContactForm {
@@ -159,29 +157,8 @@ export function useCheckout({ agree }: { agree: boolean }) {
     }, [pricing.subtotal, settings])
 
     // ── Apply promo ───────────────────────────────────────────────────────────
-    const applyPromo = useCallback(async () => {
-        if (!couponInput.trim()) return
-        setCouponLoading(true)
-        setCouponError(null)
-        try {
-            const res = await promoApi.apply(couponInput.trim().toUpperCase(), pricing.subtotal)
-            dispatch(setPromo({
-                code:     res.code,
-                discount: Math.round(Number(res.discount_amount) * 100) / 100, // ← round to 2dp
-            }))
-        } catch (err: any) {
-            setCouponError(err?.message ?? "Invalid promo code.")
-            dispatch(clearPromo())
-        } finally {
-            setCouponLoading(false)
-        }
-    }, [couponInput, pricing.subtotal, dispatch])
 
-    // ── Remove promo ──────────────────────────────────────────────────────────
-    const removePromo = useCallback(() => {
-        dispatch(clearPromo())
-        // input/error cleared by the useEffect above
-    }, [dispatch])
+
 
     // ── Payment payload ───────────────────────────────────────────────────────
     const buildPayload = useCallback((): Record<string, string> => {
@@ -261,7 +238,7 @@ export function useCheckout({ agree }: { agree: boolean }) {
             }
 
             dispatch(clearCart())
-            dispatch(clearPromo())
+
             setOrderResult(result)
 
         } catch (err: any) {
@@ -295,8 +272,7 @@ export function useCheckout({ agree }: { agree: boolean }) {
 
         couponLoading,
         couponError,
-        applyPromo,
-        removePromo,
+
 
         cardForm,          setCardForm,
         mobileNumber,      setMobileNumber,
