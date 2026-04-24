@@ -14,6 +14,18 @@ import {
 } from "@/store/cartSlice"
 import { useEffect } from "react"
 
+// ─── Image URL helper ─────────────────────────────────────────────────────────
+
+const IMAGE_BASE = process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? ""
+
+function resolveImage(path: string | null | undefined): string {
+    if (!path) return ""
+    if (path.startsWith("http")) return path
+    return `${IMAGE_BASE}${path}`
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
 export function CartDrawer() {
     const dispatch   = useAppDispatch()
     const items      = useAppSelector(selectCartItems)
@@ -29,7 +41,9 @@ export function CartDrawer() {
 
     // Close on Escape
     useEffect(() => {
-        const handler = (e: KeyboardEvent) => { if (e.key === "Escape") dispatch(closeDrawer()) }
+        const handler = (e: KeyboardEvent) => {
+            if (e.key === "Escape") dispatch(closeDrawer())
+        }
         window.addEventListener("keydown", handler)
         return () => window.removeEventListener("keydown", handler)
     }, [dispatch])
@@ -94,44 +108,56 @@ export function CartDrawer() {
                         </div>
                     ) : (
                         <div className="space-y-5">
-                            {/* Free shipping progress */}
+
+                            {/* Free shipping progress bar */}
                             {totalPrice < 100 && (
-                                <div className="bg-red-50 rounded-lg px-4 py-3">
-                                    <p className="text-xs text-red-700 font-medium mb-1.5">
+                                <div className="bg-amber-50 rounded-lg px-4 py-3 border border-amber-100">
+                                    <p className="text-xs text-amber-700 font-medium mb-1.5">
                                         Add <span className="font-bold">৳{(100 - totalPrice).toFixed(0)}</span> more for free shipping!
                                     </p>
-                                    <div className="w-full h-1.5 bg-red-100 rounded-full overflow-hidden">
+                                    <div className="w-full h-1.5 bg-amber-100 rounded-full overflow-hidden">
                                         <div
-                                            className="h-full bg-red-500 rounded-full transition-all duration-500"
+                                            className="h-full bg-amber-500 rounded-full transition-all duration-500"
                                             style={{ width: `${Math.min((totalPrice / 100) * 100, 100)}%` }}
                                         />
                                     </div>
                                 </div>
                             )}
+                            {totalPrice >= 100 && (
+                                <div className="bg-green-50 rounded-lg px-4 py-2 border border-green-100 text-xs text-green-700 font-medium">
+                                    🎉 You qualify for free shipping!
+                                </div>
+                            )}
 
                             {/* Cart rows */}
                             {items.map(({ cartKey, product, quantity }) => {
-                                const maxQty = product.stock ?? Infinity
+                                const maxQty   = product.stock ?? Infinity
+                                const imgSrc   = resolveImage(product.image)
 
                                 return (
                                     <div key={cartKey} className="flex gap-3 pb-5 border-b border-gray-100 last:border-0">
 
                                         {/* Product image */}
                                         <Link
-                                            href={`/details/${product.id}`}
+                                            href={`/books/${product.slug}`}
                                             onClick={() => dispatch(closeDrawer())}
                                             className="shrink-0"
                                         >
-                                            {/* ✅ plain <img> — avoids Next.js URL validation on relative/partial URLs */}
-                                            <div className="w-20 h-24 overflow-hidden bg-gray-100">
-                                                <img
-                                                    src={product.image || ""}
-                                                    alt={product.name}
-                                                    className="object-cover w-full h-full"
-                                                    onError={(e) => {
-                                                        (e.currentTarget as HTMLImageElement).src = ""
-                                                    }}
-                                                />
+                                            <div className="w-20 h-24 overflow-hidden bg-gray-100 rounded">
+                                                {imgSrc ? (
+                                                    <img
+                                                        src={imgSrc}
+                                                        alt={product.name}
+                                                        className="object-cover w-full h-full"
+                                                        onError={(e) => {
+                                                            (e.currentTarget as HTMLImageElement).style.display = "none"
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center">
+                                                        <ShoppingBag className="w-6 h-6 text-gray-300" />
+                                                    </div>
+                                                )}
                                             </div>
                                         </Link>
 
@@ -145,13 +171,20 @@ export function CartDrawer() {
                                                         </p>
                                                     )}
                                                     <Link
-                                                        href={`/details/${product.slug}`}
+                                                        href={`/books/${product.slug}`}
                                                         onClick={() => dispatch(closeDrawer())}
                                                     >
-                                                        <h3 className="text-sm font-medium text-gray-900 truncate hover:text-red-600 transition-colors">
+                                                        <h3 className="text-sm font-medium text-gray-900 truncate hover:text-amber-700 transition-colors">
                                                             {product.name}
                                                         </h3>
                                                     </Link>
+
+                                                    {/* Format badge */}
+                                                    {product.formatLabel && (
+                                                        <span className="inline-block mt-1 text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 font-medium">
+                                                            {product.formatLabel}
+                                                        </span>
+                                                    )}
 
                                                     {/* Color & Size badges */}
                                                     <div className="flex items-center gap-2 mt-1.5 flex-wrap">
@@ -207,18 +240,20 @@ export function CartDrawer() {
                                                     </button>
                                                 </div>
 
-                                                {/* Price */}
+                                                {/* Line price */}
                                                 <div className="text-right">
                                                     <p className="text-sm font-semibold text-gray-900">
                                                         ৳{(product.price * quantity).toLocaleString()}
                                                     </p>
                                                     {quantity > 1 && (
-                                                        <p className="text-[10px] text-gray-400">৳{product.price.toLocaleString()} each</p>
+                                                        <p className="text-[10px] text-gray-400">
+                                                            ৳{product.price.toLocaleString()} each
+                                                        </p>
                                                     )}
                                                 </div>
                                             </div>
 
-                                            {/* Stock warning when at limit */}
+                                            {/* Stock limit warning */}
                                             {quantity >= maxQty && maxQty !== Infinity && (
                                                 <p className="text-[10px] text-orange-500 mt-1 font-medium">
                                                     Max stock reached ({maxQty})
@@ -240,7 +275,13 @@ export function CartDrawer() {
                                 <span>Subtotal</span>
                                 <span className="font-medium text-gray-900">৳{totalPrice.toLocaleString()}</span>
                             </div>
-                            <div className="flex justify-between font-semibold text-gray-900 pt-2 border-t border-gray-100">
+                            <div className="flex justify-between text-gray-600">
+                                <span>Shipping</span>
+                                <span className={`font-medium ${shipping === 0 ? "text-green-600" : "text-gray-900"}`}>
+                                    {shipping === 0 ? "FREE" : `৳${shipping.toLocaleString()}`}
+                                </span>
+                            </div>
+                            <div className="flex justify-between font-semibold text-gray-900 pt-2 border-t border-gray-100 text-base">
                                 <span>Total</span>
                                 <span>৳{total.toLocaleString()}</span>
                             </div>

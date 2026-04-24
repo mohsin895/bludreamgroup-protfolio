@@ -1,8 +1,13 @@
-import { RootState } from "."
-
-export const selectCartItems      = (s: RootState) => s.cart.items
-export const selectCartTotalItems = (s: RootState) =>
-    s.cart.items.reduce((sum, i) => sum + i.quantity, 0)
-export const selectCartTotalPrice = (s: RootState) =>
-    s.cart.items.reduce((sum, i) => sum + i.product.price * i.quantity, 0)
-//                                              ^^^^^^^^ was i.price
+/**
+ * Extra cart selectors that complement cartSlice.ts.
+ * Import from here OR from cartSlice — both work.
+ *
+ * These are re-exported for backwards compatibility with any file
+ * that imports from "@/store/cartSelectors".
+ */
+export {
+    selectCartItems,
+    selectIsDrawerOpen,
+    selectTotalItems,
+    selectTotalPrice,
+} from "./cartSlice";

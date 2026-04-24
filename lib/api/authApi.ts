@@ -1,3 +1,5 @@
+import {AuthUser} from "@/store/authSlice";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api"
 
 async function apiFetch<T>(
@@ -68,7 +70,7 @@ export interface ResetPasswordPayload {
 // ── Response types ────────────────────────────────────────────────────────────
 
 export interface AuthResponse {
-    user:    import("@/store/authSlice").User
+    user:    import("@/store/authSlice").AuthUser
     token:   string
     message: string
 }
@@ -92,10 +94,10 @@ export const authApi = {
         apiFetch<{ message: string }>("/auth/logout", { method: "POST" }, token),
 
     me: (token: string) =>
-        apiFetch<{ user: import("@/store/authSlice").User }>("/auth/me", {}, token),
+        apiFetch<{ user: import("@/store/authSlice").AuthUser }>("/auth/me", {}, token),
 
     updateProfile: (data: UpdateProfilePayload, token: string) =>
-        apiFetch<{ user: import("@/store/authSlice").User; message: string }>(
+        apiFetch<{ user: import("@/store/authSlice").AuthUser; message: string }>(
             "/auth/profile", { method: "PUT", body: JSON.stringify(data) }, token,
         ),
 
@@ -123,6 +125,6 @@ export const authApi = {
             method:  "POST",
             headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
             body:    form,
-        }).then(r => r.json()) as Promise<{ user: import("@/store/authSlice").User }>
+        }).then(r => r.json()) as Promise<{ user: import("@/store/authSlice").AuthUser }>
     },
 }
