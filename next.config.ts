@@ -2,10 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
     images: {
-        domains: ["localhost"], // ✅ allow local backend images
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "bluedreamprotfolio.nelsistech.com",
+                pathname: "/public/uploads/**",
+            },
+        ],
     },
 };
 
 export default nextConfig;
-
-
