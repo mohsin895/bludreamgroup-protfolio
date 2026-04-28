@@ -193,15 +193,6 @@ export default function Navbar() {
                         textDecoration: "none",
                         transition: "color 0.2s",
                       }}
-                      onMouseEnter={(e) => {
-                        if (pathname !== item.href)
-                          (e.target as HTMLElement).style.color = "#82c3d8";
-                      }}
-                      onMouseLeave={(e) => {
-                        if (pathname !== item.href)
-                          (e.target as HTMLElement).style.color =
-                            "var(--text-muted)";
-                      }}
                     >
                       {item.label}
                     </Link>
@@ -240,23 +231,11 @@ export default function Navbar() {
                             padding: "9px 16px",
                             fontSize: "13px",
                             fontWeight: 400,
-                            color: "var(--text-muted)",
+                            color: "#ffff",
                             textDecoration: "none",
                             borderRadius: "4px",
                             transition: "all 0.15s",
                             whiteSpace: "nowrap",
-                          }}
-                          onMouseEnter={(e) => {
-                            (e.currentTarget as HTMLElement).style.background =
-                              "rgba(201,168,76,0.08)";
-                            (e.currentTarget as HTMLElement).style.color =
-                              "#82c3d8";
-                          }}
-                          onMouseLeave={(e) => {
-                            (e.currentTarget as HTMLElement).style.background =
-                              "transparent";
-                            (e.currentTarget as HTMLElement).style.color =
-                              "var(--text-muted)";
                           }}
                         >
                           {child.label}
@@ -322,9 +301,10 @@ export default function Navbar() {
               style={{
                 background: "none",
                 border: "1px solid rgba(255,255,255,0.12)",
-                color: "var(--text)",
+                color: "#ffff",
                 padding: "8px",
                 cursor: "pointer",
+                zIndex: 1100,
                 borderRadius: "4px",
                 display: "none",
               }}
@@ -354,7 +334,7 @@ export default function Navbar() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "rgba(10,10,10,0.98)",
+          background: "#203647",
           zIndex: 999,
           transform: mobileOpen ? "translateX(0)" : "translateX(100%)",
           transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
@@ -376,7 +356,7 @@ export default function Navbar() {
                         padding: "14px 0",
                         fontSize: "28px",
                         fontFamily: "var(--font-display)",
-                        color: "var(--text-muted)",
+                        color: "#ffff",
                         borderBottom: "1px solid rgba(255,255,255,0.04)",
                         animation: mobileOpen
                           ? `fadeIn 0.4s ${i * 0.05}s both`
@@ -394,7 +374,7 @@ export default function Navbar() {
                             display: "block",
                             padding: "10px 0",
                             fontSize: "15px",
-                            color: "var(--text-muted)",
+                            color: "#ffff",
                             textDecoration: "none",
                             borderBottom: "1px solid rgba(255,255,255,0.03)",
                           }}
@@ -413,8 +393,7 @@ export default function Navbar() {
                       fontSize: "32px",
                       fontFamily: "var(--font-display)",
                       fontWeight: 400,
-                      color:
-                        pathname === item.href ? "var(--gold)" : "var(--text)",
+                      color: pathname === item.href ? "#F59E0B" : "#ffffff",
                       textDecoration: "none",
                       borderBottom: "1px solid rgba(255,255,255,0.04)",
                       animation: mobileOpen

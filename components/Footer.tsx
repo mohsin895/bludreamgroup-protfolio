@@ -31,7 +31,7 @@ const socials = [
   { icon: Share2, href: "#", label: "Twitter" },
   { icon: LinkIcon, href: "#", label: "LinkedIn" },
   { icon: Rss, href: "#", label: "YouTube" },
-  { icon: Mail, href: "mailto:hello@alexandravoss.com", label: "Email" },
+  { icon: Mail, href: "mailto:hello@bluedream.com", label: "Email" },
 ];
 
 export default function Footer() {
@@ -137,7 +137,7 @@ export default function Footer() {
                 marginBottom: "20px",
               }}
             >
-              <span style={{ color: "var(--gold)" }}>A</span>lexandra Voss
+              <span style={{ color: "var(--gold)" }}>Blue</span> Dream
             </Link>
             <p
               style={{
@@ -249,7 +249,7 @@ export default function Footer() {
           }}
         >
           <p style={{ fontSize: "12px", color: "#fff" }}>
-            © {new Date().getFullYear()} Alexandra Voss. All rights reserved.
+            © {new Date().getFullYear()} blue dream. All rights reserved.
           </p>
           <div style={{ display: "flex", gap: "24px" }}>
             {["Privacy Policy", "Terms of Service", "Cookie Policy"].map(

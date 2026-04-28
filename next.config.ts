@@ -1,15 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-    images: {
-        remotePatterns: [
-            {
-                protocol: "https",
-                hostname: "bluedreamprotfolio.nelsistech.com",
-                pathname: "/public/uploads/**",
-            },
-        ],
-    },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "bluedreamprotfolio.nelsistech.com",
+        pathname: "/public/**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
