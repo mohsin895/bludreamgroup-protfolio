@@ -200,7 +200,6 @@ export default function About() {
                   size={40}
                   style={{
                     color: "#f4f7f6",
-                    color: "#f4f7f6",
                     marginBottom: "20px",
                   }}
                 />

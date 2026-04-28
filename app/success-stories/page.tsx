@@ -659,7 +659,6 @@ export default function SuccessStoriesPage() {
                     fontWeight: 700,
                     fontSize: "13px",
                     border: "1px solid #000",
-                    borderRadius: "6px",
                     letterSpacing: "0.08em",
                     textDecoration: "none",
                     textTransform: "uppercase",
