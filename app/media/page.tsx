@@ -5,47 +5,42 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useState, useEffect, useCallback } from "react";
-import {
-    getMediaItems,
-    deleteMediaItem,
-    type MediaItem,
-    type MediaType,
-    type MediaStats,
-} from "@/lib/api/media";
+import { getMediaItems, type MediaItem, type MediaType } from "@/lib/api/media";
 
-// ─── Filter config ────────────────────────────────────────────────────────────
-
-const FILTERS: { label: string; value: string }[] = [
-    { label: "All",    value: "all"   },
+// Configuration
+const STORAGE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL;
+const FILTERS = [
+    { label: "All", value: "all" },
     { label: "Photos", value: "photo" },
     { label: "Videos", value: "video" },
-    { label: "Press",  value: "press" },
+    { label: "Press", value: "press" },
     { label: "Events", value: "event" },
 ];
 
-const PRESS_LOGOS = [
-    "The New York Times",
-    "The Guardian",
-    "NPR Books",
-    "Lit Hub",
-    "The Paris Review",
-    "Publishers Weekly",
+const SORT_OPTIONS = [
+    { label: "Date (newest)", value: "date_desc" },
+    { label: "Date (oldest)", value: "date_asc" },
+    { label: "Title A-Z", value: "title_asc" },
+    { label: "Default order", value: "sort_order" },
 ];
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// Helper: Build full media URL
+function getMediaUrl(item: MediaItem): string | null {
+    if (!item.media_url) return null;
+    if (item.media_url.startsWith("http")) return item.media_url;
+    const cleanPath = item.media_url.replace(/^\/+/, "");
+    return `${STORAGE_URL.replace(/\/$/, "")}/${cleanPath}`;
+}
 
+// Type label
 function typeLabel(type: MediaType) {
-    const labels: Record<MediaType, string> = {
-        photo: "Photo",
-        video: "Video",
-        press: "Press",
-        event: "Event",
-    };
+    const labels = { photo: "Photo", video: "Video", press: "Press", event: "Event" };
     return labels[type];
 }
 
+// Background gradient based on accent color
 function bgGradient(item: MediaItem) {
-    const palettes: Record<string, string[]> = {
+    const palettes = {
         "#C9A84C": ["#1a1508", "#2e2209", "#3d2f0a"],
         "#7C9A7E": ["#0a130a", "#0f1f10", "#152a16"],
         "#9B8BC4": ["#100e1a", "#181428", "#201a34"],
@@ -55,51 +50,27 @@ function bgGradient(item: MediaItem) {
     return `radial-gradient(ellipse at 30% 40%, ${stops[1]} 0%, ${stops[0]} 60%, ${stops[2]} 100%)`;
 }
 
-// ─── Loading skeleton ─────────────────────────────────────────────────────────
-
+// Skeleton loader
 function SkeletonCard() {
     return (
-        <div
-            style={{
-                borderRadius: "8px",
-                overflow: "hidden",
-                aspectRatio: "4/3",
-                background: "linear-gradient(135deg, #1a1a1a 0%, #222 50%, #1a1a1a 100%)",
-                border: "1px solid rgba(255,255,255,0.04)",
-                animation: "skeleton-pulse 1.6s ease-in-out infinite",
-            }}
-        />
+        <div className="skeleton-card" style={{
+            borderRadius: 8,
+            overflow: "hidden",
+            aspectRatio: "4/3",
+            background: "linear-gradient(135deg, #1a1a1a 0%, #222 50%, #1a1a1a 100%)",
+            border: "1px solid rgba(255,255,255,0.04)",
+            animation: "skeleton-pulse 1.6s ease-in-out infinite",
+        }} />
     );
 }
 
-// ─── Media Card ───────────────────────────────────────────────────────────────
-
-function MediaCard({
-                       item,
-                       delay,
-                       onClick,
-                       onDelete,
-                   }: {
-    item: MediaItem;
-    delay: number;
-    onClick: () => void;
-    onDelete?: (id: number) => void;
-}) {
+// Single Media Card
+function MediaCard({ item, delay, onClick }: { item: MediaItem; delay: number; onClick: () => void }) {
     const [hovered, setHovered] = useState(false);
-    const [deleting, setDeleting] = useState(false);
+    const [imgError, setImgError] = useState(false);
+    const mediaUrl = getMediaUrl(item);
 
-    const handleDelete = async (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (!confirm(`Delete "${item.title}"?`)) return;
-        setDeleting(true);
-        try {
-            await deleteMediaItem(item.id);
-            onDelete?.(item.id);
-        } catch {
-            alert("Failed to delete item.");
-            setDeleting(false);
-        }
-    };
+    const isTextPress = item.type === "press" && (!mediaUrl || imgError) && (item.press_url || item.description);
 
     return (
         <AnimatedSection delay={delay}>
@@ -109,30 +80,19 @@ function MediaCard({
                 onMouseLeave={() => setHovered(false)}
                 style={{
                     position: "relative",
-                    borderRadius: "8px",
+                    borderRadius: 8,
                     overflow: "hidden",
                     cursor: "pointer",
-                    aspectRatio: item.aspect_ratio,
+                    aspectRatio: item.aspect_ratio || (item.type === "press" ? "1/1.2" : "4/3"),
                     background: bgGradient(item),
-                    border: `1px solid rgba(255,255,255,${hovered ? "0.1" : "0.05"})`,
-                    transition: "border-color 0.3s ease, transform 0.3s ease",
-                    transform: hovered ? "translateY(-3px)" : "translateY(0)",
-                    opacity: deleting ? 0.4 : 1,
+                    border: `1px solid rgba(255,255,255,${hovered ? 0.15 : 0.05})`,
+                    transition: "all 0.3s ease",
+                    transform: hovered ? "scale(1.02)" : "scale(1)",
+                    boxShadow: hovered ? "0 20px 40px rgba(201,168,76,0.15)" : "0 8px 24px rgba(0,0,0,0.3)",
                 }}
             >
-                {/* Decorative grid */}
-                <svg
-                    style={{
-                        position: "absolute",
-                        inset: 0,
-                        width: "100%",
-                        height: "100%",
-                        opacity: hovered ? 0.18 : 0.1,
-                        transition: "opacity 0.4s ease",
-                        pointerEvents: "none",
-                    }}
-                    xmlns="http://www.w3.org/2000/svg"
-                >
+                {/* Grid overlay */}
+                <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0.1, pointerEvents: "none" }}>
                     <defs>
                         <pattern id={`grid-${item.id}`} width="32" height="32" patternUnits="userSpaceOnUse">
                             <path d="M 32 0 L 0 0 0 32" fill="none" stroke={item.accent_color} strokeWidth="0.4" />
@@ -141,79 +101,90 @@ function MediaCard({
                     <rect width="100%" height="100%" fill={`url(#grid-${item.id})`} />
                 </svg>
 
-                {/* Accent line */}
-                <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: `linear-gradient(90deg, ${item.accent_color}99, transparent)` }} />
+                {/* Media Content */}
+                {!isTextPress && mediaUrl && !imgError ? (
+                    item.type === "video" ? (
+                        <video
+                            src={mediaUrl}
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            muted
+                            preload="metadata"
+                            onError={() => setImgError(true)}
+                        />
+                    ) : (
+                        <img
+                            src={mediaUrl}
+                            alt={item.title}
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            onError={() => setImgError(true)}
+                            loading="lazy"
+                        />
+                    )
+                ) : (
+                    <div style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
+                        padding: "32px 24px",
+                        textAlign: "center",
+                        background: "linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 100%)",
+                    }}>
+                        <div style={{ fontSize: 42, marginBottom: 16, opacity: 0.7 }}>📰</div>
+                        {item.title && (
+                            <h3 style={{ fontSize: 16, fontWeight: 500, lineHeight: 1.4, color: "#fff", margin: "0 0 8px", maxWidth: "90%" }}>
+                                {item.title.length > 60 ? item.title.slice(0,60)+"..." : item.title}
+                            </h3>
+                        )}
+                        {item.subtitle && (
+                            <p style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", margin: 0, maxWidth: "90%" }}>
+                                {item.subtitle.length > 80 ? item.subtitle.slice(0,80)+"..." : item.subtitle}
+                            </p>
+                        )}
+                        {hovered && (
+                            <div style={{ marginTop: 16, display: "flex", alignItems: "center", gap: 8 }}>
+                                <span style={{ fontSize: 11, color: item.accent_color, fontWeight: 500 }}>Read article →</span>
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {/* Top meta */}
-                <div style={{ position: "absolute", top: "16px", left: "16px", right: "16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <span style={{ fontSize: "10px", letterSpacing: "0.12em", textTransform: "uppercase", color: item.accent_color, background: `${item.accent_color}14`, border: `1px solid ${item.accent_color}30`, padding: "4px 10px", borderRadius: "3px" }}>
+                <div style={{ position: "absolute", top: 16, left: 16, right: 16, display: "flex", justifyContent: "space-between", zIndex: 2 }}>
+                    <span style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: item.accent_color, background: `${item.accent_color}14`, border: `1px solid ${item.accent_color}30`, padding: "4px 10px", borderRadius: 3, backdropFilter: "blur(4px)" }}>
                         {typeLabel(item.type)}
                     </span>
-                    <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.3)" }}>{item.date}</span>
+                    <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", background: "rgba(0,0,0,0.3)", padding: "2px 8px", borderRadius: 12 }}>{item.date}</span>
                 </div>
-
-                {/* Delete button (hover) */}
-                {onDelete && (
-                    <button
-                        onClick={handleDelete}
-                        title="Delete"
-                        style={{
-                            position: "absolute",
-                            top: "12px",
-                            right: "12px",
-                            zIndex: 10,
-                            width: "28px",
-                            height: "28px",
-                            borderRadius: "50%",
-                            background: "rgba(220,50,50,0.85)",
-                            border: "none",
-                            color: "#fff",
-                            fontSize: "14px",
-                            cursor: "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            opacity: hovered ? 1 : 0,
-                            transition: "opacity 0.2s ease",
-                        }}
-                    >
-                        ×
-                    </button>
-                )}
 
                 {/* Featured badge */}
                 {item.is_featured && (
-                    <div style={{ position: "absolute", top: "46px", left: "16px", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: item.accent_color, opacity: 0.7 }}>
+                    <div style={{ position: "absolute", top: 46, left: 16, fontSize: 9, letterSpacing: "0.1em", color: item.accent_color, opacity: 0.8, background: "rgba(0,0,0,0.3)", padding: "2px 8px", borderRadius: 12 }}>
                         ★ Featured
                     </div>
                 )}
 
                 {/* Bottom content */}
-                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "48px 20px 20px", background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)" }}>
-                    <div style={{ fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", marginBottom: "6px" }}>
-                        {item.category}
-                    </div>
-                    <h3 style={{ fontSize: "14px", fontWeight: 500, lineHeight: 1.4, color: "#fff", margin: "0 0 6px" }}>
-                        {item.title}
-                    </h3>
-                    <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.45)", margin: 0 }}>
-                        {item.subtitle}
-                    </p>
-
-                    {/* Hover reveal */}
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "12px", opacity: hovered ? 1 : 0, transform: hovered ? "translateY(0)" : "translateY(6px)", transition: "opacity 0.25s ease, transform 0.25s ease" }}>
-                        <span style={{ fontSize: "11px", color: item.accent_color, letterSpacing: "0.08em" }}>
-                            View {typeLabel(item.type)}
-                        </span>
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ color: item.accent_color }}>
-                            <path d="M2 6H10M7 3l3 3-3 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                    </div>
+                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "48px 20px 20px", background: "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.6) 70%, transparent 100%)" }}>
+                    <div style={{ fontSize: 10, letterSpacing: "0.1em", color: "rgba(255,255,255,0.4)", marginBottom: 6 }}>{item.category}</div>
+                    <h3 style={{ fontSize: 14, fontWeight: 500, lineHeight: 1.4, color: "#fff", margin: "0 0 6px" }}>{item.title}</h3>
+                    <p style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", margin: 0 }}>{item.subtitle}</p>
+                    {hovered && (
+                        <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 6 }}>
+                            <span style={{ fontSize: 11, color: item.accent_color }}>
+                                {item.type === "press" ? "Read article" : `View ${typeLabel(item.type)}`}
+                            </span>
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                <path d="M2 6H10M7 3l3 3-3 3" stroke={item.accent_color} strokeWidth="1.2" strokeLinecap="round" />
+                            </svg>
+                        </div>
+                    )}
                 </div>
 
-                {/* Video play indicator */}
-                {item.type === "video" && (
-                    <div style={{ position: "absolute", top: "50%", left: "50%", transform: `translate(-50%, -50%) scale(${hovered ? 1.1 : 1})`, width: "48px", height: "48px", borderRadius: "50%", background: "rgba(0,0,0,0.5)", border: `1.5px solid ${hovered ? item.accent_color : item.accent_color + "60"}`, display: "flex", alignItems: "center", justifyContent: "center", transition: "transform 0.3s ease, border-color 0.3s ease" }}>
+                {/* Video play icon overlay */}
+                {item.type === "video" && !imgError && mediaUrl && (
+                    <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 48, height: 48, borderRadius: "50%", background: "rgba(0,0,0,0.6)", border: `1.5px solid ${item.accent_color}`, display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)", pointerEvents: "none" }}>
                         <svg width="14" height="14" viewBox="0 0 14 14" fill={item.accent_color}>
                             <path d="M4 2.5L11.5 7L4 11.5V2.5Z" />
                         </svg>
@@ -224,59 +195,78 @@ function MediaCard({
     );
 }
 
-// ─── Lightbox ─────────────────────────────────────────────────────────────────
-
+// Lightbox component
 function Lightbox({ item, onClose, onPrev, onNext }: { item: MediaItem; onClose: () => void; onPrev: () => void; onNext: () => void }) {
+    const mediaUrl = getMediaUrl(item);
+    const [error, setError] = useState(false);
+
+    useEffect(() => {
+        const handleKey = (e: KeyboardEvent) => {
+            if (e.key === "Escape") onClose();
+            if (e.key === "ArrowLeft") onPrev();
+            if (e.key === "ArrowRight") onNext();
+        };
+        window.addEventListener("keydown", handleKey);
+        return () => window.removeEventListener("keydown", handleKey);
+    }, [onClose, onPrev, onNext]);
+
     return (
-        <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.92)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-            <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: "760px", width: "100%", background: "#111", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", overflow: "hidden" }}>
-                <div style={{ aspectRatio: "16/9", background: bgGradient(item), display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-                    <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0.12 }} xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <pattern id="lb-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke={item.accent_color} strokeWidth="0.5" />
-                            </pattern>
-                        </defs>
-                        <rect width="100%" height="100%" fill="url(#lb-grid)" />
-                    </svg>
-                    {item.media_url ? (
-                        item.type === "video"
-                            ? <video src={item.media_url} controls style={{ maxWidth: "100%", maxHeight: "100%", position: "relative" }} />
-                            : <img src={item.media_url} alt={item.title} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", position: "relative" }} />
+        <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.96)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, backdropFilter: "blur(8px)" }}>
+            <div onClick={e => e.stopPropagation()} style={{ maxWidth: 900, width: "100%", maxHeight: "90vh", background: "#0f0f0f", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+                {/* Media area */}
+                <div style={{ aspectRatio: item.type === "press" ? "auto" : "16/9", minHeight: 300, background: bgGradient(item), display: "flex", alignItems: "center", justifyContent: "center", position: "relative", flex: item.type === "press" ? "0 0 auto" : 1 }}>
+                    {item.type === "press" && item.press_url ? (
+                        <iframe src={item.press_url} style={{ width: "100%", height: "60vh", minHeight: 400, border: "none" }} title={item.title} />
+                    ) : mediaUrl && !error ? (
+                        item.type === "video" ? (
+                            <video
+                                src={mediaUrl}
+                                controls
+                                autoPlay
+                                playsInline
+                                style={{ maxWidth: "100%", maxHeight: "80vh", objectFit: "contain" }}
+                                onError={() => setError(true)}
+                            />
+                        ) : (
+                            <img src={mediaUrl} alt={item.title} style={{ maxWidth: "100%", maxHeight: "80vh", objectFit: "contain" }} onError={() => setError(true)} />
+                        )
                     ) : (
-                        <div style={{ textAlign: "center", position: "relative" }}>
-                            <div style={{ fontSize: "48px", marginBottom: "12px", opacity: 0.6 }}>
-                                {item.type === "video" ? "▶" : item.type === "press" ? "✦" : "⬛"}
-                            </div>
-                            <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.3)", letterSpacing: "0.1em" }}>
-                                {item.press_url
-                                    ? <a href={item.press_url} target="_blank" rel="noopener noreferrer" style={{ color: item.accent_color }}>Read full article →</a>
-                                    : `No media attached`}
-                            </p>
+                        <div style={{ textAlign: "center", padding: 60, color: "rgba(255,255,255,0.5)" }}>
+                            <div style={{ fontSize: 64, marginBottom: 16 }}>📄</div>
+                            {item.press_url ? (
+                                <a href={item.press_url} target="_blank" rel="noopener noreferrer" style={{ color: item.accent_color, textDecoration: "none", borderBottom: `1px solid ${item.accent_color}` }}>Open original article →</a>
+                            ) : item.description ? (
+                                <div style={{ maxWidth: 500, textAlign: "left", padding: 20, background: "rgba(0,0,0,0.4)", borderRadius: 8 }}>
+                                    <p>{item.description}</p>
+                                </div>
+                            ) : "No preview available"}
                         </div>
                     )}
                 </div>
 
-                <div style={{ padding: "24px 28px" }}>
-                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "16px" }}>
-                        <div>
-                            <div style={{ fontSize: "10px", letterSpacing: "0.12em", color: item.accent_color, marginBottom: "8px", textTransform: "uppercase" }}>
-                                {item.category} · {item.date}
-                            </div>
-                            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(18px, 2.5vw, 26px)", margin: "0 0 8px", lineHeight: 1.2 }}>
-                                {item.title}
-                            </h2>
-                            <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.45)", margin: 0 }}>{item.subtitle}</p>
+                {/* Content area */}
+                <div style={{ padding: "24px 28px", overflowY: "auto", maxHeight: "40vh" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                        <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: 10, letterSpacing: "0.12em", color: item.accent_color, marginBottom: 8 }}>{item.category} · {item.date}</div>
+                            <h2 style={{ fontSize: "clamp(18px, 2.5vw, 26px)", margin: "0 0 8px" }}>{item.title}</h2>
+                            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.6)" }}>{item.subtitle}</p>
                             {item.description && (
-                                <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.35)", marginTop: "12px", lineHeight: 1.6 }}>{item.description}</p>
+                                <div style={{ fontSize: 14, color: "rgba(255,255,255,0.7)", marginTop: 16, lineHeight: 1.6, borderLeft: `2px solid ${item.accent_color}`, paddingLeft: 16 }}>
+                                    {item.description}
+                                </div>
+                            )}
+                            {item.type === "press" && item.press_url && !mediaUrl && (
+                                <a href={item.press_url} target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", marginTop: 20, padding: "8px 20px", background: item.accent_color, color: "#000", borderRadius: 4, fontSize: 13, fontWeight: 500, textDecoration: "none" }}>
+                                    Read Full Article →
+                                </a>
                             )}
                         </div>
-                        <button onClick={onClose} style={{ background: "none", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.5)", borderRadius: "50%", width: "36px", height: "36px", cursor: "pointer", fontSize: "18px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>×</button>
+                        <button onClick={onClose} style={{ background: "rgba(255,255,255,0.05)", border: "none", borderRadius: "50%", width: 36, height: 36, cursor: "pointer", fontSize: 20, color: "rgba(255,255,255,0.7)", display: "flex", alignItems: "center", justifyContent: "center", marginLeft: 16 }}>×</button>
                     </div>
-
-                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px", borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: "16px" }}>
-                        <button onClick={onPrev} style={{ background: "none", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.5)", padding: "8px 20px", borderRadius: "4px", cursor: "pointer", fontSize: "12px", letterSpacing: "0.06em", fontFamily: "inherit" }}>← Prev</button>
-                        <button onClick={onNext} style={{ background: "none", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.5)", padding: "8px 20px", borderRadius: "4px", cursor: "pointer", fontSize: "12px", letterSpacing: "0.06em", fontFamily: "inherit" }}>Next →</button>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: 24, borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 16 }}>
+                        <button onClick={onPrev} style={{ background: "rgba(255,255,255,0.05)", border: "none", padding: "8px 20px", borderRadius: 6, cursor: "pointer", fontSize: 12, color: "white" }}>← Previous</button>
+                        <button onClick={onNext} style={{ background: "rgba(255,255,255,0.05)", border: "none", padding: "8px 20px", borderRadius: 6, cursor: "pointer", fontSize: 12, color: "white" }}>Next →</button>
                     </div>
                 </div>
             </div>
@@ -284,41 +274,23 @@ function Lightbox({ item, onClose, onPrev, onNext }: { item: MediaItem; onClose:
     );
 }
 
-// ─── Error banner ─────────────────────────────────────────────────────────────
-
-function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => void }) {
-    return (
-        <div style={{ padding: "20px 24px", background: "rgba(220,50,50,0.08)", border: "1px solid rgba(220,50,50,0.2)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", marginBottom: "32px" }}>
-            <p style={{ color: "rgba(255,120,120,0.9)", fontSize: "14px", margin: 0 }}>⚠ {message}</p>
-            <button onClick={onRetry} style={{ background: "none", border: "1px solid rgba(220,50,50,0.3)", color: "rgba(255,120,120,0.8)", padding: "6px 16px", borderRadius: "4px", cursor: "pointer", fontSize: "12px", fontFamily: "inherit" }}>Retry</button>
-        </div>
-    );
-}
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
+// Main Page Component
 export default function MediaGalleryPage() {
     const [activeFilter, setActiveFilter] = useState("all");
-    const [items,        setItems]        = useState<MediaItem[]>([]);
-    const [stats,        setStats]        = useState<MediaStats | null>(null);
-    const [loading,      setLoading]      = useState(true);
-    const [error,        setError]        = useState<string | null>(null);
+    const [sortBy, setSortBy] = useState("date_desc");
+    const [items, setItems] = useState<MediaItem[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [lightboxItem, setLightboxItem] = useState<MediaItem | null>(null);
 
-    // ── Fetch from API ──────────────────────────────────────────────
     const fetchItems = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await getMediaItems(
-                activeFilter !== "all"
-                    ? { type: activeFilter as MediaType }
-                    : {}
-            );
-            setItems(res.data as MediaItem[]);
-            setStats(res.stats);
-        } catch (err: unknown) {
-            setError(err instanceof Error ? err.message : "Failed to load media items.");
+            const res = await getMediaItems(activeFilter !== "all" ? { type: activeFilter as MediaType } : {});
+            setItems(res.data);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Failed to load media");
         } finally {
             setLoading(false);
         }
@@ -328,193 +300,139 @@ export default function MediaGalleryPage() {
         fetchItems();
     }, [fetchItems]);
 
-    // ── Lightbox navigation ─────────────────────────────────────────
-    const lightboxIndex = lightboxItem ? items.findIndex((i) => i.id === lightboxItem.id) : -1;
-    const openNext = () => { if (lightboxIndex < items.length - 1) setLightboxItem(items[lightboxIndex + 1]); };
-    const openPrev = () => { if (lightboxIndex > 0) setLightboxItem(items[lightboxIndex - 1]); };
-
-    // ── Delete handler ──────────────────────────────────────────────
-    const handleDelete = (id: number) => {
-        setItems((prev) => prev.filter((i) => i.id !== id));
-        if (lightboxItem?.id === id) setLightboxItem(null);
+    const stats = {
+        total: items.length,
+        photo: items.filter(i => i.type === "photo").length,
+        video: items.filter(i => i.type === "video").length,
+        press: items.filter(i => i.type === "press").length,
+        event: items.filter(i => i.type === "event").length,
     };
 
-    // ── Filter counts from stats ────────────────────────────────────
-    const counts: Record<string, number> = {
-        all:   stats?.total ?? 0,
-        photo: stats?.photo ?? 0,
-        video: stats?.video ?? 0,
-        press: stats?.press ?? 0,
-        event: stats?.event ?? 0,
-    };
+    const sortedItems = [...items].sort((a, b) => {
+        switch (sortBy) {
+            case "date_desc": return new Date(b.date).getTime() - new Date(a.date).getTime();
+            case "date_asc": return new Date(a.date).getTime() - new Date(b.date).getTime();
+            case "title_asc": return a.title.localeCompare(b.title);
+            case "sort_order": return a.sort_order - b.sort_order;
+            default: return 0;
+        }
+    });
+
+    const lightboxIndex = lightboxItem ? sortedItems.findIndex(i => i.id === lightboxItem.id) : -1;
+    const openNext = () => { if (lightboxIndex < sortedItems.length - 1) setLightboxItem(sortedItems[lightboxIndex + 1]); };
+    const openPrev = () => { if (lightboxIndex > 0) setLightboxItem(sortedItems[lightboxIndex - 1]); };
 
     return (
         <>
             <style>{`
-                @keyframes skeleton-pulse {
-                    0%, 100% { opacity: 0.6; }
-                    50%       { opacity: 1;   }
-                }
+                @keyframes skeleton-pulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+                .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+                .btn-outline { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 1px solid rgba(201,168,76,0.3); border-radius: 4px; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #C9A84C; background: transparent; transition: all 0.2s ease; text-decoration: none; }
+                .btn-outline:hover { border-color: #C9A84C; background: rgba(201,168,76,0.05); }
+                @media (max-width: 768px) { .container { padding: 0 16px; } }
             `}</style>
-
             <Navbar />
 
-            {/* ── Hero ── */}
-            <section style={{ paddingTop: "140px", paddingBottom: "72px", background: "var(--bg, #0a0a0a)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+            {/* Hero Section */}
+            <section style={{ padding: "140px 0 72px", background: "#0a0a0a", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
                 <div className="container">
                     <AnimatedSection>
-                        <div className="section-label">Media & Gallery</div>
-                        <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(48px, 6vw, 80px)", marginTop: "8px", letterSpacing: "-0.02em", lineHeight: 1.05 }}>
-                            Press, Events<br />
-                            <span style={{ color: "var(--gold, #C9A84C)" }}>& Gallery</span>
+                        <div className="section-label" style={{ fontSize: 12, letterSpacing: "0.12em", color: "#C9A84C", marginBottom: 16 }}>Media & Gallery</div>
+                        <h1 style={{ fontSize: "clamp(42px, 6vw, 80px)", fontFamily: "var(--font-display, Georgia, serif)", letterSpacing: "-0.02em", lineHeight: 1.05, fontWeight: 600 }}>
+                            Press, Events<br /><span style={{ color: "#C9A84C" }}>& Gallery</span>
                         </h1>
-                        <p style={{ color: "var(--text-muted, rgba(255,255,255,0.5))", fontSize: "16px", maxWidth: "480px", marginTop: "20px", lineHeight: 1.75 }}>
-                            Photographs, interviews, press coverage, and event highlights. Click any card to expand.
-                        </p>
+                        <p style={{ color: "rgba(255,255,255,0.6)", maxWidth: 520, marginTop: 20, fontSize: 16 }}>Photographs, interviews, press coverage, and event highlights. Click any card to expand and explore.</p>
 
-                        {/* Stats row — live from API */}
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: "32px", marginTop: "40px" }}>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 48, marginTop: 48 }}>
                             {[
-                                { label: "Total Items",      value: stats?.total ?? "—" },
-                                { label: "Press Features",   value: stats?.press ?? "—" },
-                                { label: "Event Photos",     value: stats?.event ?? "—" },
-                                { label: "Video Interviews", value: stats?.video ?? "—" },
-                            ].map((stat) => (
+                                { label: "Total Items", value: stats.total },
+                                { label: "Press Features", value: stats.press },
+                                { label: "Event Photos", value: stats.event },
+                                { label: "Video Interviews", value: stats.video },
+                            ].map(stat => (
                                 <div key={stat.label}>
-                                    <div style={{ fontFamily: "var(--font-display)", fontSize: "36px", letterSpacing: "-0.03em", color: "var(--gold, #C9A84C)", lineHeight: 1 }}>
-                                        {stat.value}
-                                    </div>
-                                    <div style={{ fontSize: "11px", letterSpacing: "0.1em", color: "rgba(255,255,255,0.3)", marginTop: "4px", textTransform: "uppercase" }}>
-                                        {stat.label}
-                                    </div>
+                                    <div style={{ fontSize: 42, fontFamily: "var(--font-display, Georgia, serif)", color: "#C9A84C", lineHeight: 1, fontWeight: 500 }}>{stat.value}</div>
+                                    <div style={{ fontSize: 11, letterSpacing: "0.1em", color: "rgba(255,255,255,0.4)", marginTop: 6 }}>{stat.label}</div>
                                 </div>
                             ))}
                         </div>
-
-                        <Link href="/" className="btn-outline" style={{ display: "inline-flex", marginTop: "36px" }}>
-                            ← Back to Home
-                        </Link>
+                        <Link href="/" className="btn-outline" style={{ marginTop: 48, display: "inline-flex" }}>← Back to Home</Link>
                     </AnimatedSection>
                 </div>
             </section>
 
-            {/* ── Gallery Body ── */}
-            <section className="section" style={{ background: "#0c0c0c", paddingTop: "64px", paddingBottom: "120px" }}>
+            {/* Gallery Section */}
+            <section style={{ background: "#0c0c0c", padding: "64px 0 120px" }}>
                 <div className="container">
-
-                    {/* Filter bar */}
                     <AnimatedSection>
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "48px" }}>
-                            {FILTERS.map((f) => (
-                                <button
-                                    key={f.value}
-                                    onClick={() => setActiveFilter(f.value)}
-                                    style={{
-                                        padding: "8px 18px",
-                                        borderRadius: "100px",
-                                        border: "1px solid",
-                                        borderColor: activeFilter === f.value ? "var(--gold, #C9A84C)" : "rgba(255,255,255,0.1)",
-                                        background:  activeFilter === f.value ? "rgba(201,168,76,0.1)" : "transparent",
-                                        color:       activeFilter === f.value ? "var(--gold, #C9A84C)" : "rgba(255,255,255,0.4)",
-                                        fontSize: "12px",
-                                        letterSpacing: "0.08em",
-                                        textTransform: "uppercase",
-                                        cursor: "pointer",
-                                        transition: "all 0.2s ease",
-                                        fontFamily: "inherit",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: "6px",
-                                    }}
-                                >
-                                    {f.label}
-                                    <span style={{ fontSize: "10px", opacity: 0.6, background: "rgba(255,255,255,0.08)", padding: "2px 6px", borderRadius: "100px" }}>
-                                        {counts[f.value] ?? 0}
-                                    </span>
-                                </button>
-                            ))}
+                        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", marginBottom: 48, gap: 16 }}>
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+                                {FILTERS.map(f => (
+                                    <button key={f.value} onClick={() => setActiveFilter(f.value)} style={{
+                                        padding: "8px 20px", borderRadius: 100, border: "1px solid", borderColor: activeFilter === f.value ? "#C9A84C" : "rgba(255,255,255,0.12)",
+                                        background: activeFilter === f.value ? "rgba(201,168,76,0.12)" : "transparent", color: activeFilter === f.value ? "#C9A84C" : "rgba(255,255,255,0.6)",
+                                        fontSize: 12, letterSpacing: "0.06em", cursor: "pointer", transition: "all 0.2s", fontWeight: activeFilter === f.value ? 500 : 400
+                                    }}>
+                                        {f.label} <span style={{ fontSize: 10, opacity: 0.7, marginLeft: 6 }}>{stats[f.value as keyof typeof stats] || 0}</span>
+                                    </button>
+                                ))}
+                            </div>
+                            <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ background: "rgba(20,20,20,0.8)", border: "1px solid rgba(255,255,255,0.15)", color: "white", padding: "8px 16px", borderRadius: 6, fontSize: 12, cursor: "pointer" }}>
+                                {SORT_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                            </select>
                         </div>
                     </AnimatedSection>
 
-                    {/* Error state */}
-                    {error && <ErrorBanner message={error} onRetry={fetchItems} />}
+                    {error && (
+                        <div style={{ padding: 24, background: "rgba(220,50,50,0.1)", border: "1px solid rgba(220,50,50,0.25)", borderRadius: 12, marginBottom: 32, textAlign: "center" }}>
+                            <span style={{ color: "#ff6b6b" }}>⚠ {error}</span>
+                            <button onClick={fetchItems} style={{ marginLeft: 20, background: "none", border: "1px solid rgba(255,255,255,0.2)", padding: "6px 16px", borderRadius: 4, color: "white", cursor: "pointer" }}>Retry</button>
+                        </div>
+                    )}
 
-                    {/* Masonry grid */}
                     {loading ? (
-                        <div style={{ columns: "3 280px", columnGap: "20px" }}>
-                            {Array.from({ length: 6 }).map((_, i) => (
-                                <div key={i} style={{ breakInside: "avoid", marginBottom: "20px" }}>
-                                    <SkeletonCard />
-                                </div>
-                            ))}
+                        <div style={{ columns: "3 280px", columnGap: 24 }}>
+                            {Array.from({ length: 6 }).map((_, i) => <div key={i} style={{ breakInside: "avoid", marginBottom: 24 }}><SkeletonCard /></div>)}
                         </div>
-                    ) : items.length === 0 && !error ? (
-                        <div style={{ textAlign: "center", padding: "80px 0", color: "rgba(255,255,255,0.25)", fontSize: "15px" }}>
-                            No items found for this filter.
-                        </div>
+                    ) : sortedItems.length === 0 ? (
+                        <div style={{ textAlign: "center", padding: "100px 20px", color: "rgba(255,255,255,0.35)", fontSize: 15 }}>No {activeFilter !== "all" ? activeFilter : ""} items found. Try another filter.</div>
                     ) : (
-                        <div style={{ columns: "3 280px", columnGap: "20px" }}>
-                            {items.map((item, i) => (
-                                <div key={item.id} style={{ breakInside: "avoid", marginBottom: "20px" }}>
-                                    <MediaCard
-                                        item={item}
-                                        delay={i * 0.06}
-                                        onClick={() => setLightboxItem(item)}
-                                        onDelete={handleDelete}
-                                    />
+                        <div style={{ columns: "3 280px", columnGap: 24 }}>
+                            {sortedItems.map((item, i) => (
+                                <div key={item.id} style={{ breakInside: "avoid", marginBottom: 24 }}>
+                                    <MediaCard item={item} delay={Math.min(i * 0.05, 0.6)} onClick={() => setLightboxItem(item)} />
                                 </div>
                             ))}
                         </div>
                     )}
 
-                    {/* Press logos */}
                     <AnimatedSection delay={0.3}>
-                        <div style={{ marginTop: "96px" }}>
-                            <div style={{ fontSize: "11px", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.2)", textAlign: "center", marginBottom: "32px" }}>
-                                As Featured In
-                            </div>
-                            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: "40px" }}>
-                                {PRESS_LOGOS.map((pub) => (
-                                    <span
-                                        key={pub}
-                                        style={{ fontFamily: "var(--font-display)", fontSize: "13px", letterSpacing: "0.06em", color: "rgba(255,255,255,0.18)", whiteSpace: "nowrap", transition: "color 0.2s ease", cursor: "default" }}
-                                        onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "rgba(201,168,76,0.7)")}
-                                        onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "rgba(255,255,255,0.18)")}
-                                    >
-                                        {pub}
-                                    </span>
+                        <div style={{ marginTop: 100, textAlign: "center" }}>
+                            <div style={{ fontSize: 11, letterSpacing: "0.14em", color: "rgba(255,255,255,0.25)", marginBottom: 36 }}>AS FEATURED IN</div>
+                            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 48, rowGap: 24 }}>
+                                {["The New York Times", "The Guardian", "NPR Books", "Lit Hub", "The Paris Review", "Publishers Weekly"].map(pub => (
+                                    <span key={pub} style={{ fontFamily: "var(--font-display, Georgia, serif)", fontSize: 13, letterSpacing: "0.08em", color: "rgba(255,255,255,0.2)", transition: "color 0.2s" }}>{pub}</span>
                                 ))}
                             </div>
                         </div>
                     </AnimatedSection>
 
-                    {/* Press inquiry CTA */}
                     <AnimatedSection delay={0.4}>
-                        <div style={{ marginTop: "80px", padding: "52px 48px", background: "rgba(201,168,76,0.04)", border: "1px solid rgba(201,168,76,0.12)", borderRadius: "12px", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "32px" }}>
+                        <div style={{ marginTop: 100, padding: "56px 52px", background: "linear-gradient(135deg, rgba(201,168,76,0.05) 0%, rgba(0,0,0,0.2) 100%)", border: "1px solid rgba(201,168,76,0.15)", borderRadius: 20, display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 32 }}>
                             <div>
-                                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(22px, 3vw, 34px)", margin: "0 0 10px", letterSpacing: "-0.02em" }}>
-                                    Press & Media Inquiries
-                                </h3>
-                                <p style={{ color: "rgba(255,255,255,0.45)", fontSize: "14px", lineHeight: 1.7, margin: 0, maxWidth: "380px" }}>
-                                    High-resolution photos, press kit, interview requests, and event photography are available on request.
-                                </p>
+                                <h3 style={{ fontSize: "clamp(24px, 3vw, 34px)", marginBottom: 12, fontWeight: 500 }}>Press & Media Inquiries</h3>
+                                <p style={{ color: "rgba(255,255,255,0.55)", maxWidth: 420, fontSize: 14 }}>High-resolution photos, press kit, interview requests, and event photography available on request.</p>
                             </div>
-                            <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-                                <Link href="/contact" className="btn-outline" style={{ display: "inline-flex" }}>Request Press Kit</Link>
-                                <Link href="/contact" style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "12px 24px", background: "var(--gold, #C9A84C)", color: "#0a0a0a", borderRadius: "4px", fontSize: "13px", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", textDecoration: "none" }}>
-                                    Book Interview
-                                </Link>
+                            <div style={{ display: "flex", gap: 14 }}>
+                                <Link href="/contact" className="btn-outline" style={{ padding: "12px 24px" }}>Request Press Kit</Link>
+                                <Link href="/contact" style={{ display: "inline-flex", padding: "12px 28px", background: "#C9A84C", color: "#0a0a0a", borderRadius: 6, fontSize: 13, fontWeight: 600, letterSpacing: "0.06em", textDecoration: "none" }}>Book Interview</Link>
                             </div>
                         </div>
                     </AnimatedSection>
                 </div>
             </section>
 
-            {/* ── Lightbox ── */}
-            {lightboxItem && (
-                <Lightbox item={lightboxItem} onClose={() => setLightboxItem(null)} onNext={openNext} onPrev={openPrev} />
-            )}
-
+            {lightboxItem && <Lightbox item={lightboxItem} onClose={() => setLightboxItem(null)} onPrev={openPrev} onNext={openNext} />}
             <Footer />
         </>
     );
