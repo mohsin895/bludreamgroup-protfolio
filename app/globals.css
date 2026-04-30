@@ -221,3 +221,6 @@ h6 {
 .marquee-track {
   animation: marquee 30s linear infinite;
 }
+.drawer-card{
+    z-index: 1000;
+}

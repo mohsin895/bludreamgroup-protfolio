@@ -5,57 +5,6 @@ import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { useState } from "react";
 
-/* ─── Contact Channels ──────────────────────────────────────── */
-const channels = [
-  {
-    id: 1,
-    icon: "✉",
-    title: "General Enquiries",
-    description:
-      "Questions about the platform, features, or anything else — we typically reply within one business day.",
-    contact: "hello@yourplatform.com",
-    href: "mailto:hello@yourplatform.com",
-    color: "#C9A84C",
-    bg: "rgba(201,168,76,0.08)",
-    cta: "Send an Email",
-  },
-  {
-    id: 2,
-    icon: "◎",
-    title: "Author Support",
-    description:
-      "Publishing questions, manuscript help, distribution issues, or royalty enquiries for current and prospective authors.",
-    contact: "authors@yourplatform.com",
-    href: "mailto:authors@yourplatform.com",
-    color: "#7DD4B0",
-    bg: "rgba(125,212,176,0.08)",
-    cta: "Contact Author Team",
-  },
-  {
-    id: 3,
-    icon: "▤",
-    title: "Portfolio & Design",
-    description:
-      "Need help with your portfolio setup, custom domain, or design customisation? Our creative support team has you covered.",
-    contact: "design@yourplatform.com",
-    href: "mailto:design@yourplatform.com",
-    color: "#8BA7E0",
-    bg: "rgba(139,167,224,0.08)",
-    cta: "Reach Design Support",
-  },
-  {
-    id: 4,
-    icon: "◷",
-    title: "Press & Media",
-    description:
-      "Interview requests, media kits, partnership announcements, or editorial coverage enquiries.",
-    contact: "press@yourplatform.com",
-    href: "mailto:press@yourplatform.com",
-    color: "#C97B8C",
-    bg: "rgba(201,123,140,0.08)",
-    cta: "Contact Press Team",
-  },
-];
 
 const faqs = [
   {
@@ -422,24 +371,6 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* ── Channels Grid ── */}
-      {/*<section style={{ background: "#0a0a0a", paddingTop: "0", paddingBottom: "80px" }}>*/}
-      {/*    <div className="container">*/}
-      {/*        <AnimatedSection>*/}
-      {/*            <div style={{ display: "inline-flex", alignItems: "center", gap: "10px", marginBottom: "36px" }}>*/}
-      {/*                <span style={{ display: "inline-block", width: "20px", height: "1px", background: "rgba(255,255,255,0.2)" }} />*/}
-      {/*                <span style={{ fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)" }}>*/}
-      {/*    Choose a Channel*/}
-      {/*  </span>*/}
-      {/*            </div>*/}
-      {/*        </AnimatedSection>*/}
-      {/*        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "20px" }}>*/}
-      {/*            {channels.map((c, i) => (*/}
-      {/*                <ChannelCard key={c.id} c={c} i={i} />*/}
-      {/*            ))}*/}
-      {/*        </div>*/}
-      {/*    </div>*/}
-      {/*</section>*/}
 
       {/* ── Contact Form + FAQ ── */}
       <section

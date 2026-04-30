@@ -35,10 +35,11 @@ const primaryNav = [
     label: "More",
     href: "#",
     children: [
+        { label: "Achievement", href: "/achievements" },
       { label: "Media / Gallery", href: "/media" },
       { label: "Testimonials", href: "/testimonials" },
       { label: "Events", href: "/events" },
-      // { label: "Courses", href: "/courses" },
+      { label: "Courses", href: "/courses" },
       { label: "Success Stories", href: "/success-stories" },
       { label: "Shop", href: "/shop" },
       { label: "FAQ", href: "/faq" },
@@ -64,15 +65,17 @@ export default function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { setting, logoUrl } = useSetting();
 
-  const solidNav = scrolled || isDrawerOpen;
+    const isHomePage = pathname === "/";
+    const solidNav = !isHomePage || scrolled || isDrawerOpen;
 
   // ── Hydration guard ───────────────────────────────────────────────────────
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    useEffect(() => {
+        setMounted(true);               // ← add this line
+        const onScroll = () => setScrolled(window.scrollY > 40);
+        window.addEventListener("scroll", onScroll);
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -95,9 +98,9 @@ export default function Navbar() {
           top: 0,
           left: 0,
           right: 0,
-          zIndex: 1,
+          zIndex: 1000,
           transition: "all 0.4s ease",
-          background: solidNav ? "#203647" : "#203647",
+            background: solidNav ? "#203647" : "transparent",
           backdropFilter: solidNav ? "blur(20px)" : "none",
           borderBottom: solidNav
             ? "1px solid rgba(255,255,255,0.06)"
@@ -321,7 +324,7 @@ export default function Navbar() {
             height: "1px",
             background:
               "linear-gradient(90deg, transparent, var(--gold), transparent)",
-            opacity: solidNav ? 0 : 0.3,
+            opacity: solidNav ? 0 : 0.2,
           }}
         />
       </nav>

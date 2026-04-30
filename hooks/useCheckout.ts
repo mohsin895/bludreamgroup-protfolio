@@ -28,34 +28,54 @@ export interface CardForm {
     cvv:        string
 }
 
+// ── PAYMENT METHOD RESOLVER ───────────────────────────────────────────────────
+
+/**
+ * Resolve which payment methods are enabled based on settings
+ * @param settings Cart settings from API
+ * @returns Array of enabled payment methods
+ */
 export function resolvePaymentMethods(settings: {
     cod_enabled:        boolean
     bkash_enabled:      boolean
     sslcommerz_enabled: boolean
+    nagad_enabled?:     boolean
+    bank_enabled?:      boolean
 }): PaymentMethod[] {
     const methods: PaymentMethod[] = []
     if (settings.cod_enabled)        methods.push("cod")
     if (settings.bkash_enabled)      methods.push("bkash")
+    if (settings.nagad_enabled)      methods.push("nagad")
+    if (settings.bank_enabled)       methods.push("bank")
     if (settings.sslcommerz_enabled) methods.push("sslcommerz")
     return methods
 }
 
+/**
+ * Pick a default payment method based on what's enabled
+ * Priority: COD > bKash > Nagad > Bank > SSLCommerz
+ */
 function pickDefault(settings: {
-    cod_enabled:        boolean
-    bkash_enabled:      boolean
-    sslcommerz_enabled: boolean
+    cod_enabled?:        boolean
+    bkash_enabled?:      boolean
+    sslcommerz_enabled?: boolean
+    nagad_enabled?:      boolean
+    bank_enabled?:       boolean
 }): PaymentMethod {
     if (settings.cod_enabled)        return "cod"
     if (settings.bkash_enabled)      return "bkash"
+    if (settings.nagad_enabled)      return "nagad"
+    if (settings.bank_enabled)       return "bank"
     if (settings.sslcommerz_enabled) return "sslcommerz"
     return "cod"
 }
+
+// ── CHECKOUT HOOK ─────────────────────────────────────────────────────────────
 
 export function useCheckout({ agree }: { agree: boolean }) {
     const dispatch   = useAppDispatch()
     const cartItems  = useAppSelector(selectCartItems)
     const totalPrice = useAppSelector(selectTotalPrice)
-
 
     const { settings, loading: settingsLoading } = useCartSettings()
 
@@ -69,29 +89,26 @@ export function useCheckout({ agree }: { agree: boolean }) {
 
     // ── Shipping zone ─────────────────────────────────────────────────────────
     const [selectedZoneIndex, setSelectedZoneIndex] = useState(0)
-    useEffect(() => { setSelectedZoneIndex(0) }, [settings.shipping_zones.length])
+    useEffect(() => { setSelectedZoneIndex(0) }, [settings.shipping_zones?.length])
 
     // ── Payment method ────────────────────────────────────────────────────────
     const [payMethod, setPayMethod] = useState<PaymentMethod>("cod")
     useEffect(() => {
         if (!settingsLoading) setPayMethod(pickDefault(settings))
-    }, [settingsLoading])
+    }, [settingsLoading, settings])
     useEffect(() => {
         if (settingsLoading) return
         const enabled = resolvePaymentMethods(settings)
         if (enabled.length > 0 && !enabled.includes(payMethod)) setPayMethod(enabled[0])
-    }, [settingsLoading, settings.cod_enabled, settings.bkash_enabled, settings.sslcommerz_enabled])
-
-
-    // ── Sync couponInput from Redux (handles rehydration + cross-page nav) ────
+    }, [settingsLoading, settings.cod_enabled, settings.bkash_enabled, settings.sslcommerz_enabled, settings.nagad_enabled, settings.bank_enabled])
 
     // ── Other form state ──────────────────────────────────────────────────────
-
     const [cardForm,     setCardForm] = useState<CardForm>({
         cardNumber: "", cardName: "", expiry: "", cvv: "",
     })
     const [mobileNumber, setMobileNumber] = useState("")
     const [bankRef,      setBankRef]      = useState("")
+    const [notes,        setNotes]        = useState("")
 
     // ── Request state ─────────────────────────────────────────────────────────
     const [loading,     setLoading]     = useState(false)
@@ -120,8 +137,6 @@ export function useCheckout({ agree }: { agree: boolean }) {
             ? Math.round(subtotal * (settings.tax_percentage / 100))
             : 0
         const codFee        = 0
-        // ── guard: only apply discount when promo is actually applied ─────────
-
 
         const fullOrderTotal = subtotal + shipping + tax + codFee
         const isPreOrder     = settings.pre_order_enabled && settings.cod_enabled && payMethod === "cod"
@@ -131,11 +146,10 @@ export function useCheckout({ agree }: { agree: boolean }) {
 
         return {
             subtotal, shipping, tax, codFee,
-
             fullOrderTotal, preOrderFee, dueOnDelivery,
             isPreOrder, total, baseCharge,
         }
-    }, [totalPrice, selectedZoneIndex, payMethod, settings,])
+    }, [totalPrice, selectedZoneIndex, payMethod, settings])
 
     // ── Order amount guard ────────────────────────────────────────────────────
     const orderAmountError = useMemo(() => {
@@ -152,15 +166,12 @@ export function useCheckout({ agree }: { agree: boolean }) {
         return null
     }, [pricing.subtotal, settings])
 
-    // ── Apply promo ───────────────────────────────────────────────────────────
-
-
-
     // ── Payment payload ───────────────────────────────────────────────────────
     const buildPayload = useCallback((): Record<string, string> => {
         switch (payMethod) {
             case "card":       return { card_number: cardForm.cardNumber.replace(/\s/g, ""), card_name: cardForm.cardName, expiry: cardForm.expiry, cvv: cardForm.cvv }
             case "bkash":      return mobileNumber ? { mobile_number: mobileNumber } : {}
+            case "nagad":      return mobileNumber ? { mobile_number: mobileNumber } : {}
             case "bank":       return bankRef ? { transaction_reference: bankRef } : {}
             case "sslcommerz": return { name: `${contact.firstName} ${contact.lastName}`.trim(), email: contact.email, phone: contact.phone }
             case "cod":        return { cod_fee: "0" }
@@ -200,17 +211,21 @@ export function useCheckout({ agree }: { agree: boolean }) {
                 items: cartItems.map(({ product, quantity }) => ({
                     product_id: product.id,
                     quantity,
-
+                    ...(product.formatId ? { format_id: product.formatId } : {}),
+                    // Include format details for reference
+                    format_details: {
+                        color: product.color,
+                        size: product.size,
+                        format_label: product.formatLabel,
+                    },
                 })),
                 payment_method:  payMethod,
                 payment_payload: buildPayload(),
-
                 pricing: {
                     subtotal:         pricing.subtotal,
                     shipping:         pricing.shipping,
                     tax:              pricing.tax,
                     cod_fee:          pricing.codFee,
-
                     full_order_total: pricing.fullOrderTotal,
                     total:            pricing.total,
                     ...(pricing.isPreOrder ? {
@@ -224,6 +239,7 @@ export function useCheckout({ agree }: { agree: boolean }) {
                     is_free:  pricing.shipping === 0,
                     ...(shippingZoneName ? { zone_name: shippingZoneName } : {}),
                 },
+                ...(notes ? { notes } : {}),
             })
 
             const redirectUrl = result.payment_redirect ?? (result as any).redirect_url
@@ -234,7 +250,6 @@ export function useCheckout({ agree }: { agree: boolean }) {
             }
 
             dispatch(clearCart())
-
             setOrderResult(result)
 
         } catch (err: any) {
@@ -254,8 +269,8 @@ export function useCheckout({ agree }: { agree: boolean }) {
         }
     }, [
         agree, cartItems, contact, address,
-        selectedZoneIndex, payMethod,
-       pricing, buildPayload,
+        selectedZoneIndex, payMethod, notes,
+        pricing, buildPayload,
         dispatch, orderAmountError, settings,
     ])
 
@@ -264,11 +279,10 @@ export function useCheckout({ agree }: { agree: boolean }) {
         address,           setAddress,
         selectedZoneIndex, setSelectedZoneIndex,
         payMethod,         setPayMethod,
-
-
         cardForm,          setCardForm,
         mobileNumber,      setMobileNumber,
         bankRef,           setBankRef,
+        notes,             setNotes,
         pricing,
         orderAmountError,
         settings,

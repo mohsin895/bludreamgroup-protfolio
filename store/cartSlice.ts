@@ -1,125 +1,150 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "./index";
+// store/cartSlice.ts
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import type { RootState } from "./store"
 
-// ─── Shape ────────────────────────────────────────────────────────────────────
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 export interface CartProduct {
-    id:           number;
-    slug:         string;
-    name:         string;
-    image:        string | null;
-    price:        number;
-    formatId?:    number;
-    formatLabel?: string;
-    color?:       string;
-    colorHex?:    string;
-    size?:        string;
-    stock?:       number;
-    category?:    string;
+    id:           number
+    slug:         string
+    name:         string
+    image:        string | null
+    price:        number
+    formatId?:    number | null
+    formatLabel?: string | null
+    stock?:       number | null
+    color?:       string | null
+    colorHex?:    string | null
+    size?:        string | null
+    category?:    string | null
 }
 
 export interface CartItem {
-    cartKey:  string;
-    product:  CartProduct;
-    quantity: number;
+    cartKey:  string      // unique: `${product.id}-${formatId ?? "default"}`
+    product:  CartProduct
+    quantity: number
 }
 
-export interface CartState {
-    items:        CartItem[];
-    isDrawerOpen: boolean;
+interface CartState {
+    items:        CartItem[]
+    isDrawerOpen: boolean
 }
 
-// ─── Initial state ────────────────────────────────────────────────────────────
-// NOTE: Do NOT loadState() here — redux-persist handles rehydration.
-// The persisted items will be injected automatically.
+const STORAGE_KEY = "cart_items"
+
+function loadFromStorage(): CartItem[] {
+    if (typeof window === "undefined") return []
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY)
+        return raw ? JSON.parse(raw) : []
+    } catch {
+        return []
+    }
+}
+
+function saveToStorage(items: CartItem[]) {
+    if (typeof window === "undefined") return
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+    } catch {}
+}
+
+function makeCartKey(productId: number, formatId?: number | null): string {
+    return `${productId}-${formatId ?? "default"}`
+}
 
 const initialState: CartState = {
-    items:        [],
+    items:        [],           // hydrated client-side in slice actions
     isDrawerOpen: false,
-};
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function makeCartKey(product: CartProduct): string {
-    const parts = [String(product.id)];
-    if (product.formatId) parts.push(String(product.formatId));
-    if (product.color)    parts.push(product.color);
-    if (product.size)     parts.push(product.size);
-    return parts.join("-");
 }
 
-// ─── Slice ────────────────────────────────────────────────────────────────────
+// ── Slice ─────────────────────────────────────────────────────────────────────
 
 const cartSlice = createSlice({
     name: "cart",
     initialState,
     reducers: {
+        // Must be called once on app mount to hydrate from localStorage
+        hydrateCart(state) {
+            state.items = loadFromStorage()
+        },
+
+        openDrawer(state)   { state.isDrawerOpen = true  },
+        closeDrawer(state)  { state.isDrawerOpen = false },
+        toggleDrawer(state) { state.isDrawerOpen = !state.isDrawerOpen },
 
         addItem(
             state,
             action: PayloadAction<{ product: CartProduct; quantity?: number }>
         ) {
-            const { product, quantity = 1 } = action.payload;
-            const cartKey = makeCartKey(product);
-            const existing = state.items.find((i) => i.cartKey === cartKey);
+            const { product, quantity = 1 } = action.payload
+            const key = makeCartKey(product.id, product.formatId)
+            const existing = state.items.find((i) => i.cartKey === key)
 
             if (existing) {
-                const max = product.stock ?? Infinity;
-                existing.quantity = Math.min(existing.quantity + quantity, max);
+                const maxQty = product.stock ?? Infinity
+                existing.quantity = Math.min(existing.quantity + quantity, maxQty)
             } else {
-                state.items.push({ cartKey, product, quantity });
+                state.items.push({ cartKey: key, product, quantity })
             }
 
-            state.isDrawerOpen = true;
+            saveToStorage(state.items)
+            state.isDrawerOpen = true
         },
 
         removeItem(state, action: PayloadAction<string>) {
-            state.items = state.items.filter((i) => i.cartKey !== action.payload);
+            state.items = state.items.filter((i) => i.cartKey !== action.payload)
+            saveToStorage(state.items)
         },
 
         updateQuantity(
             state,
             action: PayloadAction<{ cartKey: string; quantity: number }>
         ) {
-            const { cartKey, quantity } = action.payload;
-            const item = state.items.find((i) => i.cartKey === cartKey);
-            if (!item) return;
+            const { cartKey, quantity } = action.payload
+            const item = state.items.find((i) => i.cartKey === cartKey)
+            if (!item) return
+
             if (quantity <= 0) {
-                state.items = state.items.filter((i) => i.cartKey !== cartKey);
+                state.items = state.items.filter((i) => i.cartKey !== cartKey)
             } else {
-                item.quantity = Math.min(quantity, item.product.stock ?? Infinity);
+                const maxQty = item.product.stock ?? Infinity
+                item.quantity = Math.min(quantity, maxQty)
             }
+
+            saveToStorage(state.items)
         },
 
         clearCart(state) {
-            state.items = [];
+            state.items = []
+            saveToStorage([])
         },
-
-        openDrawer(state)   { state.isDrawerOpen = true;  },
-        closeDrawer(state)  { state.isDrawerOpen = false; },
-        toggleDrawer(state) { state.isDrawerOpen = !state.isDrawerOpen; },
     },
-});
-
-// ─── Actions ──────────────────────────────────────────────────────────────────
+})
 
 export const {
+    hydrateCart,
+    openDrawer,
+    closeDrawer,
+    toggleDrawer,
     addItem,
     removeItem,
     updateQuantity,
     clearCart,
-    openDrawer,
-    closeDrawer,
-    toggleDrawer,
-} = cartSlice.actions;
+} = cartSlice.actions
 
-// ─── Selectors ────────────────────────────────────────────────────────────────
+// ── Selectors ─────────────────────────────────────────────────────────────────
 
-export const selectCartItems    = (s: RootState) => s.cart.items;
-export const selectIsDrawerOpen = (s: RootState) => s.cart.isDrawerOpen;
-export const selectTotalItems   = (s: RootState) =>
-    s.cart.items.reduce((n, i) => n + i.quantity, 0);
-export const selectTotalPrice   = (s: RootState) =>
-    s.cart.items.reduce((n, i) => n + i.product.price * i.quantity, 0);
+export const selectCartItems    = (state: RootState) => state.cart.items
+export const selectIsDrawerOpen = (state: RootState) => state.cart.isDrawerOpen
 
-export default cartSlice.reducer;
+export const selectTotalItems = (state: RootState) =>
+    state.cart.items.reduce((sum, i) => sum + i.quantity, 0)
+
+export const selectTotalPrice = (state: RootState) =>
+    state.cart.items.reduce(
+        (sum, i) => sum + i.product.price * i.quantity,
+        0
+    )
+
+export default cartSlice.reducer
