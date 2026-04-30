@@ -161,13 +161,13 @@ function ServiceCard({ service, i }: { service: MappedService; i: number }) {
                       padding: "8px 14px",
                       border: "1px solid #82c3d8",
                       borderRadius: "6px",
-                      color: "#ffff",
+                      color: "#fff",
                       fontSize: "12px",
                       fontWeight: 600,
                       textDecoration: "none",
                       transition: "all 0.25s ease",
                     }}
-                    className="svc-btn"
+                    className="text-white bg-white"
                   >
                     Learn More <ChevronRight size={12} />
                   </Link>
@@ -328,7 +328,7 @@ export default function ServicesPage() {
             </h1>
             <p
               style={{
-                color: "#fff",
+                color: "#0009",
                 fontSize: "17px",
                 maxWidth: "540px",
                 marginTop: "20px",
@@ -361,7 +361,7 @@ export default function ServicesPage() {
                     style={{
                       fontFamily: "var(--font-display)",
                       fontSize: "36px",
-                      color: "var(--gold)",
+                      color: "#000",
                       letterSpacing: "-0.03em",
                       lineHeight: 1,
                     }}
@@ -373,7 +373,7 @@ export default function ServicesPage() {
                       fontSize: "11px",
                       letterSpacing: "0.1em",
                       textTransform: "uppercase",
-                      color: "rgba(255,255,255,0.28)",
+                      color: "#000",
                       marginTop: "4px",
                     }}
                   >
