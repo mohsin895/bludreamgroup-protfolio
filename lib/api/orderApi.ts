@@ -13,6 +13,48 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? ""
 
 export type PaymentMethod = "cod" | "card" | "bkash" | "nagad" | "bank" | "sslcommerz"
 
+export type OrderStatus = "pending" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled"
+
+export interface Order {
+    id: number
+    user_id?: number
+    order_number?: string
+    tracking_number: string
+    status: OrderStatus
+    payment_method?: string
+    payment_status: string
+    subtotal: number
+    shipping: number
+    tax?: number
+    total: number
+    created_at: string
+    updated_at?: string
+    items?: Array<{
+        id: number
+        product_id: number
+        product_name: string
+        image?: string | null
+        quantity: number
+        price: number
+        subtotal: number
+        format?: string | null
+        color?: string | null
+        size?: string | null
+    }>
+    billing_name?: string
+    billing_address?: string
+    billing_city?: string
+    billing_country?: string
+    billing_phone?: string
+    shipping_name?: string
+    shipping_address?: string
+    shipping_city?: string
+    shipping_country?: string
+    shipping_phone?: string
+    notes?: string
+    coupon_code?: string
+}
+
 export interface PlaceOrderPayload {
     contact: {
         first_name: string
@@ -414,11 +456,18 @@ export const orderApi = {
     /**
      * Get order details by ID
      */
-    async getOrder(orderId: number | string): Promise<PlaceOrderResponse> {
+    async getOrder(orderId: number | string): Promise<Order> {
         if (!orderId) {
             throw new OrderApiError("Order ID is required")
         }
-        return makeRequest<PlaceOrderResponse>(`/orders/${orderId}`)
+        return makeRequest<Order>(`/orders/${orderId}`)
+    },
+
+    /**
+     * Alias for getOrder (for consistency with page component usage)
+     */
+    async get(orderId: number | string): Promise<Order> {
+        return this.getOrder(orderId)
     },
 
     /**
@@ -436,6 +485,16 @@ export const orderApi = {
             "POST",
             reason ? { reason } : {}
         )
+    },
+
+    /**
+     * Alias for cancelOrder (for consistency with page component usage)
+     */
+    async cancel(
+        orderId: number | string,
+        reason?: string
+    ): Promise<{ status: boolean; message: string }> {
+        return this.cancelOrder(orderId, reason)
     },
 
     /**
@@ -459,11 +518,11 @@ export const orderApi = {
     /**
      * Get order by tracking number
      */
-    async getOrderByTracking(trackingNumber: string): Promise<PlaceOrderResponse> {
+    async getOrderByTracking(trackingNumber: string): Promise<Order> {
         if (!trackingNumber) {
             throw new OrderApiError("Tracking number is required")
         }
-        return makeRequest<PlaceOrderResponse>(`/orders/track/${trackingNumber}`)
+        return makeRequest<Order>(`/orders/track/${trackingNumber}`)
     },
 
     /**
