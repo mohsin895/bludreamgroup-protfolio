@@ -1,5 +1,5 @@
 "use client";
-import { selectIsAuth, selectUser } from "@/store/authSlice";
+
 import {
   selectIsDrawerOpen,
   selectTotalItems,
@@ -53,8 +53,7 @@ const primaryNav = [
 export default function Navbar() {
   const dispatch = useAppDispatch();
   const totalItems = useAppSelector(selectTotalItems);
-  const isAuth = useAppSelector(selectIsAuth);
-  const user = useAppSelector(selectUser);
+
   const isDrawerOpen = useAppSelector(selectIsDrawerOpen);
 
   const [mounted, setMounted] = useState(false);
@@ -71,7 +70,7 @@ export default function Navbar() {
   // ── Hydration guard ───────────────────────────────────────────────────────
 
     useEffect(() => {
-        setMounted(true);               // ← add this line
+                   // ← add this line
         const onScroll = () => setScrolled(window.scrollY > 40);
         window.addEventListener("scroll", onScroll);
         return () => window.removeEventListener("scroll", onScroll);
