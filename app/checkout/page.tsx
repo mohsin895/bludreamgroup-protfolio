@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import {
-    ShoppingBag, Check, AlertCircle, Loader2, ChevronRight,
+    ShoppingBag, Check, AlertCircle, Loader2,
 } from "lucide-react"
 import AnimatedSection from "@/components/AnimatedSection"
 import Navbar          from "@/components/Navbar"
@@ -27,7 +27,11 @@ function Field({
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
             <label style={{ fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", fontWeight: 500 }}>
-                {label}{required && <span style={{ color: "var(--gold)", marginLeft: "2px" }}>*</span>}
+                {label}
+                {required
+                    ? <span style={{ color: "var(--gold)", marginLeft: "2px" }}>*</span>
+                    : <span style={{ color: "rgba(255,255,255,0.2)", marginLeft: "6px", fontSize: "10px", textTransform: "none", letterSpacing: 0 }}>(optional)</span>
+                }
             </label>
             <input
                 type={type} name={name} value={value} onChange={onChange}
@@ -47,7 +51,7 @@ function Field({
     )
 }
 
-// ── Payment icons ─────────────────────────────────────────────────────────────
+// ── Payment meta ──────────────────────────────────────────────────────────────
 
 const PAYMENT_META: Record<string, { label: string; desc: string; emoji: string }> = {
     cod:        { label: "Cash on Delivery", desc: "Pay when your order arrives",    emoji: "💵" },
@@ -162,8 +166,8 @@ export default function CheckoutPage() {
                                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                                         <Field label="First Name" name="firstName" value={contact.firstName} onChange={(e) => setContact(p => ({ ...p, firstName: e.target.value }))} error={fieldErrors.first_name} />
                                         <Field label="Last Name"  name="lastName"  value={contact.lastName}  onChange={(e) => setContact(p => ({ ...p, lastName: e.target.value }))}  error={fieldErrors.last_name} />
-                                        <Field label="Email"  name="email" value={contact.email} onChange={(e) => setContact(p => ({ ...p, email: e.target.value }))} type="email" error={fieldErrors.email} />
-                                        <Field label="Phone"  name="phone" value={contact.phone} onChange={(e) => setContact(p => ({ ...p, phone: e.target.value }))} type="tel"   error={fieldErrors.phone} />
+                                        <Field label="Email" name="email" value={contact.email} onChange={(e) => setContact(p => ({ ...p, email: e.target.value }))} type="email" error={fieldErrors.email} />
+                                        <Field label="Phone" name="phone" value={contact.phone} onChange={(e) => setContact(p => ({ ...p, phone: e.target.value }))} type="tel"   error={fieldErrors.phone} />
                                     </div>
                                 </SectionCard>
                             </AnimatedSection>
@@ -176,8 +180,13 @@ export default function CheckoutPage() {
                                             <Field label="Street Address" name="street" value={address.street} onChange={(e) => setAddress(p => ({ ...p, street: e.target.value }))} error={fieldErrors.street} />
                                         </div>
                                         <Field label="City"          name="city"    value={address.city}    onChange={(e) => setAddress(p => ({ ...p, city: e.target.value }))}    error={fieldErrors.city} />
-                                        <Field label="State / Region" name="state"   value={address.state}   onChange={(e) => setAddress(p => ({ ...p, state: e.target.value }))}   required={false} />
-                                        <Field label="ZIP / Postal"  name="zip"     value={address.zip}     onChange={(e) => setAddress(p => ({ ...p, zip: e.target.value }))}     required={false} />
+                                        {/* FIX: State is truly optional — no server validation for it */}
+                                        <Field label="State / Region" name="state"  value={address.state}   onChange={(e) => setAddress(p => ({ ...p, state: e.target.value }))}   required={false} />
+                                        {/*
+                                            FIX: zip is now required={true} to match server-side validateAddress().
+                                            Previously the UI showed "(optional)" but the API would reject missing zip.
+                                        */}
+                                        <Field label="ZIP / Postal"  name="zip"     value={address.zip}     onChange={(e) => setAddress(p => ({ ...p, zip: e.target.value }))}     required={true} error={fieldErrors.zip} />
                                         <Field label="Country"       name="country" value={address.country} onChange={(e) => setAddress(p => ({ ...p, country: e.target.value }))} />
                                     </div>
                                 </SectionCard>
@@ -228,19 +237,30 @@ export default function CheckoutPage() {
                                             {/* bKash extra field */}
                                             {payMethod === "bkash" && (
                                                 <div style={{ marginTop: "8px" }}>
-                                                    <Field label="bKash Number" name="bkash" value={mobileNumber} onChange={(e) => setMobileNumber(e.target.value)} type="tel" placeholder="01XXXXXXXXX" />
+                                                    <Field label="bKash Number" name="bkash" value={mobileNumber} onChange={(e) => setMobileNumber(e.target.value)} type="tel" placeholder="01XXXXXXXXX" error={fieldErrors.mobile_number} />
                                                 </div>
                                             )}
                                             {/* Nagad extra field */}
                                             {payMethod === "nagad" && (
                                                 <div style={{ marginTop: "8px" }}>
-                                                    <Field label="Nagad Number" name="nagad" value={mobileNumber} onChange={(e) => setMobileNumber(e.target.value)} type="tel" placeholder="01XXXXXXXXX" />
+                                                    <Field label="Nagad Number" name="nagad" value={mobileNumber} onChange={(e) => setMobileNumber(e.target.value)} type="tel" placeholder="01XXXXXXXXX" error={fieldErrors.mobile_number} />
                                                 </div>
                                             )}
                                             {/* Bank extra field */}
                                             {payMethod === "bank" && (
                                                 <div style={{ marginTop: "8px" }}>
-                                                    <Field label="Transaction Reference" name="bankRef" value={bankRef} onChange={(e) => setBankRef(e.target.value)} placeholder="Reference / Transaction ID" />
+                                                    <Field label="Transaction Reference" name="bankRef" value={bankRef} onChange={(e) => setBankRef(e.target.value)} placeholder="Reference / Transaction ID" error={fieldErrors.transaction_reference} />
+                                                </div>
+                                            )}
+                                            {/* Card extra fields */}
+                                            {payMethod === "card" && (
+                                                <div style={{ marginTop: "8px", display: "flex", flexDirection: "column", gap: "12px" }}>
+                                                    <Field label="Card Number" name="cardNumber" value={cardForm.cardNumber} onChange={(e) => setCardForm(p => ({ ...p, cardNumber: e.target.value }))} placeholder="•••• •••• •••• ••••" error={fieldErrors.card_number} />
+                                                    <Field label="Cardholder Name" name="cardName" value={cardForm.cardName} onChange={(e) => setCardForm(p => ({ ...p, cardName: e.target.value }))} error={fieldErrors.card_name} />
+                                                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                                                        <Field label="Expiry" name="expiry" value={cardForm.expiry} onChange={(e) => setCardForm(p => ({ ...p, expiry: e.target.value }))} placeholder="MM/YY" error={fieldErrors.expiry} />
+                                                        <Field label="CVV" name="cvv" value={cardForm.cvv} onChange={(e) => setCardForm(p => ({ ...p, cvv: e.target.value }))} placeholder="•••" error={fieldErrors.cvv} />
+                                                    </div>
                                                 </div>
                                             )}
                                         </div>
@@ -251,7 +271,10 @@ export default function CheckoutPage() {
                             {/* Notes */}
                             <AnimatedSection delay={0.1}>
                                 <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                                    <label style={{ fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)" }}>Order Notes (optional)</label>
+                                    <label style={{ fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)" }}>
+                                        Order Notes
+                                        <span style={{ color: "rgba(255,255,255,0.2)", marginLeft: "6px", fontSize: "10px", textTransform: "none", letterSpacing: 0 }}>(optional)</span>
+                                    </label>
                                     <textarea
                                         placeholder="Special instructions, personalisation requests…"
                                         value={notes}
@@ -278,7 +301,7 @@ export default function CheckoutPage() {
                                 </div>
                             )}
 
-                            {/* Error */}
+                            {/* General error */}
                             {error && (
                                 <div style={{ display: "flex", alignItems: "center", gap: "10px", background: "rgba(196,124,90,0.08)", border: "1px solid rgba(196,124,90,0.2)", borderRadius: "8px", padding: "14px 18px", color: "#C47C5A", fontSize: "14px" }}>
                                     <AlertCircle size={16} />
@@ -310,37 +333,23 @@ export default function CheckoutPage() {
                                             <div style={{ flex: 1, minWidth: 0 }}>
                                                 <p style={{ fontSize: "13px", fontWeight: 500, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.product.name}</p>
 
-                                                {/* Format Information */}
                                                 <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "4px" }}>
                                                     {item.product.color && (
                                                         <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "10px", color: "var(--text-dim)" }}>
-                                                            <div style={{
-                                                                width: "12px",
-                                                                height: "12px",
-                                                                borderRadius: "50%",
-                                                                background: item.product.colorHex || "#ccc",
-                                                                border: "1px solid rgba(255,255,255,0.2)",
-                                                            }} />
+                                                            <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: item.product.colorHex || "#ccc", border: "1px solid rgba(255,255,255,0.2)" }} />
                                                             {item.product.color}
                                                         </div>
                                                     )}
                                                     {item.product.size && (
-                                                        <div style={{ fontSize: "10px", color: "var(--text-dim)" }}>
-                                                            Size: {item.product.size}
-                                                        </div>
+                                                        <div style={{ fontSize: "10px", color: "var(--text-dim)" }}>Size: {item.product.size}</div>
                                                     )}
                                                 </div>
 
-                                                {/* Format Label */}
                                                 {item.product.formatLabel && (
-                                                    <p style={{ fontSize: "11px", color: "var(--text-dim)", margin: "4px 0 0 0" }}>
-                                                        {item.product.formatLabel}
-                                                    </p>
+                                                    <p style={{ fontSize: "11px", color: "var(--text-dim)", margin: "4px 0 0 0" }}>{item.product.formatLabel}</p>
                                                 )}
 
-                                                <p style={{ fontSize: "11px", color: "var(--text-dim)", margin: "4px 0 0 0" }}>
-                                                    Qty: {item.quantity}
-                                                </p>
+                                                <p style={{ fontSize: "11px", color: "var(--text-dim)", margin: "4px 0 0 0" }}>Qty: {item.quantity}</p>
                                             </div>
                                             <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--gold)", flexShrink: 0 }}>
                                                 {formatPrice(item.product.price * item.quantity)}

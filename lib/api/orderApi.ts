@@ -545,6 +545,28 @@ export const orderApi = {
         }
         return makeRequest("/orders/calculate", "POST", payload)
     },
+
+    /**
+     * Get list of all orders for the current user
+     */
+    async listOrders(params?: {
+        page?: number
+        limit?: number
+        status?: OrderStatus
+        sort?: "newest" | "oldest" | "total_asc" | "total_desc"
+    }): Promise<Order[]> {
+        const queryParams = new URLSearchParams()
+        if (params?.page) queryParams.append("page", String(params.page))
+        if (params?.limit) queryParams.append("limit", String(params.limit))
+        if (params?.status) queryParams.append("status", params.status)
+        if (params?.sort) queryParams.append("sort", params.sort)
+
+        const query = queryParams.toString()
+        const endpoint = `/orders${query ? `?${query}` : ""}`
+
+        const response = await makeRequest<{ status: boolean; data: Order[] }>(endpoint)
+        return response.data || []
+    },
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

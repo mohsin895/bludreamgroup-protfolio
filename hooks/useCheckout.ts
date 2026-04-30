@@ -31,9 +31,9 @@ export interface CardForm {
 // ── PAYMENT METHOD RESOLVER ───────────────────────────────────────────────────
 
 /**
- * Resolve which payment methods are enabled based on settings
- * @param settings Cart settings from API
- * @returns Array of enabled payment methods
+ * Resolve which payment methods are enabled based on settings.
+ * FIX: now correctly reads nagad_enabled and bank_enabled (were undefined before
+ *      because CartSettings didn't declare them — they were always falsy).
  */
 export function resolvePaymentMethods(settings: {
     cod_enabled:        boolean
@@ -52,7 +52,7 @@ export function resolvePaymentMethods(settings: {
 }
 
 /**
- * Pick a default payment method based on what's enabled
+ * Pick a default payment method based on what's enabled.
  * Priority: COD > bKash > Nagad > Bank > SSLCommerz
  */
 function pickDefault(settings: {
@@ -93,14 +93,26 @@ export function useCheckout({ agree }: { agree: boolean }) {
 
     // ── Payment method ────────────────────────────────────────────────────────
     const [payMethod, setPayMethod] = useState<PaymentMethod>("cod")
-    useEffect(() => {
-        if (!settingsLoading) setPayMethod(pickDefault(settings))
-    }, [settingsLoading, settings])
+
+    /**
+     * FIX: Merged two competing useEffects into one.
+     * The old code had two separate effects both calling setPayMethod, which could
+     * race and cause unexpected overrides. Now: once settings load, pick the best
+     * available method, preserving the current selection if it's still enabled.
+     */
     useEffect(() => {
         if (settingsLoading) return
         const enabled = resolvePaymentMethods(settings)
-        if (enabled.length > 0 && !enabled.includes(payMethod)) setPayMethod(enabled[0])
-    }, [settingsLoading, settings.cod_enabled, settings.bkash_enabled, settings.sslcommerz_enabled, settings.nagad_enabled, settings.bank_enabled])
+        if (enabled.length === 0) return
+        setPayMethod(prev => enabled.includes(prev) ? prev : pickDefault(settings))
+    }, [
+        settingsLoading,
+        settings.cod_enabled,
+        settings.bkash_enabled,
+        settings.sslcommerz_enabled,
+        settings.nagad_enabled,
+        settings.bank_enabled,
+    ])
 
     // ── Other form state ──────────────────────────────────────────────────────
     const [cardForm,     setCardForm] = useState<CardForm>({
@@ -133,10 +145,10 @@ export function useCheckout({ agree }: { agree: boolean }) {
             shipping = 0
         }
 
-        const tax           = settings.tax_enabled && settings.tax_percentage
+        const tax    = settings.tax_enabled && settings.tax_percentage
             ? Math.round(subtotal * (settings.tax_percentage / 100))
             : 0
-        const codFee        = 0
+        const codFee = 0
 
         const fullOrderTotal = subtotal + shipping + tax + codFee
         const isPreOrder     = settings.pre_order_enabled && settings.cod_enabled && payMethod === "cod"
@@ -212,10 +224,9 @@ export function useCheckout({ agree }: { agree: boolean }) {
                     product_id: product.id,
                     quantity,
                     ...(product.formatId ? { format_id: product.formatId } : {}),
-                    // Include format details for reference
                     format_details: {
-                        color: product.color,
-                        size: product.size,
+                        color:        product.color,
+                        size:         product.size,
                         format_label: product.formatLabel,
                     },
                 })),
@@ -244,8 +255,11 @@ export function useCheckout({ agree }: { agree: boolean }) {
 
             const redirectUrl = result.payment_redirect ?? (result as any).redirect_url
             if (redirectUrl) {
-                sessionStorage.setItem("pending_order_id", String(result.order_id))
-                window.location.href = redirectUrl
+                // FIX: SSR guard — sessionStorage is not available during server-side rendering
+                if (typeof window !== "undefined") {
+                    sessionStorage.setItem("pending_order_id", String(result.order_id))
+                    window.location.href = redirectUrl
+                }
                 return
             }
 

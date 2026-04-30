@@ -39,6 +39,10 @@ export interface CartSettings {
     sslcommerz_mode:               "sandbox" | "live"
     bkash_enabled:                 boolean
     bkash_mode:                    "sandbox" | "live"
+    // FIX: Added missing nagad_enabled and bank_enabled fields
+    nagad_enabled:                 boolean
+    nagad_mode:                    "sandbox" | "live"
+    bank_enabled:                  boolean
     steadfast_enabled:             boolean
     pathao_enabled:                boolean
     pathao_mode:                   "staging" | "live"
@@ -65,6 +69,10 @@ const DEFAULT: CartSettings = {
     sslcommerz_mode:              "sandbox",
     bkash_enabled:                false,
     bkash_mode:                   "sandbox",
+    // FIX: Added defaults for nagad and bank
+    nagad_enabled:                false,
+    nagad_mode:                   "sandbox",
+    bank_enabled:                 false,
     steadfast_enabled:            false,
     pathao_enabled:               false,
     pathao_mode:                  "staging",
@@ -94,6 +102,10 @@ function parse(raw: any): CartSettings {
         sslcommerz_mode:              raw.sslcommerz_mode ?? "sandbox",
         bkash_enabled:                Boolean(raw.bkash_enabled),
         bkash_mode:                   raw.bkash_mode ?? "sandbox",
+        // FIX: Parse nagad and bank from API response
+        nagad_enabled:                Boolean(raw.nagad_enabled),
+        nagad_mode:                   raw.nagad_mode ?? "sandbox",
+        bank_enabled:                 Boolean(raw.bank_enabled),
         steadfast_enabled:            Boolean(raw.steadfast_enabled),
         pathao_enabled:               Boolean(raw.pathao_enabled),
         pathao_mode:                  raw.pathao_mode ?? "staging",
