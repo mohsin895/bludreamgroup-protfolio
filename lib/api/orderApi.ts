@@ -63,11 +63,11 @@ export interface PlaceOrderPayload {
 export interface PlaceOrderResponse {
     status: boolean
     message: string
-    order_id: number | string
+    order_id?: number | string
     tracking_number?: string
     payment_redirect?: string
     redirect_url?: string
-    order: {
+    order?: {
         id: number
         user_id: number
         order_number: string
@@ -79,18 +79,45 @@ export interface PlaceOrderResponse {
 }
 
 export interface ApiErrorResponse {
-    status: boolean
+    status: false
     message: string
     errors?: Record<string, string[]>
+}
+
+export interface ValidationErrors {
+    [key: string]: string
+}
+
+// Custom error class for API errors
+export class OrderApiError extends Error {
+    status: boolean
+    errors?: Record<string, string[]>
+    fieldErrors?: Record<string, string>
+
+    constructor(message: string, errors?: Record<string, string[]>) {
+        super(message)
+        this.name = "OrderApiError"
+        this.status = false
+        this.errors = errors
+        this.fieldErrors = this.flattenErrors(errors)
+    }
+
+    private flattenErrors(errors?: Record<string, string[]>): Record<string, string> {
+        const flattened: Record<string, string> = {}
+        if (errors) {
+            for (const [field, messages] of Object.entries(errors)) {
+                if (Array.isArray(messages) && messages.length > 0) {
+                    flattened[field] = messages[0]
+                }
+            }
+        }
+        return flattened
+    }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // VALIDATION FUNCTIONS
 // ─────────────────────────────────────────────────────────────────────────────
-
-interface ValidationErrors {
-    [key: string]: string
-}
 
 function validateContact(contact: {
     first_name: string
@@ -114,7 +141,8 @@ function validateContact(contact: {
     }
 
     const phoneRegex = /^(\+88)?01[3-9]\d{8}$/
-    if (!contact.phone?.trim() || !phoneRegex.test(contact.phone.replace(/\s/g, ""))) {
+    const cleanPhone = contact.phone?.replace(/\s/g, "") || ""
+    if (!cleanPhone || !phoneRegex.test(cleanPhone)) {
         errors.phone = "Valid phone number is required (01X XXXXXXXX or +88)"
     }
 
@@ -124,6 +152,7 @@ function validateContact(contact: {
 function validateAddress(address: {
     street: string
     city: string
+    state?: string
     zip: string
     country: string
 }): ValidationErrors {
@@ -155,11 +184,12 @@ function validatePaymentPayload(
     const errors: ValidationErrors = {}
 
     switch (method) {
-        case "card":
-            if (!payload.card_number?.replace(/\s/g, "")) {
+        case "card": {
+            const cardNum = payload.card_number?.replace(/\s/g, "") || ""
+            if (!cardNum) {
                 errors.card_number = "Card number is required"
-            } else if (!/^\d{13,19}$/.test(payload.card_number.replace(/\s/g, ""))) {
-                errors.card_number = "Invalid card number"
+            } else if (!/^\d{13,19}$/.test(cardNum)) {
+                errors.card_number = "Invalid card number (13-19 digits)"
             }
 
             if (!payload.card_name?.trim()) {
@@ -175,17 +205,20 @@ function validatePaymentPayload(
             if (!payload.cvv?.trim()) {
                 errors.cvv = "CVV is required"
             } else if (!/^\d{3,4}$/.test(payload.cvv)) {
-                errors.cvv = "Invalid CVV"
+                errors.cvv = "Invalid CVV (3-4 digits)"
             }
             break
+        }
 
-        case "bkash":
-            if (!payload.mobile_number?.trim()) {
+        case "bkash": {
+            const bkashNum = payload.mobile_number?.replace(/\s/g, "") || ""
+            if (!bkashNum) {
                 errors.mobile_number = "bKash number is required"
-            } else if (!/^(\+88)?01[3-9]\d{8}$/.test(payload.mobile_number.replace(/\s/g, ""))) {
+            } else if (!/^(\+88)?01[3-9]\d{8}$/.test(bkashNum)) {
                 errors.mobile_number = "Invalid mobile number"
             }
             break
+        }
 
         case "bank":
             if (!payload.transaction_reference?.trim()) {
@@ -193,11 +226,23 @@ function validatePaymentPayload(
             }
             break
 
-        case "nagad":
-            if (!payload.mobile_number?.trim()) {
+        case "nagad": {
+            const nagadNum = payload.mobile_number?.replace(/\s/g, "") || ""
+            if (!nagadNum) {
                 errors.mobile_number = "Nagad number is required"
+            } else if (!/^(\+88)?01[3-9]\d{8}$/.test(nagadNum)) {
+                errors.mobile_number = "Invalid Nagad number"
             }
             break
+        }
+
+        case "cod":
+        case "sslcommerz":
+            // No additional validation needed
+            break
+
+        default:
+            errors.payment_method = "Invalid payment method"
     }
 
     return errors
@@ -251,14 +296,40 @@ async function makeRequest<T>(
         options.body = JSON.stringify(body)
     }
 
-    const response = await fetch(`${API_BASE}${endpoint}`, options)
+    try {
+        const response = await fetch(`${API_BASE}${endpoint}`, options)
 
-    if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+        // Try to parse JSON response regardless of status
+        let data: any
+        try {
+            data = await response.json()
+        } catch {
+            // If JSON parsing fails, throw HTTP error
+            if (!response.ok) {
+                throw new OrderApiError(
+                    `HTTP ${response.status}: ${response.statusText}`
+                )
+            }
+            throw new OrderApiError("Invalid response format from server")
+        }
+
+        // Check if response indicates an error
+        if (!response.ok) {
+            throw new OrderApiError(
+                data.message || `HTTP ${response.status}: ${response.statusText}`,
+                data.errors
+            )
+        }
+
+        return data as T
+    } catch (error) {
+        if (error instanceof OrderApiError) {
+            throw error
+        }
+        throw new OrderApiError(
+            error instanceof Error ? error.message : "An unknown error occurred"
+        )
     }
-
-    const data = await response.json()
-    return data
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -270,26 +341,29 @@ export const orderApi = {
      * Place a new order
      * @param payload Order payload with contact, address, items, and payment info
      * @returns Order response with ID and optional payment redirect URL
+     * @throws OrderApiError if validation or API call fails
      */
     async place(payload: PlaceOrderPayload): Promise<PlaceOrderResponse> {
         // Validate contact information
         const contactErrors = validateContact(payload.contact)
         if (Object.keys(contactErrors).length > 0) {
-            throw {
-                status: false,
-                message: "Validation failed",
-                errors: contactErrors,
-            }
+            throw new OrderApiError("Contact validation failed", {
+                ...Object.entries(contactErrors).reduce(
+                    (acc, [key, val]) => ({ ...acc, [key]: [val] }),
+                    {}
+                ),
+            })
         }
 
         // Validate address
         const addressErrors = validateAddress(payload.address)
         if (Object.keys(addressErrors).length > 0) {
-            throw {
-                status: false,
-                message: "Validation failed",
-                errors: addressErrors,
-            }
+            throw new OrderApiError("Address validation failed", {
+                ...Object.entries(addressErrors).reduce(
+                    (acc, [key, val]) => ({ ...acc, [key]: [val] }),
+                    {}
+                ),
+            })
         }
 
         // Validate payment payload
@@ -298,63 +372,65 @@ export const orderApi = {
             payload.payment_payload
         )
         if (Object.keys(paymentErrors).length > 0) {
-            throw {
-                status: false,
-                message: "Validation failed",
-                errors: paymentErrors,
-            }
+            throw new OrderApiError("Payment information validation failed", {
+                ...Object.entries(paymentErrors).reduce(
+                    (acc, [key, val]) => ({ ...acc, [key]: [val] }),
+                    {}
+                ),
+            })
         }
 
         // Validate items
         if (!payload.items || payload.items.length === 0) {
-            throw {
-                status: false,
-                message: "Cart is empty",
-                errors: { items: ["At least one item is required"] },
-            }
+            throw new OrderApiError("Cart is empty", {
+                items: ["At least one item is required"],
+            })
+        }
+
+        // Validate pricing
+        if (!payload.pricing || payload.pricing.total <= 0) {
+            throw new OrderApiError("Invalid pricing information", {
+                pricing: ["Order total must be greater than 0"],
+            })
         }
 
         // Make API request
-        try {
-            const response = await makeRequest<PlaceOrderResponse>(
-                "/orders/place",
-                "POST",
-                payload
+        const response = await makeRequest<PlaceOrderResponse>(
+            "/orders/place",
+            "POST",
+            payload
+        )
+
+        if (!response.status) {
+            throw new OrderApiError(
+                response.message || "Failed to place order",
+                {}
             )
-
-            if (!response.status) {
-                throw {
-                    status: false,
-                    message: response.message || "Failed to place order",
-                    errors: response.errors,
-                }
-            }
-
-            return response
-        } catch (error: any) {
-            // Handle API errors
-            if (error.errors) {
-                throw error
-            }
-
-            throw {
-                status: false,
-                message: error.message || "An error occurred while placing the order",
-            }
         }
+
+        return response
     },
 
     /**
      * Get order details by ID
      */
     async getOrder(orderId: number | string): Promise<PlaceOrderResponse> {
+        if (!orderId) {
+            throw new OrderApiError("Order ID is required")
+        }
         return makeRequest<PlaceOrderResponse>(`/orders/${orderId}`)
     },
 
     /**
      * Cancel an order
      */
-    async cancelOrder(orderId: number | string, reason?: string): Promise<{ status: boolean; message: string }> {
+    async cancelOrder(
+        orderId: number | string,
+        reason?: string
+    ): Promise<{ status: boolean; message: string }> {
+        if (!orderId) {
+            throw new OrderApiError("Order ID is required")
+        }
         return makeRequest(
             `/orders/${orderId}/cancel`,
             "POST",
@@ -370,6 +446,9 @@ export const orderApi = {
         gateway: string,
         transactionId: string
     ): Promise<{ status: boolean; message: string; order_id: number }> {
+        if (!orderId || !gateway || !transactionId) {
+            throw new OrderApiError("Order ID, gateway, and transaction ID are required")
+        }
         return makeRequest("/orders/verify-payment", "POST", {
             order_id: orderId,
             gateway,
@@ -381,9 +460,10 @@ export const orderApi = {
      * Get order by tracking number
      */
     async getOrderByTracking(trackingNumber: string): Promise<PlaceOrderResponse> {
-        return makeRequest<PlaceOrderResponse>(
-            `/orders/track/${trackingNumber}`
-        )
+        if (!trackingNumber) {
+            throw new OrderApiError("Tracking number is required")
+        }
+        return makeRequest<PlaceOrderResponse>(`/orders/track/${trackingNumber}`)
     },
 
     /**
@@ -401,6 +481,9 @@ export const orderApi = {
         discount: number
         total: number
     }> {
+        if (!payload.subtotal || payload.subtotal <= 0) {
+            throw new OrderApiError("Subtotal must be greater than 0")
+        }
         return makeRequest("/orders/calculate", "POST", payload)
     },
 }
@@ -409,8 +492,18 @@ export const orderApi = {
 // ERROR HANDLER UTILITY
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function handleOrderError(error: any): { message: string; fieldErrors: Record<string, string> } {
+export function handleOrderError(error: any): {
+    message: string
+    fieldErrors: Record<string, string>
+} {
     const fieldErrors: Record<string, string> = {}
+
+    if (error instanceof OrderApiError) {
+        return {
+            message: error.message,
+            fieldErrors: error.fieldErrors || {},
+        }
+    }
 
     if (error.errors && typeof error.errors === "object") {
         for (const [field, messages] of Object.entries(error.errors)) {
@@ -430,12 +523,15 @@ export function handleOrderError(error: any): { message: string; fieldErrors: Re
 // PAYMENT METHOD HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const paymentMethodInfo: Record<PaymentMethod, {
-    name: string
-    description: string
-    emoji: string
-    icon?: string
-}> = {
+export const paymentMethodInfo: Record<
+    PaymentMethod,
+    {
+        name: string
+        description: string
+        emoji: string
+        icon?: string
+    }
+> = {
     cod: {
         name: "Cash on Delivery",
         description: "Pay when your order arrives",

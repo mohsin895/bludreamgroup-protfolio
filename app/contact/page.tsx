@@ -101,128 +101,6 @@ function FaqItem({ q, a, i }: { q: string; a: string; i: number }) {
   );
 }
 
-/* ─── Channel Card ──────────────────────────────────────────── */
-function ChannelCard({ c, i }: { c: (typeof channels)[0]; i: number }) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <AnimatedSection delay={i * 0.07}>
-      <div
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{
-          position: "relative",
-          background: hovered ? "#141414" : "#0f0f0f",
-          border: `1px solid ${hovered ? c.color + "44" : "rgba(255,255,255,0.06)"}`,
-          borderRadius: "12px",
-          padding: "32px",
-          transition: "all 0.32s cubic-bezier(0.16,1,0.3,1)",
-          transform: hovered ? "translateY(-4px)" : "translateY(0)",
-          overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
-          height: "100%",
-        }}
-      >
-        {/* Top accent */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "2px",
-            background: `linear-gradient(90deg, ${c.color}, transparent)`,
-            opacity: hovered ? 1 : 0,
-            transition: "opacity 0.3s ease",
-          }}
-        />
-
-        {/* Icon circle */}
-        <div
-          style={{
-            width: "48px",
-            height: "48px",
-            borderRadius: "50%",
-            background: c.bg,
-            border: `1px solid ${c.color}33`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "18px",
-            color: c.color,
-            marginBottom: "20px",
-            flexShrink: 0,
-          }}
-        >
-          {c.icon}
-        </div>
-
-        <h3
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "18px",
-            color: "#fff",
-            letterSpacing: "-0.01em",
-            margin: "0 0 10px",
-          }}
-        >
-          {c.title}
-        </h3>
-        <p
-          style={{
-            fontSize: "14px",
-            lineHeight: 1.75,
-            color: "rgba(255,255,255,0.45)",
-            margin: "0 0 24px",
-            flex: 1,
-          }}
-        >
-          {c.description}
-        </p>
-
-        <div style={{ marginBottom: "20px" }}>
-          <div
-            style={{
-              fontSize: "11px",
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              color: "rgba(255,255,255,0.25)",
-              marginBottom: "6px",
-            }}
-          >
-            Contact
-          </div>
-          <div style={{ fontSize: "13px", color: c.color, fontWeight: 500 }}>
-            {c.contact}
-          </div>
-        </div>
-
-        <a
-          href={c.href}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "6px",
-            padding: "10px 18px",
-            background: hovered ? c.bg : "transparent",
-            border: `1px solid ${hovered ? c.color + "55" : "rgba(255,255,255,0.08)"}`,
-            borderRadius: "6px",
-            fontSize: "12px",
-            fontWeight: 600,
-            letterSpacing: "0.07em",
-            textTransform: "uppercase",
-            color: hovered ? c.color : "rgba(255,255,255,0.4)",
-            textDecoration: "none",
-            transition: "all 0.25s ease",
-            alignSelf: "flex-start",
-          }}
-        >
-          {c.cta} →
-        </a>
-      </div>
-    </AnimatedSection>
-  );
-}
 
 /* ─── Page ───────────────────────────────────────────────────── */
 export default function ContactPage() {
@@ -331,7 +209,7 @@ export default function ContactPage() {
                 margin: "0 0 24px",
               }}
             >
-              Let's start
+                { "  Let's start"}
               <br />
               <span
                 style={{
@@ -352,8 +230,8 @@ export default function ContactPage() {
                 marginBottom: "40px",
               }}
             >
-              Whether you're a first-time author, an established designer, or a
-              publisher — we're here and happy to help.
+              Whether you are a first-time author, an established designer, or a
+              publisher — we are here and happy to help.
             </p>
 
             <Link
@@ -467,7 +345,7 @@ export default function ContactPage() {
                         margin: "0 0 24px",
                       }}
                     >
-                      Thanks for reaching out. We'll be back in touch within one
+                      Thanks for reaching out. We will be back in touch within one
                       business day.
                     </p>
                     <button
