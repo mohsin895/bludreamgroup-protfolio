@@ -2,6 +2,7 @@
 
 import AnimatedSection from "@/components/AnimatedSection";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
 import {
   fetchMappedTestimonials,
@@ -526,138 +527,7 @@ export default function TestimonialsPage() {
       <Navbar />
 
       {/* ── Hero ── */}
-      <section
-        style={{
-          paddingTop: "160px",
-          paddingBottom: "100px",
-          background: "var(--bg)",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        {/* Decorative glow */}
-        <div
-          style={{
-            position: "absolute",
-            top: "-180px",
-            left: "-200px",
-            width: "600px",
-            height: "600px",
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 70%)",
-            pointerEvents: "none",
-          }}
-        />
-
-        <div className="container">
-          <AnimatedSection>
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "10px",
-                marginBottom: "24px",
-              }}
-            >
-              <span
-                style={{
-                  display: "inline-block",
-                  width: "28px",
-                  height: "1px",
-                  background: "var(--gold)",
-                }}
-              />
-              <span
-                style={{
-                  fontSize: "11px",
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  color: "var(--gold)",
-                }}
-              >
-                Testimonials
-              </span>
-            </div>
-
-            <h1
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(44px, 6.5vw, 88px)",
-                lineHeight: 1,
-                letterSpacing: "-0.03em",
-                color: "#000",
-                maxWidth: "680px",
-                margin: "0 0 24px",
-              }}
-            >
-              Voices from
-              <br />
-              <span
-                style={{
-                  color: "#000",
-                  WebkitTextStroke: "1px rgba(201,168,76,0.55)",
-                }}
-              >
-                the community.
-              </span>
-            </h1>
-
-            <p
-              style={{
-                fontSize: "17px",
-                lineHeight: 1.75,
-                color: "#000",
-                maxWidth: "480px",
-                marginBottom: "40px",
-              }}
-            >
-              Authors, designers, and publishers share what it's actually like
-              to build their creative practice here.
-            </p>
-
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-                flexWrap: "wrap",
-              }}
-            >
-              <Link
-                href="/get-started"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "14px 28px",
-                  background: "var(--gold)",
-                  color: "#0a0a0a",
-                  borderRadius: "6px",
-                  fontWeight: 700,
-                  fontSize: "13px",
-                  letterSpacing: "0.06em",
-                  textDecoration: "none",
-                  textTransform: "uppercase",
-                }}
-              >
-                Join Them →
-              </Link>
-              <Link
-                href="/"
-                style={{
-                  fontSize: "13px",
-                  color: "#000",
-                  textDecoration: "none",
-                  letterSpacing: "0.04em",
-                }}
-              >
-                ← Back to Home
-              </Link>
-            </div>
-          </AnimatedSection>
-        </div>
-      </section>
+      <PageHero title="Testimonials" currentPage="Testimonials" />
 
       {/* ── Trust Bar ── */}
       <section

@@ -1,10 +1,9 @@
 "use client";
 import AnimatedSection from "@/components/AnimatedSection";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
-import Link from "next/link";
 import { useState } from "react";
-
 
 const faqs = [
   {
@@ -101,7 +100,6 @@ function FaqItem({ q, a, i }: { q: string; a: string; i: number }) {
   );
 }
 
-
 /* ─── Page ───────────────────────────────────────────────────── */
 export default function ContactPage() {
   const [formState, setFormState] = useState({
@@ -145,110 +143,7 @@ export default function ContactPage() {
       <Navbar />
 
       {/* ── Hero ── */}
-      <section
-        style={{
-          paddingTop: "160px",
-          paddingBottom: "100px",
-          background: "var(--bg)",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            bottom: "-200px",
-            left: "-200px",
-            width: "600px",
-            height: "600px",
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 70%)",
-            pointerEvents: "none",
-          }}
-        />
-
-        <div className="container">
-          <AnimatedSection>
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "10px",
-                marginBottom: "24px",
-              }}
-            >
-              <span
-                style={{
-                  display: "inline-block",
-                  width: "28px",
-                  height: "1px",
-                  background: "var(--gold)",
-                }}
-              />
-              <span
-                style={{
-                  fontSize: "11px",
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  color: "var(--gold)",
-                }}
-              >
-                Contact
-              </span>
-            </div>
-
-            <h1
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(44px, 6.5vw, 88px)",
-                lineHeight: 1,
-                letterSpacing: "-0.03em",
-                color: "#0009",
-                maxWidth: "680px",
-                margin: "0 0 24px",
-              }}
-            >
-                { "  Let's start"}
-              <br />
-              <span
-                style={{
-                  color: "#000",
-                  WebkitTextStroke: "1px rgba(201,168,76,0.55)",
-                }}
-              >
-                a conversation.
-              </span>
-            </h1>
-
-            <p
-              style={{
-                fontSize: "17px",
-                lineHeight: 1.75,
-                color: "#0009",
-                maxWidth: "460px",
-                marginBottom: "40px",
-              }}
-            >
-              Whether you are a first-time author, an established designer, or a
-              publisher — we are here and happy to help.
-            </p>
-
-            <Link
-              href="/"
-              style={{
-                fontSize: "13px",
-                color: "#0009",
-                textDecoration: "none",
-                letterSpacing: "0.04em",
-              }}
-            >
-              ← Back to Home
-            </Link>
-          </AnimatedSection>
-        </div>
-      </section>
-
+      <PageHero title="Contact Us" currentPage="Contact" />
 
       {/* ── Contact Form + FAQ ── */}
       <section
@@ -345,8 +240,8 @@ export default function ContactPage() {
                         margin: "0 0 24px",
                       }}
                     >
-                      Thanks for reaching out. We will be back in touch within one
-                      business day.
+                      Thanks for reaching out. We will be back in touch within
+                      one business day.
                     </p>
                     <button
                       onClick={() => {

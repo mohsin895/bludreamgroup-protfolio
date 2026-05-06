@@ -2,6 +2,7 @@
 
 import AnimatedSection from "@/components/AnimatedSection";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
 import {
   fetchEventCategories,
@@ -147,7 +148,7 @@ function SkeletonCard() {
             width: "56px",
             height: "76px",
             borderRadius: "6px",
-            background: "rgba(255,255,255,0.06)",
+            background: "#fff",
             animation: "shimmer 1.5s ease-in-out infinite",
           }}
         />
@@ -255,11 +256,11 @@ function EventCard({ event, delay }: { event: MappedEvent; delay: number }) {
   return (
     <AnimatedSection delay={delay}>
       <div
-        className="card"
+        className="card bg-white"
         style={{
           padding: "0",
           overflow: "hidden",
-          opacity: isPast ? 0.65 : 1,
+          opacity: isPast ? 0.9 : 1,
           transition: "opacity 0.2s ease",
           position: "relative",
         }}
@@ -268,7 +269,7 @@ function EventCard({ event, delay }: { event: MappedEvent; delay: number }) {
         <div
           style={{
             height: "3px",
-            background: `linear-gradient(90deg, ${typeColor}80, transparent)`,
+            background: `#fff`,
           }}
         />
 
@@ -283,7 +284,7 @@ function EventCard({ event, delay }: { event: MappedEvent; delay: number }) {
                 flexShrink: 0,
                 width: "56px",
                 textAlign: "center",
-                background: `${typeColor}10`,
+                background: `#fff`,
                 border: `1px solid ${typeColor}25`,
                 borderRadius: "6px",
                 padding: "10px 0",
@@ -293,9 +294,10 @@ function EventCard({ event, delay }: { event: MappedEvent; delay: number }) {
                 style={{
                   fontSize: "22px",
                   fontFamily: "var(--font-display)",
-                  color: typeColor,
+                  color: "#000",
                   lineHeight: 1,
                   letterSpacing: "-0.02em",
+                  background: "#fff",
                 }}
               >
                 {event.day}
@@ -304,7 +306,7 @@ function EventCard({ event, delay }: { event: MappedEvent; delay: number }) {
                 style={{
                   fontSize: "9px",
                   letterSpacing: "0.14em",
-                  color: "rgba(255,255,255,0.35)",
+                  color: "#000",
                   marginTop: "4px",
                   textTransform: "uppercase",
                 }}
@@ -314,7 +316,7 @@ function EventCard({ event, delay }: { event: MappedEvent; delay: number }) {
               <div
                 style={{
                   fontSize: "9px",
-                  color: "rgba(255,255,255,0.2)",
+                  color: "#000",
                   marginTop: "2px",
                 }}
               >
@@ -338,8 +340,8 @@ function EventCard({ event, delay }: { event: MappedEvent; delay: number }) {
                     fontSize: "10px",
                     letterSpacing: "0.1em",
                     textTransform: "uppercase",
-                    color: typeColor,
-                    background: `${typeColor}10`,
+                    color: "#000",
+                    background: `#fff`,
                     border: `1px solid ${typeColor}25`,
                     padding: "3px 8px",
                     borderRadius: "3px",
@@ -356,7 +358,7 @@ function EventCard({ event, delay }: { event: MappedEvent; delay: number }) {
                   fontWeight: 500,
                   lineHeight: 1.4,
                   margin: "0 0 10px",
-                  color: isPast ? "rgba(255,255,255,0.55)" : "#fff",
+                  color: isPast ? "#000" : "#f00",
                 }}
               >
                 {event.title}
@@ -371,7 +373,7 @@ function EventCard({ event, delay }: { event: MappedEvent; delay: number }) {
                     alignItems: "center",
                     gap: "7px",
                     fontSize: "12px",
-                    color: "rgba(255,255,255,0.4)",
+                    color: "#000",
                   }}
                 >
                   <MapPin
@@ -386,12 +388,12 @@ function EventCard({ event, delay }: { event: MappedEvent; delay: number }) {
                     alignItems: "center",
                     gap: "7px",
                     fontSize: "12px",
-                    color: "rgba(255,255,255,0.4)",
+                    color: "#000",
                   }}
                 >
                   <Clock
                     size={11}
-                    style={{ color: typeColor, flexShrink: 0 }}
+                    style={{ color: "typeColor", flexShrink: 0 }}
                   />
                   <span>{event.time}</span>
                 </div>
@@ -404,7 +406,7 @@ function EventCard({ event, delay }: { event: MappedEvent; delay: number }) {
             style={{
               fontSize: "13px",
               lineHeight: 1.75,
-              color: "rgba(255,255,255,0.4)",
+              color: "#000",
               margin: "18px 0 0",
             }}
           >
@@ -433,18 +435,11 @@ function EventCard({ event, delay }: { event: MappedEvent; delay: number }) {
                 alignItems: "center",
                 gap: "5px",
                 fontSize: "11px",
-                color: "rgba(255,255,255,0.25)",
+                color: "#000",
                 textDecoration: "none",
                 letterSpacing: "0.05em",
                 transition: "color 0.2s ease",
               }}
-              onMouseEnter={(e) =>
-                ((e.currentTarget as HTMLElement).style.color = typeColor)
-              }
-              onMouseLeave={(e) =>
-                ((e.currentTarget as HTMLElement).style.color =
-                  "rgba(255,255,255,0.25)")
-              }
             >
               <Navigation size={11} />
               Get Directions
@@ -561,11 +556,12 @@ export default function EventsPage() {
       <Navbar />
 
       {/* ── Hero ── */}
+      <PageHero title="Our Events" currentPage="Events" />
       <section
         style={{
-          paddingTop: "140px",
+          paddingTop: "40px",
           paddingBottom: "72px",
-          background: "#fff",
+          background: "#F4F7F6",
           borderBottom: "1px solid rgba(255,255,255,0.05)",
         }}
       >
@@ -646,14 +642,6 @@ export default function EventsPage() {
                 </div>
               ))}
             </div>
-
-            <Link
-              href="/"
-              className="btn-outline"
-              style={{ display: "inline-flex", marginTop: "36px" }}
-            >
-              ← Back to Home
-            </Link>
           </AnimatedSection>
         </div>
       </section>
@@ -665,6 +653,7 @@ export default function EventsPage() {
           background: "#203647",
           paddingTop: "64px",
           paddingBottom: "120px",
+          marginBottom: "60px",
         }}
       >
         <div className="container">
@@ -994,7 +983,7 @@ export default function EventsPage() {
                 style={{
                   textAlign: "center",
                   padding: "80px 0",
-                  color: "rgba(255,255,255,0.2)",
+                  color: "#000",
                 }}
               >
                 <Calendar
@@ -1034,6 +1023,7 @@ export default function EventsPage() {
                   background: "#f4f7f6ff",
                   border: "1px solid rgba(201,168,76,0.12)",
                   borderRadius: "12px",
+                  color: "#000",
                   display: "flex",
                   flexWrap: "wrap",
                   alignItems: "center",
@@ -1099,21 +1089,6 @@ export default function EventsPage() {
           )}
         </div>
       </section>
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.4; transform: scale(0.7); }
-        }
-        @keyframes shimmer {
-          0%, 100% { opacity: 0.5; }
-          50% { opacity: 1; }
-        }
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to   { transform: rotate(360deg); }
-        }
-      `}</style>
 
       <Footer />
     </>

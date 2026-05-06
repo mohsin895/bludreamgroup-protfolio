@@ -11,31 +11,19 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { CartDrawer } from "@/components/CartDrawer";
-
 import { useSetting } from "@/hooks/useSetting";
-
+import { fetchServices, MappedService } from "@/lib/api/service";
 import { usePathname } from "next/navigation";
-
 const primaryNav = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Books", href: "/books" },
-  {
-    label: "Services",
-    href: "/services",
-    children: [
-      { label: "Executive Coaching", href: "/services#coaching" },
-      { label: "Keynote Speaking", href: "/services#speaking" },
-      { label: "Corporate Workshops", href: "/services#workshops" },
-      { label: "Brand Strategy", href: "/services#strategy" },
-    ],
-  },
   { label: "Blog", href: "/blog" },
   {
     label: "More",
     href: "#",
     children: [
-        { label: "Achievement", href: "/achievements" },
+      { label: "Achievement", href: "/achievements" },
       { label: "Media / Gallery", href: "/media" },
       { label: "Testimonials", href: "/testimonials" },
       { label: "Events", href: "/events" },
@@ -53,28 +41,45 @@ const primaryNav = [
 export default function Navbar() {
   const dispatch = useAppDispatch();
   const totalItems = useAppSelector(selectTotalItems);
-
   const isDrawerOpen = useAppSelector(selectIsDrawerOpen);
 
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [services, setServices] = useState<MappedService[]>([]);
+  const [loadingServices, setLoadingServices] = useState(true);
+
   const pathname = usePathname();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { setting, logoUrl } = useSetting();
 
-    const isHomePage = pathname === "/";
-    const solidNav = !isHomePage || scrolled || isDrawerOpen;
+  const isHomePage = pathname === "/";
+  const solidNav = !isHomePage || scrolled || isDrawerOpen;
 
-  // ── Hydration guard ───────────────────────────────────────────────────────
+  // ── Fetch dynamic services ─────────────────────────────────────────────────
+  useEffect(() => {
+    const loadServices = async () => {
+      try {
+        const fetchedServices = await fetchServices();
+        setServices(fetchedServices);
+      } catch (error) {
+        console.error("Failed to fetch services:", error);
+        setServices([]);
+      } finally {
+        setLoadingServices(false);
+      }
+    };
+    loadServices();
+  }, []);
 
-    useEffect(() => {
-                   // ← add this line
-        const onScroll = () => setScrolled(window.scrollY > 40);
-        window.addEventListener("scroll", onScroll);
-        return () => window.removeEventListener("scroll", onScroll);
-    }, []);
+  // ── Hydration guard ────────────────────────────────────────────────────────
+  useEffect(() => {
+    setMounted(true);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -89,6 +94,29 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // ── Build nav with dynamic services ────────────────────────────────────────
+  const navWithServices = [
+    primaryNav[0], // Home
+    primaryNav[1], // About
+    primaryNav[2], // Books
+    // Dynamic Services dropdown
+    ...(services.length > 0
+      ? [
+          {
+            label: "Services",
+            href: "/services",
+            children: services.map((service) => ({
+              label: service.title,
+              href: `/services/${service.slug}`,
+            })),
+          },
+        ]
+      : []),
+    primaryNav[3],
+    primaryNav[4],
+    primaryNav[5],
+  ];
+
   return (
     <>
       <nav
@@ -99,7 +127,7 @@ export default function Navbar() {
           right: 0,
           zIndex: 1000,
           transition: "all 0.4s ease",
-            background: solidNav ? "#203647" : "transparent",
+          background: solidNav ? "#203647" : "transparent",
           backdropFilter: solidNav ? "blur(20px)" : "none",
           borderBottom: solidNav
             ? "1px solid rgba(255,255,255,0.06)"
@@ -142,7 +170,7 @@ export default function Navbar() {
               style={{ display: "flex", alignItems: "center", gap: "2px" }}
               className="desktop-nav"
             >
-              {primaryNav.map((item) => (
+              {navWithServices.map((item) => (
                 <div key={item.label} style={{ position: "relative" }}>
                   {item.children ? (
                     <button
@@ -222,6 +250,8 @@ export default function Navbar() {
                             ? "translateX(-50%) translateY(0)"
                             : "translateX(-50%) translateY(-8px)",
                         transition: "opacity 0.2s, transform 0.2s",
+                        maxHeight: "400px",
+                        overflowY: "auto",
                       }}
                     >
                       {item.children.map((child) => (
@@ -248,26 +278,7 @@ export default function Navbar() {
                 </div>
               ))}
 
-              {/* Auth — guarded by mounted to prevent hydration mismatch */}
-              {/*{mounted && isAuth ? (*/}
-              {/*    <a href="/profile" className="flex items-center gap-2 text-sm text-gray-700 hover:text-red-600 transition-colors">*/}
-              {/*        {user?.avatar ? (*/}
-              {/*            <img src={user.avatar} alt={user.name} className="w-7 h-7 rounded-full object-cover border border-gray-200" />*/}
-              {/*        ) : (*/}
-              {/*            <div className="w-7 h-7 rounded-full bg-red-600 flex items-center justify-center text-white text-[11px] font-bold">*/}
-              {/*                {user?.name?.charAt(0).toUpperCase() ?? "U"}*/}
-              {/*            </div>*/}
-              {/*        )}*/}
-              {/*        <span>{user?.name?.split(" ")[0]}</span>*/}
-              {/*    </a>*/}
-              {/*) : (*/}
-              {/*    <a href="/login" className="flex items-center gap-2 text-sm text-gray-700 hover:text-red-600 transition-colors">*/}
-              {/*        <User className="w-5 h-5" />*/}
-              {/*        <span>Login</span>*/}
-              {/*    </a>*/}
-              {/*)}*/}
-
-              {/* Cart — guarded by mounted to prevent hydration mismatch */}
+              {/* Cart */}
               <button
                 onClick={() => dispatch(toggleDrawer())}
                 className="relative flex items-center gap-2 cursor-pointer text-sm text-white hover:text-[#82c3d8] transition-colors"
@@ -349,7 +360,7 @@ export default function Navbar() {
           style={{ paddingTop: "32px", paddingBottom: "32px" }}
         >
           <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            {primaryNav.map((item, i) => (
+            {navWithServices.map((item, i) => (
               <div key={item.label}>
                 {item.children ? (
                   <>

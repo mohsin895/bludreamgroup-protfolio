@@ -1,6 +1,7 @@
 "use client";
 import AnimatedSection from "@/components/AnimatedSection";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { useState } from "react";
@@ -685,11 +686,12 @@ export default function ShopPage() {
   return (
     <>
       <Navbar />
+      <PageHero title="Shop Page" currentPage="Shop" />
       {/* ── Hero ── */}
       <section
         style={{
-          paddingTop: "160px",
-          paddingBottom: "100px",
+          paddingTop: "50px",
+          paddingBottom: "50px",
           background: "var(--bg)",
           position: "relative",
           overflow: "hidden",
@@ -802,17 +804,6 @@ export default function ShopPage() {
                 }}
               >
                 Browse Books ↓
-              </Link>
-              <Link
-                href="/"
-                style={{
-                  fontSize: "13px",
-                  color: "#000",
-                  textDecoration: "none",
-                  letterSpacing: "0.04em",
-                }}
-              >
-                ← Back to Home
               </Link>
             </div>
           </AnimatedSection>

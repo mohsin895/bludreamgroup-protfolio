@@ -1,13 +1,13 @@
 "use client";
 import AnimatedSection from "@/components/AnimatedSection";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
 import {
   getAllResources,
   typeStyle,
   type Resource,
 } from "@/lib/api/resourceapi";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const CATEGORIES = [
@@ -500,12 +500,12 @@ export default function ResourcesPage() {
   return (
     <>
       <Navbar />
-
+      <PageHero title="Resources" currentPage="Resources" />
       {/* ── HERO ── */}
       <section
         style={{
-          paddingTop: "160px",
-          paddingBottom: "100px",
+          paddingTop: "10px",
+          paddingBottom: "40px",
           background: "var(--bg)",
           position: "relative",
           overflow: "hidden",
@@ -589,49 +589,6 @@ export default function ResourcesPage() {
               Free guides, templates, checklists, and worksheets built for
               authors, designers, and publishers — no fluff, only what works.
             </p>
-
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-                flexWrap: "wrap",
-              }}
-            >
-              <a
-                href="#resources"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "14px 28px",
-                  background: "#6FB3C8",
-                  color: "#fff9",
-                  borderRadius: "6px",
-                  fontWeight: 700,
-                  fontSize: "13px",
-                  letterSpacing: "0.06em",
-                  textDecoration: "none",
-                  textTransform: "uppercase" as const,
-                }}
-              >
-                Browse Resources ↓
-              </a>
-              <Link
-                href="/"
-                style={{
-                  fontSize: "13px",
-                  borderRadius: "6px",
-                  border: "1px solid #0007",
-                  padding: "14px 28px",
-                  color: "#000",
-                  textDecoration: "none",
-                  letterSpacing: "0.04em",
-                }}
-              >
-                ← Back to Home
-              </Link>
-            </div>
           </AnimatedSection>
         </div>
       </section>

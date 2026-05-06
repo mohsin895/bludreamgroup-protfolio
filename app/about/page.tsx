@@ -2,6 +2,7 @@
 
 import AnimatedSection from "@/components/AnimatedSection";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
 import {
   fetchAboutPageData,
@@ -298,33 +299,7 @@ export default function AboutPage() {
       <Navbar />
 
       {/* ── Hero ── */}
-      <section
-        style={{
-          paddingTop: "140px",
-          paddingBottom: "80px",
-          background: "var(--bg)",
-        }}
-      >
-        <div className="container">
-          <AnimatedSection>
-            <div className="section-label">My Story</div>
-            <h1
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(52px, 6vw, 84px)",
-                maxWidth: "700px",
-                marginTop: "8px",
-              }}
-            >
-              {loading ? (
-                <span style={{ opacity: 0.3 }}>Loading…</span>
-              ) : (
-                (about?.pageTitle ?? "The Woman Behind the Work")
-              )}
-            </h1>
-          </AnimatedSection>
-        </div>
-      </section>
+      <PageHero title="About Us" currentPage="About" />
 
       {/* ── Bio section ── */}
       <section style={{ background: "#203647", padding: "80px 0" }}>

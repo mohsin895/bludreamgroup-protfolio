@@ -1,6 +1,7 @@
 "use client";
 import AnimatedSection from "@/components/AnimatedSection";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
 import {
   formatPrice,
@@ -456,11 +457,11 @@ export default function BooksPage() {
   return (
     <>
       <Navbar />
+      <PageHero title="Published Books" currentPage="Books" />
 
       {/* ── Hero ── */}
       <section
         style={{
-          paddingTop: "140px",
           paddingBottom: "60px",
           background: "var(--bg)",
           position: "relative",

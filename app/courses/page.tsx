@@ -1,6 +1,7 @@
 "use client";
 import AnimatedSection from "@/components/AnimatedSection";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { ReactNode, useEffect, useState } from "react";
@@ -910,13 +911,13 @@ export default function CoursesPage(): ReactNode {
   return (
     <>
       <Navbar />
-
+      <PageHero title="Our Courses" currentPage="Courses" />
       {/* ── Hero ── */}
       <section
         style={{
-          paddingTop: "160px",
-          paddingBottom: "100px",
-          background: "#fff",
+          paddingTop: "40px",
+          paddingBottom: "60px",
+          background: "#F4F7F6",
           position: "relative",
           overflow: "hidden",
         }}
@@ -1001,46 +1002,6 @@ export default function CoursesPage(): ReactNode {
               Practical courses on publishing, portfolio building, and creative
               business — taught by practitioners with real results.
             </p>
-
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-                flexWrap: "wrap",
-              }}
-            >
-              <Link
-                href="#courses"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "14px 28px",
-                  background: "var(--gold)",
-                  color: "#0a0a0a",
-                  borderRadius: "6px",
-                  fontWeight: 700,
-                  fontSize: "13px",
-                  letterSpacing: "0.06em",
-                  textDecoration: "none",
-                  textTransform: "uppercase",
-                }}
-              >
-                Browse Courses ↓
-              </Link>
-              <Link
-                href="/"
-                style={{
-                  fontSize: "13px",
-                  color: "#000",
-                  textDecoration: "none",
-                  letterSpacing: "0.04em",
-                }}
-              >
-                ← Back to Home
-              </Link>
-            </div>
           </AnimatedSection>
         </div>
       </section>

@@ -2,6 +2,7 @@
 
 import AnimatedSection from "@/components/AnimatedSection";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
 import {
   fetchServiceBySlug,
@@ -234,6 +235,10 @@ export default function ServiceDetailPage() {
   return (
     <>
       <Navbar />
+      <PageHero
+        title={slug || "Services Details"}
+        currentPage="Service Details"
+      />
 
       {/* ── Loading ── */}
       {loading && (
@@ -291,7 +296,7 @@ export default function ServiceDetailPage() {
           {/* ── Hero ── */}
           <section
             style={{
-              paddingTop: "120px",
+              paddingTop: "20px",
               paddingBottom: "0",
               background: "var(--bg)",
               position: "relative",
@@ -319,9 +324,9 @@ export default function ServiceDetailPage() {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "8px",
-                  fontSize: "12px",
-                  color: "rgba(255,255,255,0.3)",
+                  gap: "12px",
+                  fontSize: "14px",
+                  color: "#000",
                   marginBottom: "40px",
                   letterSpacing: "0.05em",
                 }}
@@ -329,26 +334,18 @@ export default function ServiceDetailPage() {
                 <Link
                   href="/services"
                   style={{
-                    color: "rgba(255,255,255,0.3)",
+                    color: "#000",
                     textDecoration: "none",
                     display: "inline-flex",
                     alignItems: "center",
-                    gap: "4px",
+                    gap: "6px",
                     transition: "color 0.2s",
                   }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.color = "var(--gold)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.color = "rgba(255,255,255,0.3)")
-                  }
                 >
-                  <ArrowLeft size={12} /> Services
+                  <ArrowLeft size={16} /> Services
                 </Link>
                 <ChevronRight size={10} />
-                <span style={{ color: "rgba(255,255,255,0.5)" }}>
-                  {service.title}
-                </span>
+                <span style={{ color: "#000" }}>{service.title}</span>
               </nav>
 
               {/* Two-column layout */}
@@ -371,10 +368,10 @@ export default function ServiceDetailPage() {
                         display: "inline-flex",
                         alignItems: "center",
                         gap: "8px",
-                        fontSize: "11px",
+                        fontSize: "12px",
                         letterSpacing: "0.14em",
                         textTransform: "uppercase",
-                        color: "var(--gold)",
+                        color: "#000",
                         marginBottom: "20px",
                       }}
                     >
@@ -389,7 +386,7 @@ export default function ServiceDetailPage() {
                       fontSize: "clamp(38px, 5vw, 68px)",
                       lineHeight: 1.0,
                       letterSpacing: "-0.02em",
-                      color: "#fff",
+                      color: "#000",
                       marginBottom: "24px",
                     }}
                   >
@@ -402,7 +399,7 @@ export default function ServiceDetailPage() {
                       className="service-description"
                       style={{
                         fontSize: "16px",
-                        color: "#fff",
+                        color: "#000",
                         lineHeight: 1.85,
                         maxWidth: "600px",
                       }}
@@ -412,7 +409,7 @@ export default function ServiceDetailPage() {
                     <p
                       style={{
                         fontSize: "16px",
-                        color: "rgba(255,255,255,0.7)",
+                        color: "#000",
                         lineHeight: 1.85,
                         fontStyle: "italic",
                       }}
@@ -429,7 +426,7 @@ export default function ServiceDetailPage() {
                           fontSize: "11px",
                           letterSpacing: "0.12em",
                           textTransform: "uppercase",
-                          color: "rgba(255,255,255,0.3)",
+                          color: "#000",
                           marginBottom: "18px",
                         }}
                       >
@@ -456,13 +453,14 @@ export default function ServiceDetailPage() {
                                 width: "32px",
                                 height: "32px",
                                 borderRadius: "6px",
-                                background: "rgba(201,168,76,0.08)",
+                                background: "#6FB3C8",
                                 border: "1px solid rgba(201,168,76,0.15)",
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
                                 flexShrink: 0,
                                 marginTop: "2px",
+                                color: "#fff",
                               }}
                             >
                               <FaIcon icon={note.icon} size={14} />
@@ -569,7 +567,7 @@ export default function ServiceDetailPage() {
                               fontSize: "11px",
                               letterSpacing: "0.1em",
                               textTransform: "uppercase",
-                              color: "rgba(255,255,255,0.25)",
+                              color: "#fff9",
                             }}
                           >
                             {label}

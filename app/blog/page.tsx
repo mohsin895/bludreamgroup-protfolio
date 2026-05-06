@@ -2,6 +2,7 @@
 
 import AnimatedSection from "@/components/AnimatedSection";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
 import {
   fetchBlogCategories,
@@ -166,7 +167,7 @@ function SkeletonFeatured() {
                   width: "80px",
                   height: "10px",
                   borderRadius: "2px",
-                  background: "var(--border)",
+                  background: "#fff",
                   animation: "shimmer 1.5s ease-in-out infinite",
                 }}
               />
@@ -233,7 +234,7 @@ function PostThumbnail({ url, title }: { url: string | null; title: string }) {
     <div
       style={{
         width: "100%",
-        height: "180px",
+        height: "100%",
         borderRadius: "2px",
         overflow: "hidden",
         marginBottom: "4px",
@@ -316,14 +317,14 @@ export default function BlogPage() {
       <style>{`
    
         :root {
-  --bg: #203647;
+  --bg: #F4F7F6;
   --card: #203647;
   --gold: #c9a84c;
   --text: rgba(255,255,255,0.7);
   --muted: rgba(255,255,255,0.45);
   --border: rgba(130,195,216,0.15);
 }
-        body { font-family: 'DM Sans', sans-serif; background: var(--parchment); color: var(--ink); }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); }
 
         .blog-hero { padding: 160px 0 80px; background: var(--ink); position: relative; overflow: hidden; }
         .blog-hero::before {
@@ -362,16 +363,16 @@ export default function BlogPage() {
         .featured-meta { display:flex; align-items:center; gap:16px; font-size:12px; color:rgba(255,255,255,0.3); letter-spacing:0.05em; flex-wrap:wrap; }
         .featured-meta span::before { content:'·'; margin-right:16px; }
         .featured-meta span:first-child::before { display:none; }
-        .featured-right { padding:56px 48px; display:flex; flex-direction:column; justify-content:center; border-left:1px solid var(--border); }
-        .featured-right-label { font-size:10px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin-bottom:24px; }
+        .featured-right { padding:56px 0px 0px 40px; display:flex; flex-direction:column; justify-content:center; border-left:1px solid var(--border); }
+        .featured-right-label { font-size:10px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:#fff; margin-bottom:24px; }
         .read-btn {
-          display:inline-flex; align-items:center; gap:10px; background:var(--ink); color:#fff;
+          display:inline-flex; align-items:center; gap:10px; background:#6FB3C8; color:#fff;
           padding:14px 24px; font-size:13px; font-weight:500; letter-spacing:0.06em; text-decoration:none;
           border-radius:2px; transition:background 0.2s, gap 0.2s; width:fit-content; margin-top:24px;
         }
-        .read-btn:hover { background:#2a2520; gap:14px; }
+        .read-btn:hover { background:#6FB3C8; gap:14px; }
 
-        .filter-bar { padding:32px 0; border-bottom:1px solid var(--border); background:var(--parchment); position:sticky; top:0; z-index:10; }
+        .filter-bar { padding:32px 0; border-bottom:1px solid #E9ECEB; background:#E9ECEB; position:sticky; top:0; z-index:10; }
         .filter-scroll { display:flex; gap:4px; overflow-x:auto; scrollbar-width:none; }
         .filter-scroll::-webkit-scrollbar { display:none; }
         .filter-btn {
@@ -392,16 +393,16 @@ export default function BlogPage() {
           display:inline-block; font-size:10px; font-weight:500; letter-spacing:0.15em; text-transform:uppercase;
           color:var(--gold); background:var(--gold-light); padding:3px 8px; border-radius:2px; width:fit-content;
         }
-        .post-card-title { font-family:'Playfair Display',serif; font-size:19px; font-weight:600; line-height:1.3; color:var(--ink); margin:4px 0; flex:1; }
-        .post-card-excerpt { font-size:14px; color:var(--muted); line-height:1.75; font-weight:300; }
-        .post-card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:8px; padding-top:16px; border-top:1px solid var(--border); }
-        .post-card-meta { font-size:12px; color:var(--muted); display:flex; gap:12px; }
+        .post-card-title { font-family:'Playfair Display',serif; font-size:19px; font-weight:600; line-height:1.3; color:#000; margin:4px 0; flex:1; }
+        .post-card-excerpt { font-size:14px; color:#000; line-height:1.75; font-weight:300; }
+        .post-card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:8px; padding-top:16px; border-top:1px solid #0002; }
+        .post-card-meta { font-size:12px; color:#000; display:flex; gap:12px; }
         .post-arrow {
-          width:28px; height:28px; border-radius:50%; border:1px solid var(--border);
-          display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--muted);
+          width:28px; height:28px; border-radius:50%; border:1px solid #000;
+          display:flex; align-items:center; justify-content:center; font-size:14px; color:#000;
           transition:all 0.2s; flex-shrink:0;
         }
-        .post-card:hover .post-arrow { background:var(--ink); color:#fff; border-color:var(--ink); }
+        .post-card:hover .post-arrow { background:var(--ink); color:#000; border-color:var(--ink); }
         .empty-state { padding:80px 32px; text-align:center; color:var(--muted); font-size:15px; background:var(--parchment); grid-column:1/-1; }
 
         .newsletter-strip { background:#f4f7f6; padding:80px 0; text-align:center; }
@@ -423,25 +424,7 @@ export default function BlogPage() {
       <Navbar />
 
       {/* ── Hero ── */}
-      <section className="blog-hero">
-        <div className="container">
-          <AnimatedSection>
-            <div className="hero-label">Words &amp; Ideas</div>
-            <h1 className="hero-title">
-              The
-              <br />
-              <em>Journal</em>
-            </h1>
-            <p className="hero-sub">
-              Essays on writing, reading, and the life that happens between
-              drafts.
-            </p>
-            <Link href="/" className="hero-back">
-              ← Back to Home
-            </Link>
-          </AnimatedSection>
-        </div>
-      </section>
+      <PageHero title="Our Blog" currentPage="Blogs" />
 
       {/* ── Featured Post ── */}
       {loading && <SkeletonFeatured />}
@@ -469,6 +452,7 @@ export default function BlogPage() {
                     fontWeight: 600,
                     lineHeight: 1.3,
                     marginBottom: "12px",
+                    color: "#fff",
                   }}
                 >
                   {featured.title}
@@ -553,7 +537,9 @@ export default function BlogPage() {
       )}
 
       {/* ── Posts Grid ── */}
-      <section style={{ background: "var(--parchment)", paddingBottom: "0" }}>
+      <section
+        style={{ background: "var(--parchment)", paddingBottom: "30px" }}
+      >
         <div className="container" style={{ padding: 0 }}>
           {loading ? (
             <div className="posts-grid">

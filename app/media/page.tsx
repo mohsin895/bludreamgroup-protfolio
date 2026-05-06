@@ -2,6 +2,7 @@
 
 import AnimatedSection from "@/components/AnimatedSection";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
 import { getMediaItems, type MediaItem, type MediaType } from "@/lib/api/media";
 import Link from "next/link";
@@ -860,10 +861,11 @@ export default function MediaGalleryPage() {
       <Navbar />
 
       {/* Hero Section */}
+      <PageHero title="Media & Gallery" currentPage="Media" />
       <section
         style={{
-          padding: "140px 0 72px",
-          background: "#fff",
+          padding: "40px 0 72px",
+          background: "#F4F7F6",
           borderBottom: "1px solid rgba(255,255,255,0.05)",
         }}
       >

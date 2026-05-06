@@ -2,6 +2,7 @@
 
 import AnimatedSection from "@/components/AnimatedSection";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
 import {
   fetchServicesPageData,
@@ -247,8 +248,13 @@ function ServiceCard({ service, i }: { service: MappedService; i: number }) {
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-
-export default function ServicesPage() {
+type PageProps = {
+  params: {
+    slug?: string;
+  };
+};
+export default function ServicesPage({ params }: PageProps) {
+  const { slug } = params;
   const [services, setServices] = useState<MappedService[]>([]);
   const [categories, setCategories] = useState<MappedServiceCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -285,114 +291,7 @@ export default function ServicesPage() {
     <>
       <Navbar />
 
-      {/* ── Hero ── */}
-      <section
-        style={{
-          paddingTop: "140px",
-          paddingBottom: "80px",
-          background: "var(--bg)",
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        {/* Decorative glow */}
-        <div
-          style={{
-            position: "absolute",
-            top: "-100px",
-            right: "-100px",
-            width: "500px",
-            height: "500px",
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 70%)",
-            pointerEvents: "none",
-          }}
-        />
-        <div className="container">
-          <AnimatedSection>
-            <div className="section-label">What I Offer</div>
-            <h1
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(52px, 6vw, 84px)",
-                marginTop: "8px",
-                letterSpacing: "-0.02em",
-                lineHeight: 1.0,
-              }}
-            >
-              Transform Your
-              <br />
-              <span style={{ color: "var(--gold)" }}>Leadership</span>
-            </h1>
-            <p
-              style={{
-                color: "#0009",
-                fontSize: "17px",
-                maxWidth: "540px",
-                marginTop: "20px",
-                lineHeight: 1.7,
-              }}
-            >
-              Keynotes, coaching, workshops, and courses — built for leaders who
-              refuse to settle.
-            </p>
-
-            {/* Stats */}
-            <div
-              style={{
-                display: "flex",
-                gap: "40px",
-                marginTop: "36px",
-                flexWrap: "wrap",
-              }}
-            >
-              {[
-                { label: "Services", value: loading ? "—" : services.length },
-                {
-                  label: "Categories",
-                  value: loading ? "—" : categories.length,
-                },
-                { label: "Countries", value: "47+" },
-              ].map((s) => (
-                <div key={s.label}>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: "36px",
-                      color: "#000",
-                      letterSpacing: "-0.03em",
-                      lineHeight: 1,
-                    }}
-                  >
-                    {s.value}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "11px",
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase",
-                      color: "#000",
-                      marginTop: "4px",
-                    }}
-                  >
-                    {s.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <Link
-              href="/"
-              className="btn-outline"
-              style={{ display: "inline-flex", marginTop: "32px" }}
-            >
-              ← Back to Home
-            </Link>
-          </AnimatedSection>
-        </div>
-      </section>
+      <PageHero title={slug || "Our Services"} currentPage="Service Details" />
 
       {/* ── Category filter ── */}
       {!loading && !error && categories.length > 0 && (
@@ -421,12 +320,8 @@ export default function ServicesPage() {
                   activeFilter === "all"
                     ? "var(--gold)"
                     : "rgba(255,255,255,0.1)",
-                background:
-                  activeFilter === "all"
-                    ? "rgba(201,168,76,0.12)"
-                    : "transparent",
-                color:
-                  activeFilter === "all" ? "#fff" : "rgba(255,255,255,0.45)",
+                background: activeFilter === "all" ? "#6FB3C8" : "transparent",
+                color: activeFilter === "all" ? "#fff" : "#fff",
                 fontSize: "12px",
                 letterSpacing: "0.06em",
                 cursor: "pointer",
@@ -449,10 +344,8 @@ export default function ServicesPage() {
                       ? "var(--gold)"
                       : "rgba(255,255,255,0.1)",
                   background:
-                    activeFilter === cat.id
-                      ? "rgba(201,168,76,0.12)"
-                      : "transparent",
-                  color: activeFilter === cat.id ? "var(--gold)" : "#fff",
+                    activeFilter === cat.id ? "#6FB3C8" : "transparent",
+                  color: activeFilter === cat.id ? "#fff" : "#fff",
                   fontSize: "12px",
                   letterSpacing: "0.06em",
                   cursor: "pointer",
