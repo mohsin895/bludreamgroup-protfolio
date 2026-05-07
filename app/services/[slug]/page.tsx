@@ -491,39 +491,6 @@ export default function ServiceDetailPage() {
                       </div>
                     </div>
                   )}
-
-                  {/* CTA row */}
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "12px",
-                      flexWrap: "wrap",
-                      marginTop: "40px",
-                    }}
-                  >
-                    <Link
-                      href="/contact"
-                      className="btn-primary"
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      Book This Service <ArrowRight size={14} />
-                    </Link>
-                    <Link
-                      href="/services"
-                      className="btn-outline"
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <ArrowLeft size={13} /> All Services
-                    </Link>
-                  </div>
                 </AnimatedSection>
 
                 {/* Right — sticky image + meta */}

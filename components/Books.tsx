@@ -185,7 +185,7 @@ function BookCard({ book, delay }: { book: Product; delay: number }) {
               <p
                 style={{
                   fontSize: "12px",
-                  color: accent,
+                  color: "#6FB3C8",
                   marginTop: "4px",
                   fontStyle: "italic",
                   opacity: 0.8,
@@ -225,7 +225,11 @@ function BookCard({ book, delay }: { book: Product; delay: number }) {
             >
               {cheapest ? (
                 <span
-                  style={{ fontSize: "15px", fontWeight: 700, color: accent }}
+                  style={{
+                    fontSize: "15px",
+                    fontWeight: 700,
+                    color: "#6FB3C8",
+                  }}
                 >
                   {formatPrice(cheapest.price)}
                 </span>
@@ -238,7 +242,7 @@ function BookCard({ book, delay }: { book: Product; delay: number }) {
                   alignItems: "center",
                   gap: "4px",
                   fontSize: "11px",
-                  color: accent,
+                  color: "#6FB3C8",
                   fontWeight: 700,
                   letterSpacing: "0.06em",
                   textTransform: "uppercase",
