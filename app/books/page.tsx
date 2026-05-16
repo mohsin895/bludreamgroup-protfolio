@@ -122,7 +122,7 @@ function BookCard({ book, index }: { book: Product; index: number }) {
         display: "grid",
         gridTemplateColumns: "320px 1fr",
         gap: 0,
-        background: "#203647",
+        background: "#648181",
         overflow: "hidden",
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
       }}
@@ -132,44 +132,24 @@ function BookCard({ book, index }: { book: Product; index: number }) {
         style={{
           background: bgGrad ?? `linear-gradient(135deg, #0f0f14, #1a1520)`,
           display: "flex",
-          alignItems: "center",
+          alignItems: "stretch",
           justifyContent: "center",
-          padding: "48px 36px",
+          padding: "0",
           borderRight: "1px solid rgba(255,255,255,0.05)",
           position: "relative",
-          minHeight: "360px",
+          minHeight: "420px",
         }}
       >
-        {/* Badge */}
-        {book.genre && (
-          <div style={{ position: "absolute", top: "20px", left: "20px" }}>
-            <span
-              className="tag"
-              style={{
-                background: book.cover_accent
-                  ? `${book.cover_accent}22`
-                  : undefined,
-                borderColor: book.cover_accent
-                  ? `${book.cover_accent}44`
-                  : undefined,
-                color: book.cover_accent ?? undefined,
-              }}
-            >
-              {book.genre}
-            </span>
-          </div>
-        )}
-
         {/* Cover image or placeholder */}
         {hasImage ? (
           <div
             style={{
               width: "100%",
-              maxWidth: "180px",
-              aspectRatio: "2/3",
+              height: "100%",
               borderRadius: "6px",
               overflow: "hidden",
-              boxShadow: `0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06)`,
+              boxShadow:
+                "0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06)",
             }}
           >
             <img
@@ -207,21 +187,6 @@ function BookCard({ book, index }: { book: Product; index: number }) {
             />
           </div>
         )}
-
-        {/* Year strip */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: "20px",
-            right: "20px",
-            fontSize: "11px",
-            color: "rgba(255,255,255,0.3)",
-            letterSpacing: "0.12em",
-            fontWeight: 500,
-          }}
-        >
-          {book.year}
-        </div>
       </div>
 
       {/* Info Panel */}
@@ -235,7 +200,7 @@ function BookCard({ book, index }: { book: Product; index: number }) {
         <div
           style={{
             fontSize: "11px",
-            color: "var(--text-dim)",
+            color: "#fff9",
             letterSpacing: "0.12em",
             textTransform: "uppercase",
             fontWeight: 600,
@@ -271,22 +236,9 @@ function BookCard({ book, index }: { book: Product; index: number }) {
           </p>
         )}
 
-        {book.tagline && (
-          <p
-            style={{
-              fontSize: "13px",
-              color: "#fff",
-              marginTop: "10px",
-              letterSpacing: "0.04em",
-              fontStyle: "italic",
-            }}
-          >
-            &ldquo;{book.tagline}&rdquo;
-          </p>
-        )}
-
-        {book.short_description && (
-          <p
+        {book.description && (
+          <div
+            className="book-description"
             style={{
               fontSize: "14px",
               color: "#fff",
@@ -298,9 +250,10 @@ function BookCard({ book, index }: { book: Product; index: number }) {
               WebkitBoxOrient: "vertical",
               overflow: "hidden",
             }}
-          >
-            {book.short_description}
-          </p>
+            dangerouslySetInnerHTML={{
+              __html: book.description,
+            }}
+          />
         )}
 
         {/* Formats pricing pills */}
@@ -323,7 +276,7 @@ function BookCard({ book, index }: { book: Product; index: number }) {
                   borderRadius: "20px",
                   background: "rgba(255,255,255,0.04)",
                   border: "1px solid rgba(255,255,255,0.08)",
-                  color: "var(--text-muted)",
+                  color: "#fff",
                   display: "inline-flex",
                   alignItems: "center",
                   gap: "6px",
@@ -577,6 +530,15 @@ export default function BooksPage() {
             transform: translateY(-3px);
             box-shadow: 0 24px 60px rgba(0,0,0,0.4) !important;
           }
+            .book-description,
+.book-description * {
+  color: #fff !important;
+}
+
+.book-description p,
+.book-description span {
+  color: #fff !important;
+}
           @media(max-width: 900px) {
             .book-card {
               grid-template-columns: 1fr !important;

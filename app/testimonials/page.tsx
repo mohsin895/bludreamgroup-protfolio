@@ -90,7 +90,7 @@ function FeaturedSkeleton() {
   return (
     <div
       style={{
-        background: "#203647",
+        background: "#648181",
         border: "1px solid rgba(255,255,255,0.06)",
         borderRadius: "16px",
         padding: "clamp(32px, 4vw, 56px)",
@@ -534,7 +534,7 @@ export default function TestimonialsPage() {
         style={{
           borderTop: "1px solid rgba(255,255,255,0.05)",
           borderBottom: "1px solid rgba(255,255,255,0.05)",
-          background: "#203647",
+          background: "#648181",
           padding: "28px 0",
         }}
       >
@@ -671,7 +671,7 @@ export default function TestimonialsPage() {
       </section>
 
       {/* ── Filter + Grid ── */}
-      <section style={{ background: "#203647", padding: "56px 0 120px" }}>
+      <section style={{ background: "#648181", padding: "56px 0 120px" }}>
         <div className="container">
           {/* Filter row */}
           <AnimatedSection>

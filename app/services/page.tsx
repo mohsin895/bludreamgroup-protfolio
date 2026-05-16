@@ -32,7 +32,7 @@ function SkeletonCard() {
   return (
     <div
       style={{
-        background: "#203647",
+        background: "#648181",
         border: "1px solid rgba(130,195,216,0.15)",
         borderRadius: "10px",
         overflow: "hidden",
@@ -109,7 +109,7 @@ function ServiceCard({ service, i }: { service: MappedService; i: number }) {
         <div
           className="svc-card"
           style={{
-            background: "#203647",
+            background: "#648181",
             border: "1px solid rgba(130,195,216,0.15)",
             borderRadius: "10px",
             overflow: "hidden",
@@ -367,7 +367,7 @@ export default function ServicesPage({ params }: PageProps) {
       {/* ── Services grid ── */}
       <section
         style={{
-          background: "#203647",
+          background: "#648181",
           paddingTop: "64px",
           paddingBottom: "120px",
         }}

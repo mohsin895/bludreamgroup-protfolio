@@ -12,29 +12,17 @@ import { useEffect, useRef, useState } from "react";
 
 import { CartDrawer } from "@/components/CartDrawer";
 import { useSetting } from "@/hooks/useSetting";
-import { fetchServices, MappedService } from "@/lib/api/service";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 const primaryNav = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Books", href: "/books" },
   { label: "Blog", href: "/blog" },
-  {
-    label: "More",
-    href: "#",
-    children: [
-      { label: "Achievement", href: "/achievements" },
-      { label: "Media / Gallery", href: "/media" },
-      { label: "Testimonials", href: "/testimonials" },
-      { label: "Events", href: "/events" },
-      { label: "Courses", href: "/courses" },
-      { label: "Success Stories", href: "/success-stories" },
-      { label: "Shop", href: "/shop" },
-      { label: "FAQ", href: "/faq" },
-      { label: "Press", href: "/press" },
-      { label: "Resources", href: "/resources" },
-    ],
-  },
+  { label: "Courses", href: "/courses" },
+  { label: "Shop", href: "/shop" },
+  { label: "Achievement", href: "/achievements" },
+
   { label: "Contact", href: "/contact" },
 ];
 
@@ -47,8 +35,6 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const [services, setServices] = useState<MappedService[]>([]);
-  const [loadingServices, setLoadingServices] = useState(true);
 
   const pathname = usePathname();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -56,22 +42,6 @@ export default function Navbar() {
 
   const isHomePage = pathname === "/";
   const solidNav = !isHomePage || scrolled || isDrawerOpen;
-
-  // ── Fetch dynamic services ─────────────────────────────────────────────────
-  useEffect(() => {
-    const loadServices = async () => {
-      try {
-        const fetchedServices = await fetchServices();
-        setServices(fetchedServices);
-      } catch (error) {
-        console.error("Failed to fetch services:", error);
-        setServices([]);
-      } finally {
-        setLoadingServices(false);
-      }
-    };
-    loadServices();
-  }, []);
 
   // ── Hydration guard ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -94,29 +64,6 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // ── Build nav with dynamic services ────────────────────────────────────────
-  const navWithServices = [
-    primaryNav[0], // Home
-    primaryNav[1], // About
-    primaryNav[2], // Books
-    // Dynamic Services dropdown
-    ...(services.length > 0
-      ? [
-          {
-            label: "Services",
-            href: "/services",
-            children: services.map((service) => ({
-              label: service.title,
-              href: `/services/${service.slug}`,
-            })),
-          },
-        ]
-      : []),
-    primaryNav[3],
-    primaryNav[4],
-    primaryNav[5],
-  ];
-
   return (
     <>
       <nav
@@ -127,7 +74,7 @@ export default function Navbar() {
           right: 0,
           zIndex: 1000,
           transition: "all 0.4s ease",
-          background: solidNav ? "#203647" : "transparent",
+          background: solidNav ? "#648181" : "#648181",
           backdropFilter: solidNav ? "blur(20px)" : "none",
           borderBottom: solidNav
             ? "1px solid rgba(255,255,255,0.06)"
@@ -145,23 +92,15 @@ export default function Navbar() {
             }}
           >
             {/* Logo */}
-            <Link
-              href="/"
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "24px",
-                fontWeight: 500,
-                color: "#ffff",
-                textDecoration: "none",
-                letterSpacing: "-0.01em",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              <span style={{ color: "var(--gold)" }}>
-                {setting?.site_name ?? "Blue dream"}
-              </span>
+            <Link href="/">
+              <div style={{ width: 120, height: 40, position: "relative" }}>
+                <Image
+                  src="/logo.jpeg"
+                  alt="Logo"
+                  fill
+                  style={{ objectFit: "contain" }}
+                />
+              </div>
             </Link>
 
             {/* Desktop Nav */}
@@ -170,7 +109,7 @@ export default function Navbar() {
               style={{ display: "flex", alignItems: "center", gap: "2px" }}
               className="desktop-nav"
             >
-              {navWithServices.map((item) => (
+              {primaryNav.map((item) => (
                 <div key={item.label} style={{ position: "relative" }}>
                   {item.children ? (
                     <button
@@ -236,7 +175,7 @@ export default function Navbar() {
                         position: "absolute",
                         top: "calc(100% + 8px)",
                         left: "50%",
-                        background: "#203647",
+                        background: "#648181",
                         border: "1px solid rgba(255,255,255,0.08)",
                         borderRadius: "6px",
                         padding: "8px",
@@ -347,7 +286,7 @@ export default function Navbar() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "#203647",
+          background: "#648181",
           zIndex: 999,
           transform: mobileOpen ? "translateX(0)" : "translateX(100%)",
           transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
@@ -360,7 +299,7 @@ export default function Navbar() {
           style={{ paddingTop: "32px", paddingBottom: "32px" }}
         >
           <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            {navWithServices.map((item, i) => (
+            {primaryNav.map((item, i) => (
               <div key={item.label}>
                 {item.children ? (
                   <>

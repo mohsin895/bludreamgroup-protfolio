@@ -26,24 +26,19 @@ function BookCard({ book, delay }: { book: Product; delay: number }) {
         <div
           className="home-book-card card"
           style={{
-            background: "#1a2e3b",
+            background: "#284B63",
             border: "1px solid rgba(130,195,216,0.15)",
           }}
         >
           {/* Cover */}
           <div
+            className="home-book-card card"
             style={{
-              background: book.cover_color
-                ? `linear-gradient(150deg, ${book.cover_color}ee, ${book.cover_accent ?? book.cover_color}99)`
-                : "#203647",
-              aspectRatio: "3/4",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "36px",
-              borderBottom: "1px solid rgba(255,255,255,0.04)",
-              position: "relative",
+              backgroundImage: " url('/book-card-bg.jpg')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+
               overflow: "hidden",
             }}
           >
@@ -59,39 +54,10 @@ function BookCard({ book, delay }: { book: Product; delay: number }) {
               />
             )}
 
-            {/* Badge */}
-            {book.genre && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: "16px",
-                  right: "16px",
-                  zIndex: 2,
-                }}
-              >
-                <span
-                  className="tag"
-                  style={{
-                    background:
-                      accent !== "var(--gold)" ? `${accent}22` : undefined,
-                    borderColor:
-                      accent !== "var(--gold)" ? `${accent}55` : undefined,
-                    color: accent !== "var(--gold)" ? accent : undefined,
-                    fontSize: "9px",
-                  }}
-                >
-                  {book.genre}
-                </span>
-              </div>
-            )}
-
             {/* Cover image or placeholder */}
             {imgSrc ? (
               <div
                 style={{
-                  width: "100%",
-                  height: "200px",
-                  maxWidth: "130px",
                   position: "relative",
                   zIndex: 1,
                 }}
@@ -104,7 +70,7 @@ function BookCard({ book, delay }: { book: Product; delay: number }) {
                     height: "100%",
                     objectFit: "cover",
                     borderRadius: "4px",
-                    boxShadow: `0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(130,195,216,0.2)`,
+
                     display: "block",
                   }}
                 />
@@ -128,21 +94,6 @@ function BookCard({ book, delay }: { book: Product; delay: number }) {
                 <BookOpen size={36} style={{ color: accent, opacity: 0.3 }} />
               </div>
             )}
-
-            {/* Year chip */}
-            <div
-              style={{
-                position: "absolute",
-                bottom: "14px",
-                left: "14px",
-                fontSize: "10px",
-                color: "rgba(255,255,255,0.5)",
-                letterSpacing: "0.1em",
-                fontWeight: 600,
-              }}
-            >
-              {book.year}
-            </div>
           </div>
 
           {/* Info */}
@@ -321,7 +272,7 @@ export default function Books() {
   }, []);
 
   return (
-    <section className="section" style={{ background: "#203647" }}>
+    <section className="section" style={{ background: "#284B63" }}>
       <div className="container">
         {/* Header */}
         <AnimatedSection style={{ textAlign: "center", marginBottom: "56px" }}>
@@ -343,17 +294,6 @@ export default function Books() {
           >
             Books That Change Minds
           </h2>
-          {!loading && books.length > 0 && (
-            <p
-              style={{
-                color: "var(--text-dim)",
-                fontSize: "14px",
-                marginTop: "12px",
-              }}
-            >
-              {books.length} title{books.length !== 1 ? "s" : ""} available
-            </p>
-          )}
         </AnimatedSection>
 
         {/* Grid */}

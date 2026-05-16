@@ -1,18 +1,21 @@
 "use client"
 // app/checkout/page.tsx — Complete checkout using useCheckout hook
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import {
-    ShoppingBag, Check, AlertCircle, Loader2,
-} from "lucide-react"
 import AnimatedSection from "@/components/AnimatedSection"
-import Navbar          from "@/components/Navbar"
-import Footer          from "@/components/Footer"
-import { useCheckout, resolvePaymentMethods } from "@/hooks/useCheckout"
+import Footer from "@/components/Footer"
+import Navbar from "@/components/Navbar"
+import { resolvePaymentMethods, useCheckout } from "@/hooks/useCheckout"
 import { formatPrice } from "@/lib/api/orderApi"
-import { useAppSelector } from "@/store/hooks"
 import { selectCartItems, selectTotalItems } from "@/store/cartSlice"
+import { useAppSelector } from "@/store/hooks"
+import {
+    AlertCircle,
+    Check,
+    Loader2,
+    ShoppingBag,
+} from "lucide-react"
+import Link from "next/link"
+import { useEffect, useState } from "react"
 
 // ── Field ─────────────────────────────────────────────────────────────────────
 

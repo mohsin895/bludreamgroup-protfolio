@@ -574,7 +574,7 @@ function CourseCard({ c, i }: CourseCardProps): ReactNode {
         onMouseLeave={() => setHovered(false)}
         style={{
           position: "relative",
-          background: hovered ? "#203647" : "#203647",
+          background: hovered ? "#648181" : "#648181",
           border: `1px solid ${
             hovered ? c.color + "44" : "rgba(255,255,255,0.06)"
           }`,
@@ -1012,7 +1012,7 @@ export default function CoursesPage(): ReactNode {
           style={{
             borderTop: "1px solid rgba(255,255,255,0.05)",
             borderBottom: "1px solid rgba(255,255,255,0.05)",
-            background: "#203647",
+            background: "#648181",
             padding: "32px 0",
           }}
         >
@@ -1071,7 +1071,7 @@ export default function CoursesPage(): ReactNode {
       {!loading && featured && (
         <section
           style={{
-            background: "#203647",
+            background: "#648181",
             paddingTop: "80px",
             paddingBottom: "0",
           }}
@@ -1085,7 +1085,7 @@ export default function CoursesPage(): ReactNode {
       {/* ── Main Grid Section ── */}
       <section
         id="courses"
-        style={{ background: "#203647", padding: "56px 0 120px" }}
+        style={{ background: "#648181", padding: "56px 0 120px" }}
       >
         <div className="container">
           {/* Error State */}
@@ -1195,7 +1195,7 @@ export default function CoursesPage(): ReactNode {
                         padding: "7px 14px",
                         fontSize: "11px",
                         letterSpacing: "0.06em",
-                        background: activeLevel === lvl ? "#6FB3C8" : "#203647",
+                        background: activeLevel === lvl ? "#6FB3C8" : "#648181",
                         border: `1px solid ${
                           activeLevel === lvl ? "#6FB3C8" : "#6FB3C8"
                         }`,

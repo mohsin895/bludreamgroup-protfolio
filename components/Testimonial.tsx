@@ -21,7 +21,7 @@ function SkeletonCard() {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        background: "#284b63", // slightly lighter than #203647
+        background: "#284b63", // slightly lighter than #648181
         border: "1px solid rgba(255,255,255,0.08)",
       }}
     >
@@ -237,7 +237,7 @@ export default function Testimonial() {
   return (
     <>
       {/* ── TESTIMONIALS ── */}
-      <section className="section" style={{ background: "#203647" }}>
+      <section className="section" style={{ background: "#648181" }}>
         <div className="container">
           {/* Header */}
           <AnimatedSection

@@ -192,12 +192,10 @@ function Portrait({
   initials: string;
 }) {
   const [err, setErr] = useState(false);
-  const showImg = logoUrl && !err;
 
   return (
     <div
       style={{
-        background: showImg ? "transparent" : "#F4f7f6",
         border: "1px solid rgba(201,168,76,0.12)",
         borderRadius: "6px",
         aspectRatio: "4/5",
@@ -205,46 +203,22 @@ function Portrait({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        background: "#1b2b2b",
       }}
     >
-      {showImg ? (
-        <Image
-          src={logoUrl!}
-          alt="Portrait"
-          width={480}
-          height={600}
-          style={{ objectFit: "cover", width: "100%", height: "100%" }}
-          onError={() => setErr(true)}
-          priority
-        />
-      ) : (
-        <div
-          style={{
-            textAlign: "center",
-            color: "var(--text-muted)",
-            fontSize: "14px",
-          }}
-        >
-          <div
-            style={{
-              width: "80px",
-              height: "80px",
-              borderRadius: "50%",
-              background: "#fff",
-              margin: "0 auto 12px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontFamily: "var(--font-display)",
-              fontSize: "28px",
-              color: "var(--gold)",
-            }}
-          >
-            {initials}
-          </div>
-          Portrait Photo
-        </div>
-      )}
+      <Image
+        src="/chairman.jpeg"
+        alt="Portrait"
+        width={480}
+        height={600}
+        style={{
+          objectFit: "cover",
+          width: "100%",
+          height: "100%",
+        }}
+        onError={() => setErr(true)}
+        priority
+      />
     </div>
   );
 }
@@ -302,7 +276,7 @@ export default function AboutPage() {
       <PageHero title="About Us" currentPage="About" />
 
       {/* ── Bio section ── */}
-      <section style={{ background: "#203647", padding: "80px 0" }}>
+      <section style={{ background: "#648181", padding: "80px 0" }}>
         <div
           className="container"
           style={{
@@ -364,6 +338,7 @@ export default function AboutPage() {
                     fontFamily: "var(--font-display)",
                     fontSize: "38px",
                     marginBottom: "24px",
+                    color: "#fff",
                   }}
                 >
                   {about.aboutTitle}
@@ -414,6 +389,7 @@ export default function AboutPage() {
                         display: "inline-flex",
                         alignItems: "center",
                         gap: "8px",
+                        color: "#fff",
                       }}
                     >
                       <Download size={14} /> Press Kit

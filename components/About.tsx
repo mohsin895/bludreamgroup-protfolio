@@ -189,7 +189,7 @@ export default function About() {
             ) : (
               <div
                 style={{
-                  background: "#203647",
+                  background: "#648181",
                   border: "1px solid rgba(255,255,255,0.06)",
                   borderRadius: "6px",
                   padding: "48px",

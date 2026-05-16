@@ -966,7 +966,7 @@ export default function MediaGalleryPage() {
       </section>
 
       {/* Gallery Section */}
-      <section style={{ background: "#203647", padding: "64px 0 120px" }}>
+      <section style={{ background: "#648181", padding: "64px 0 120px" }}>
         <div className="container">
           <AnimatedSection>
             <div

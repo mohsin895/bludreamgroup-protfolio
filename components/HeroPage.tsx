@@ -98,9 +98,9 @@ export default function PageHero({
           position: relative;
           background: linear-gradient(
             135deg,
-            #203647 0%,
-            #203647 50%,
-            #203647 100%
+            #648181 0%,
+            #648181 50%,
+            #648181 100%
           );
           overflow: hidden;
           padding: 4rem 1.5rem 5rem;

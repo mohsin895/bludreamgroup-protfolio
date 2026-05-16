@@ -106,7 +106,7 @@ function ServiceCard({
             cursor: "pointer",
             display: "flex",
             flexDirection: "column",
-            background: "#203647",
+            background: "#648181",
             border: "1px solid rgba(130,195,216,0.15)",
           }}
         >

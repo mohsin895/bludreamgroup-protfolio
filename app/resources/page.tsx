@@ -31,7 +31,7 @@ function FeaturedResource({ resource }: { resource: Resource }) {
       <div
         style={{
           position: "relative",
-          background: "#203647",
+          background: "#648181",
           border: `1px solid ${color}33`,
           borderRadius: "16px",
           padding: "clamp(32px,4vw,56px)",
@@ -598,7 +598,7 @@ export default function ResourcesPage() {
         style={{
           borderTop: "1px solid rgba(255,255,255,0.05)",
           borderBottom: "1px solid rgba(255,255,255,0.05)",
-          background: "#203647",
+          background: "#648181",
           padding: "28px 0",
         }}
       >
@@ -653,7 +653,7 @@ export default function ResourcesPage() {
       {/* ── FEATURED ── */}
       <section
         style={{
-          background: "#203647",
+          background: "#648181",
           paddingTop: "80px",
           paddingBottom: "0",
         }}
@@ -678,7 +678,7 @@ export default function ResourcesPage() {
       {/* ── GRID ── */}
       <section
         id="resources"
-        style={{ background: "#203647", padding: "56px 0 120px" }}
+        style={{ background: "#648181", padding: "56px 0 120px" }}
       >
         <div className="container">
           {/* Filter bar */}

@@ -115,7 +115,7 @@ function StoryCard({ s, i }: { s: Story; i: number }) {
         onMouseLeave={() => setHovered(false)}
         style={{
           position: "relative",
-          background: "#203647",
+          background: "#648181",
           border: `1px solid ${hovered ? s.color + "55" : "rgba(255,255,255,0.06)"}`,
           borderRadius: "12px",
           padding: "36px",
@@ -283,7 +283,7 @@ function SkeletonCard() {
   return (
     <div
       style={{
-        background: "#203647",
+        background: "#648181",
         border: "1px solid rgba(255,255,255,0.06)",
         borderRadius: "12px",
         padding: "36px",
@@ -519,7 +519,7 @@ export default function SuccessStoriesPage() {
         style={{
           borderTop: "1px solid rgba(255,255,255,0.05)",
           borderBottom: "1px solid rgba(255,255,255,0.05)",
-          background: "#203647",
+          background: "#648181",
           padding: "56px 0",
         }}
       >
@@ -541,7 +541,7 @@ export default function SuccessStoriesPage() {
       {/* ── Filter Row ── */}
       <section
         style={{
-          background: "#203647",
+          background: "#648181",
           paddingTop: "72px",
           paddingBottom: "0",
         }}
@@ -603,7 +603,7 @@ export default function SuccessStoriesPage() {
       </section>
 
       {/* ── Cards Grid ── */}
-      <section style={{ background: "#203647", padding: "0 0 120px" }}>
+      <section style={{ background: "#648181", padding: "0 0 120px" }}>
         <div className="container">
           {/* Error state */}
           {error && !loading && (

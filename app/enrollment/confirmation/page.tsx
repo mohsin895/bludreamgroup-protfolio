@@ -1,9 +1,9 @@
 "use client";
-import { useState, useEffect, ReactNode } from "react";
-import { useSearchParams } from "next/navigation";
-import Link from "next/link";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { ReactNode, useEffect, useState } from "react";
 
 /* ─── Type Definitions ──────────────────────────────────────── */
 interface EnrollmentData {

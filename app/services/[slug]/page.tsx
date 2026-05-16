@@ -107,7 +107,7 @@ function RelatedCard({ service, i }: { service: MappedService; i: number }) {
         <div
           className="related-svc-card"
           style={{
-            background: "#203647",
+            background: "#648181",
             border: "1px solid rgba(130,195,216,0.15)",
             borderRadius: "10px",
             overflow: "hidden",
@@ -502,7 +502,7 @@ export default function ServiceDetailPage() {
                     <div
                       style={{
                         marginTop: "24px",
-                        background: "#203647",
+                        background: "#648181",
                         border: "1px solid rgba(130,195,216,0.15)",
                         borderRadius: "10px",
                         padding: "20px 24px",
@@ -576,7 +576,7 @@ export default function ServiceDetailPage() {
 
           {/* ── Related services ── */}
           {related.length > 0 && (
-            <section style={{ background: "#203647", padding: "80px 0" }}>
+            <section style={{ background: "#648181", padding: "80px 0" }}>
               <div className="container">
                 <AnimatedSection>
                   <div

@@ -275,7 +275,7 @@ function FeaturedProduct() {
       <div
         style={{
           position: "relative",
-          background: "#203647",
+          background: "#648181",
           border: "1px solid rgba(201,168,76,0.2)",
           borderRadius: "16px",
           padding: "clamp(28px, 4vw, 52px)",
@@ -487,7 +487,7 @@ function ProductCard({ p, i }: { p: (typeof products)[0]; i: number }) {
   const [added, setAdded] = useState(false);
   const soldOut = p.stock === "Sold Out";
   const bc = p.badge
-    ? (badgeColors[p.badge] ?? { color: "var(--gold)", bg: "#203647" })
+    ? (badgeColors[p.badge] ?? { color: "var(--gold)", bg: "#648181" })
     : null;
 
   return (
@@ -497,7 +497,7 @@ function ProductCard({ p, i }: { p: (typeof products)[0]; i: number }) {
         onMouseLeave={() => setHovered(false)}
         style={{
           position: "relative",
-          background: "#203647",
+          background: "#648181",
           border: `1px solid ${hovered && !soldOut ? p.color + "44" : ""}`,
           borderRadius: "12px",
           overflow: "hidden",
@@ -595,7 +595,7 @@ function ProductCard({ p, i }: { p: (typeof products)[0]; i: number }) {
         <div
           style={{
             height: "1px",
-            background: "#203647",
+            background: "#648181",
             margin: "16px 24px 0",
           }}
         />
@@ -815,7 +815,7 @@ export default function ShopPage() {
         style={{
           borderTop: "1px solid rgba(255,255,255,0.05)",
           borderBottom: "1px solid rgba(255,255,255,0.05)",
-          background: "#203647",
+          background: "#648181",
           padding: "28px 0",
         }}
       >
@@ -866,7 +866,7 @@ export default function ShopPage() {
       {/* ── Featured ── */}
       <section
         style={{
-          background: "#203647",
+          background: "#648181",
           paddingTop: "80px",
           paddingBottom: "0",
         }}
@@ -879,7 +879,7 @@ export default function ShopPage() {
       {/* ── Grid ── */}
       <section
         id="shop"
-        style={{ background: "#203647", padding: "56px 0 120px" }}
+        style={{ background: "#648181", padding: "56px 0 120px" }}
       >
         <div className="container">
           {/* Filter + Sort row */}

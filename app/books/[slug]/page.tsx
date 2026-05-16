@@ -857,7 +857,7 @@ export default function BookDetailPage() {
       </section>
 
       {related.length > 0 && (
-        <section style={{ background: "#0c0c0c", padding: "80px 0" }}>
+        <section style={{ background: "#fff9", padding: "80px 0" }}>
           <div className="container">
             <AnimatedSection>
               <div className="section-label" style={{ marginBottom: "8px" }}>

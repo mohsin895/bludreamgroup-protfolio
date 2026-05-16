@@ -7,15 +7,16 @@ const footerLinks = {
     { label: "Home", href: "/" },
     { label: "About", href: "/about" },
     { label: "Books", href: "/books" },
-    { label: "Services", href: "/services" },
     { label: "Blog", href: "/blog" },
+    { label: "Resources", href: "/resources" },
+    { label: "Events", href: "/events" },
   ],
   Resources: [
     { label: "Courses", href: "/courses" },
     { label: "Resources", href: "/resources" },
     { label: "Success Stories", href: "/success-stories" },
     { label: "FAQ", href: "/faq" },
-    { label: "Shop", href: "/shop" },
+    { label: "Success Stories", href: "/success-stories" },
   ],
   Media: [
     { label: "Gallery", href: "/media" },
@@ -38,7 +39,7 @@ export default function Footer() {
   return (
     <footer
       style={{
-        background: "#203647",
+        background: "#648181",
         borderTop: "1px solid rgba(255,255,255,0.06)",
         marginTop: "0",
       }}
@@ -46,7 +47,7 @@ export default function Footer() {
       {/* Newsletter strip */}
       <div
         style={{
-          background: "linear-gradient(135deg, #5FA8BF, #203647)",
+          background: "linear-gradient(135deg, #5FA8BF, #648181)",
           borderBottom: "1px solid rgba(201,168,76,0.12)",
           padding: "48px 0",
         }}
@@ -103,7 +104,7 @@ export default function Footer() {
               type="submit"
               className="btn-primary"
               style={{
-                background: "#203647",
+                background: "#648181",
                 color: "#fff",
                 borderRadius: "0 4px 4px 0",
               }}

@@ -650,7 +650,7 @@ export default function EventsPage() {
       <section
         className="section"
         style={{
-          background: "#203647",
+          background: "#648181",
           paddingTop: "64px",
           paddingBottom: "120px",
           marginBottom: "60px",

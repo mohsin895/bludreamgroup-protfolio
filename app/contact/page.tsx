@@ -113,7 +113,7 @@ export default function ContactPage() {
 
   const inputStyle = (field: string) => ({
     width: "100%",
-    background: focused === field ? "#203647" : "#fff9)",
+    background: focused === field ? "#648181" : "#fff9)",
     border: `1px solid ${focused === field ? "rgba(201,168,76,0.4)" : "rgba(255,255,255,0.08)"}`,
     borderRadius: "8px",
     padding: "14px 18px",
@@ -148,7 +148,7 @@ export default function ContactPage() {
       {/* ── Contact Form + FAQ ── */}
       <section
         style={{
-          background: "#203647",
+          background: "#648181",
           borderTop: "1px solid rgba(255,255,255,0.04)",
           padding: "100px 0",
         }}
@@ -339,32 +339,32 @@ export default function ContactPage() {
                       <option
                         value=""
                         disabled
-                        style={{ background: "#203647" }}
+                        style={{ background: "#648181" }}
                       >
                         Select a topic…
                       </option>
-                      <option value="general" style={{ background: "#203647" }}>
+                      <option value="general" style={{ background: "#648181" }}>
                         General Enquiry
                       </option>
-                      <option value="author" style={{ background: "#203647" }}>
+                      <option value="author" style={{ background: "#648181" }}>
                         Author Support
                       </option>
                       <option
                         value="portfolio"
-                        style={{ background: "#203647" }}
+                        style={{ background: "#648181" }}
                       >
                         Portfolio & Design
                       </option>
-                      <option value="press" style={{ background: "#203647" }}>
+                      <option value="press" style={{ background: "#648181" }}>
                         Press & Media
                       </option>
                       <option
                         value="partnership"
-                        style={{ background: "#203647" }}
+                        style={{ background: "#648181" }}
                       >
                         Partnership
                       </option>
-                      <option value="other" style={{ background: "#203647" }}>
+                      <option value="other" style={{ background: "#648181" }}>
                         Other
                       </option>
                     </select>

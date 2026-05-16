@@ -179,7 +179,7 @@ function PressCard({ item, delay }: { item: PressItem; delay: number }) {
         style={{
           padding: "0",
           overflow: "hidden",
-          background: "#203647",
+          background: "#648181",
           color: "#fff",
           transition: "transform 0.25s ease, border-color 0.25s ease",
           transform: hovered ? "translateY(-3px)" : "translateY(0)",
@@ -361,7 +361,7 @@ function SkeletonCard() {
   return (
     <div
       style={{
-        background: "#203647",
+        background: "#648181",
         border: "1px solid rgba(255,255,255,0.06)",
         borderRadius: "12px",
         padding: "28px",
@@ -574,7 +574,7 @@ export default function PressPage() {
       <section
         className="section"
         style={{
-          background: "#203647",
+          background: "#648181",
           paddingTop: "64px",
           paddingBottom: "120px",
         }}
@@ -783,7 +783,7 @@ export default function PressPage() {
                       borderRadius: "100px",
                       border: "1px solid",
                       borderColor:
-                        activeFilter === f.value ? "#203647" : "#6fb3c8",
+                        activeFilter === f.value ? "#648181" : "#6fb3c8",
                       background:
                         activeFilter === f.value ? "#6fb3c8" : "transparent",
                       color:
