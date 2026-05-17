@@ -3,477 +3,254 @@ import AnimatedSection from "@/components/AnimatedSection";
 import Footer from "@/components/Footer";
 import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
+import {
+  formatPrice,
+  getAllProducts,
+  imageUrl,
+  lowestPrice,
+  type Product,
+} from "@/lib/api/product";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-/* ─── Data ─────────────────────────────────────────────────── */
-const featured = {
-  id: 1,
-  title: "The Ink & Architecture Collection",
-  subtitle: "Limited Edition Hardcover Box Set",
-  description:
-    "Three volumes bound in cloth, foil-stamped and numbered. Includes original lithograph prints, a handwritten author note, and archival slipcase. Only 500 sets printed worldwide.",
-  price: "$189",
-  originalPrice: "$240",
-  badge: "Limited Edition",
-  stock: "47 remaining",
-  color: "#C9A84C",
-  bg: "rgba(201,168,76,0.08)",
-  tags: ["Hardcover", "Signed", "Box Set"],
-  formats: ["Box Set", "Ebook Bundle"],
-};
+/* ─── API Configuration ─────────────────────────────────────── */
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  "http://localhost/bludreamgroup-protfolio-api/public/api";
+const IMAGE_BASE_URL =
+  process.env.NEXT_PUBLIC_IMAGE_BASE_URL ||
+  "http://localhost/bludreamgroup-protfolio-api/public/";
 
-const products = [
-  {
-    id: 2,
-    category: "Fiction",
-    title: "The Cartographer's Daughter",
-    author: "Naomi Ashford",
-    price: "$18",
-    originalPrice: null,
-    badge: "Bestseller",
-    color: "#C9A84C",
-    bg: "rgba(201,168,76,0.08)",
-    format: "Paperback · Ebook",
-    pages: "342 pages",
-    rating: 4.9,
-    reviews: 1240,
-    stock: "In Stock",
-  },
-  {
-    id: 3,
-    category: "Design",
-    title: "Grid Systems & Visual Thought",
-    author: "Marcus Yuen",
-    price: "$34",
-    originalPrice: "$44",
-    badge: "Sale",
-    color: "#7DD4B0",
-    bg: "rgba(125,212,176,0.08)",
-    format: "Hardcover · PDF",
-    pages: "208 pages",
-    rating: 4.8,
-    reviews: 620,
-    stock: "In Stock",
-  },
-  {
-    id: 4,
-    category: "Non-Fiction",
-    title: "Publish, Then Polish",
-    author: "Sasha Orlova",
-    price: "$22",
-    originalPrice: null,
-    badge: "New",
-    color: "#8BA7E0",
-    bg: "rgba(139,167,224,0.08)",
-    format: "Paperback · Ebook",
-    pages: "264 pages",
-    rating: 4.7,
-    reviews: 390,
-    stock: "In Stock",
-  },
-  {
-    id: 5,
-    category: "Illustration",
-    title: "The Hand-Drawn Atlas",
-    author: "Theo Wainwright",
-    price: "$54",
-    originalPrice: null,
-    badge: "Sold Out",
-    color: "#C97B8C",
-    bg: "rgba(201,123,140,0.08)",
-    format: "Hardcover · Print",
-    pages: "180 pages",
-    rating: 5.0,
-    reviews: 214,
-    stock: "Sold Out",
-  },
-  {
-    id: 6,
-    category: "Photography",
-    title: "Borderlands: A Documentary",
-    author: "Emre Çelik",
-    price: "$48",
-    originalPrice: "$60",
-    badge: "Sale",
-    color: "#7DD4B0",
-    bg: "rgba(125,212,176,0.08)",
-    format: "Hardcover · Digital",
-    pages: "156 pages",
-    rating: 4.9,
-    reviews: 178,
-    stock: "In Stock",
-  },
-  {
-    id: 7,
-    category: "Fiction",
-    title: "Letters from the Margin",
-    author: "Layla Whitmore",
-    price: "$16",
-    originalPrice: null,
-    badge: null,
-    color: "#C9A84C",
-    bg: "rgba(201,168,76,0.08)",
-    format: "Paperback · Ebook",
-    pages: "298 pages",
-    rating: 4.6,
-    reviews: 542,
-    stock: "In Stock",
-  },
+/* ─── Unified Color Palette ─────────────────────────────────── */
+const colors = [
+  { color: "#C9A84C", bg: "rgba(201,168,76,0.08)" },
+  { color: "#7DD4B0", bg: "rgba(125,212,176,0.08)" },
+  { color: "#C97B8C", bg: "rgba(201,123,140,0.08)" },
+  { color: "#8BA7E0", bg: "rgba(139,167,224,0.08)" },
 ];
 
-const categories = [
-  "All",
-  "Fiction",
-  "Non-Fiction",
-  "Design",
-  "Illustration",
-  "Photography",
-];
-const sortOptions = ["Featured", "Price: Low–High", "Highest Rated", "Newest"];
-
-const badgeColors: Record<string, { color: string; bg: string }> = {
-  Bestseller: { color: "#C9A84C", bg: "rgba(201,168,76,0.12)" },
-  Sale: { color: "#7DD4B0", bg: "rgba(125,212,176,0.12)" },
-  New: { color: "#8BA7E0", bg: "rgba(139,167,224,0.12)" },
-  "Sold Out": { color: "rgba(255,255,255,0.3)", bg: "rgba(255,255,255,0.04)" },
-  "Limited Edition": { color: "#C9A84C", bg: "rgba(201,168,76,0.12)" },
+const levelColors = {
+  Beginner: { bg: "rgba(125,212,176,0.1)", color: "#7DD4B0" },
+  Intermediate: { bg: "rgba(139,167,224,0.1)", color: "#8BA7E0" },
+  Advanced: { bg: "rgba(201,123,140,0.1)", color: "#C97B8C" },
 };
 
-/* ─── Star Row ──────────────────────────────────────────────── */
-function Stars({ rating, reviews }: { rating: number; reviews: number }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-      <div style={{ display: "flex", gap: "2px" }}>
-        {Array.from({ length: 5 }).map((_, i) => (
-          <svg key={i} width="11" height="11" viewBox="0 0 14 14" fill="none">
-            <path
-              d="M7 1L8.545 4.955L12.5 5.18L9.5 7.855L10.545 11.75L7 9.5L3.455 11.75L4.5 7.855L1.5 5.18L5.455 4.955L7 1Z"
-              fill={
-                i < Math.floor(rating) ? "#C9A84C" : "rgba(255,255,255,0.12)"
-              }
-            />
-          </svg>
-        ))}
-      </div>
-      <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.3)" }}>
-        {rating} ({reviews.toLocaleString()})
-      </span>
-    </div>
-  );
-}
+/* ─── Book Card Component ────────────────────────────────────── */
+function BookCard({ book, index }: { book: Product; index: number }) {
+  const colorSet = colors[index % colors.length];
+  const cheapest = lowestPrice(book.formats);
+  const imgSrc = imageUrl(book.main_image?.medium ?? book.main_image?.original);
+  const hasImage = !!imgSrc;
+  const bgGrad = book.cover_color
+    ? `linear-gradient(135deg, ${book.cover_color}dd, ${book.cover_accent ?? book.cover_color}99)`
+    : undefined;
 
-/* ─── Book Cover Placeholder ────────────────────────────────── */
-function BookCover({
-  color,
-  title,
-  category,
-}: {
-  color: string;
-  title: string;
-  category: string;
-}) {
   return (
-    <div
-      style={{
-        width: "100%",
-        aspectRatio: "2/3",
-        background: `linear-gradient(135deg, ${color}18 0%, ${color}06 100%)`,
-        border: `1px solid ${color}22`,
-        borderRadius: "6px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "20px",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      {/* Spine line */}
+    <AnimatedSection delay={index * 0.06}>
       <div
-        style={{
-          position: "absolute",
-          left: "12px",
-          top: 0,
-          bottom: 0,
-          width: "3px",
-          background: `${color}30`,
-          borderRadius: "2px",
-        }}
-      />
-      {/* Category */}
-      <div
-        style={{
-          fontSize: "9px",
-          letterSpacing: "0.14em",
-          textTransform: "uppercase",
-          color: `${color}80`,
-          marginBottom: "12px",
-        }}
-      >
-        {category}
-      </div>
-      {/* Title lines */}
-      <div
-        style={{
-          width: "70%",
-          height: "2px",
-          background: `${color}40`,
-          borderRadius: "1px",
-          marginBottom: "6px",
-        }}
-      />
-      <div
-        style={{
-          width: "50%",
-          height: "2px",
-          background: `${color}25`,
-          borderRadius: "1px",
-          marginBottom: "6px",
-        }}
-      />
-      <div
-        style={{
-          width: "40%",
-          height: "2px",
-          background: `${color}15`,
-          borderRadius: "1px",
-        }}
-      />
-      {/* Center ornament */}
-      <div
-        style={{
-          marginTop: "20px",
-          width: "32px",
-          height: "32px",
-          borderRadius: "50%",
-          border: `1px solid ${color}30`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div
-          style={{
-            width: "12px",
-            height: "12px",
-            borderRadius: "50%",
-            background: `${color}30`,
-          }}
-        />
-      </div>
-    </div>
-  );
-}
-
-/* ─── Featured Product ──────────────────────────────────────── */
-function FeaturedProduct() {
-  const [added, setAdded] = useState(false);
-  return (
-    <AnimatedSection>
-      <div
+        className="card book-card"
         style={{
           position: "relative",
-          background: "#648181",
-          border: "1px solid rgba(201,168,76,0.2)",
-          borderRadius: "16px",
-          padding: "clamp(28px, 4vw, 52px)",
-          overflow: "hidden",
           display: "grid",
           gridTemplateColumns: "240px 1fr",
-          gap: "clamp(28px, 4vw, 56px)",
-          alignItems: "center",
+          gap: 0,
+          background: "#648181",
+          overflow: "hidden",
+          borderRadius: "12px",
+          transition: "all 0.32s cubic-bezier(0.16,1,0.3,1)",
+          border: `1px solid rgba(255,255,255,0.06)`,
         }}
       >
+        {/* Cover Panel */}
         <div
           style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "2px",
-            background: "linear-gradient(90deg, var(--gold), transparent)",
+            background: bgGrad ?? `linear-gradient(135deg, #0f0f14, #1a1520)`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+            borderRight: "1px solid rgba(255,255,255,0.05)",
+            position: "relative",
+            minHeight: "300px",
           }}
-        />
+        >
+          {hasImage ? (
+            <img
+              src={imgSrc}
+              alt={book.title}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: "block",
+                borderRadius: "6px",
+              }}
+              loading="lazy"
+            />
+          ) : (
+            <div
+              style={{
+                width: "100%",
+                maxWidth: "140px",
+                aspectRatio: "2/3",
+                background: `linear-gradient(135deg, ${book.cover_color ?? "#667eea"}22, ${book.cover_accent ?? "#f59e0b"}11)`,
+                border: `1px solid ${book.cover_color ?? "rgba(201,168,76,0.2)"}44`,
+                borderRadius: "6px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            />
+          )}
+        </div>
 
-        {/* Book cover */}
-        <BookCover
-          color={featured.color}
-          title={featured.title}
-          category="Limited Edition"
-        />
-
-        <div>
+        {/* Info Panel */}
+        <div
+          style={{
+            padding: "28px",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              marginBottom: "16px",
-              flexWrap: "wrap",
+              fontSize: "11px",
+              color: "#fff9",
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              fontWeight: 600,
+              marginBottom: "8px",
             }}
           >
-            <span
-              style={{
-                fontSize: "10px",
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                color: "var(--gold)",
-              }}
-            >
-              Featured
-            </span>
-            <span
-              style={{
-                fontSize: "10px",
-                padding: "3px 10px",
-                background: badgeColors["Limited Edition"].bg,
-                borderRadius: "100px",
-                color: badgeColors["Limited Edition"].color,
-                letterSpacing: "0.08em",
-              }}
-            >
-              {featured.badge}
-            </span>
+            {[book.author, book.year, book.pages ? `${book.pages} pages` : null]
+              .filter(Boolean)
+              .join(" · ")}
           </div>
 
-          <h2
+          <h3
             style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "clamp(20px, 2.5vw, 30px)",
+              fontSize: "clamp(16px, 1.5vw, 20px)",
               color: "#fff",
-              letterSpacing: "-0.02em",
-              lineHeight: 1.15,
+              letterSpacing: "-0.01em",
+              lineHeight: 1.25,
               margin: "0 0 8px",
             }}
           >
-            {featured.title}
-          </h2>
-          <p
-            style={{
-              fontSize: "14px",
-              color: "rgba(255,255,255,0.35)",
-              marginBottom: "16px",
-            }}
-          >
-            {featured.subtitle}
-          </p>
-          <p
-            style={{
-              fontSize: "14px",
-              lineHeight: 1.75,
-              color: "rgba(255,255,255,0.5)",
-              marginBottom: "24px",
-              maxWidth: "480px",
-            }}
-          >
-            {featured.description}
-          </p>
+            {book.title}
+          </h3>
 
-          {/* Stock warning */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              marginBottom: "24px",
-            }}
-          >
-            <div
+          {book.subtitle && (
+            <p
               style={{
-                width: "6px",
-                height: "6px",
-                borderRadius: "50%",
-                background: "#C9A84C",
-              }}
-            />
-            <span
-              style={{
-                fontSize: "12px",
-                color: "rgba(201,168,76,0.8)",
-                letterSpacing: "0.04em",
+                fontSize: "13px",
+                color: book.cover_accent ?? "#fff",
+                marginBottom: "12px",
+                fontStyle: "italic",
               }}
             >
-              {featured.stock}
-            </span>
-          </div>
+              {book.subtitle}
+            </p>
+          )}
+
+          {book.description && (
+            <p
+              style={{
+                fontSize: "12px",
+                lineHeight: 1.6,
+                color: "rgba(255,255,255,0.6)",
+                marginBottom: "16px",
+                flex: 1,
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+              dangerouslySetInnerHTML={{
+                __html: book.description,
+              }}
+            />
+          )}
 
           {/* Formats */}
+          {book.formats?.length > 0 && (
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "6px",
+                marginBottom: "16px",
+              }}
+            >
+              {book.formats.map((f) => (
+                <span
+                  key={f.id}
+                  style={{
+                    fontSize: "10px",
+                    fontWeight: 600,
+                    padding: "4px 10px",
+                    borderRadius: "16px",
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    color: "#fff",
+                    letterSpacing: "0.04em",
+                  }}
+                >
+                  {f.label} · {formatPrice(f.price)}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Divider */}
           <div
             style={{
-              display: "flex",
-              gap: "8px",
-              marginBottom: "28px",
-              flexWrap: "wrap",
+              height: "1px",
+              background: "rgba(255,255,255,0.05)",
+              margin: "12px 0",
             }}
-          >
-            {featured.formats.map((f, idx) => (
-              <div
-                key={f}
-                style={{
-                  padding: "7px 14px",
-                  background: idx === 0 ? "#fff" : "transparent",
-                  border: `1px solid ${idx === 0 ? "rgba(201,168,76,0.4)" : "#fff"}`,
-                  borderRadius: "6px",
-                  fontSize: "12px",
-                  color: idx === 0 ? "var(--gold)" : "#fff",
-                  cursor: "pointer",
-                }}
-              >
-                {f}
-              </div>
-            ))}
-          </div>
+          />
 
+          {/* Footer */}
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "20px",
-              flexWrap: "wrap",
+              justifyContent: "space-between",
+              gap: "12px",
             }}
           >
-            <div>
+            {cheapest && (
               <span
                 style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "28px",
+                  fontSize: "16px",
                   fontWeight: 700,
                   color: "#fff",
                 }}
               >
-                {featured.price}
+                {formatPrice(cheapest.price)}
               </span>
-              <span
-                style={{
-                  fontSize: "14px",
-                  color: "#",
-                  textDecoration: "line-through",
-                  marginLeft: "8px",
-                }}
-              >
-                {featured.originalPrice}
-              </span>
-            </div>
-            <button
-              onClick={() => setAdded(true)}
+            )}
+            <Link
+              href={`/books/${book.slug}`}
               style={{
-                padding: "13px 28px",
-                background: added ? "#6FB3C8" : "var(--gold)",
-                border: added ? "1px solid rgba(125,212,176,0.4)" : "none",
-                borderRadius: "6px",
+                padding: "8px 14px",
+                background: colorSet.color,
+                border: `1px solid ${colorSet.color}44`,
+                borderRadius: "5px",
+                fontSize: "11px",
                 fontWeight: 700,
-                fontSize: "13px",
-                letterSpacing: "0.06em",
+                letterSpacing: "0.07em",
                 textTransform: "uppercase",
-                color: added ? "#fff" : "#ffff",
+                color: "#fff",
+                textDecoration: "none",
                 cursor: "pointer",
-                transition: "all 0.3s ease",
+                transition: "all 0.25s ease",
+                whiteSpace: "nowrap",
+                display: "inline-block",
               }}
             >
-              {added ? " Added to Cart" : "Add to Cart"}
-            </button>
+              View Book
+            </Link>
           </div>
         </div>
       </div>
@@ -481,129 +258,129 @@ function FeaturedProduct() {
   );
 }
 
-/* ─── Product Card ──────────────────────────────────────────── */
-function ProductCard({ p, i }: { p: (typeof products)[0]; i: number }) {
-  const [hovered, setHovered] = useState(false);
-  const [added, setAdded] = useState(false);
-  const soldOut = p.stock === "Sold Out";
-  const bc = p.badge
-    ? (badgeColors[p.badge] ?? { color: "var(--gold)", bg: "#648181" })
-    : null;
+/* ─── Course Card Component ──────────────────────────────────── */
+function CourseCard({ course, index }) {
+  const colorSet = colors[index % colors.length];
+  const levelColor = levelColors[course.level] || levelColors.Beginner;
 
   return (
-    <AnimatedSection delay={i * 0.07}>
+    <AnimatedSection delay={index * 0.06}>
       <div
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
         style={{
           position: "relative",
           background: "#648181",
-          border: `1px solid ${hovered && !soldOut ? p.color + "44" : ""}`,
+          border: `1px solid rgba(255,255,255,0.06)`,
           borderRadius: "12px",
           overflow: "hidden",
+          padding: "28px",
           display: "flex",
           flexDirection: "column",
           height: "100%",
           transition: "all 0.32s cubic-bezier(0.16,1,0.3,1)",
-          transform: hovered && !soldOut ? "translateY(-4px)" : "translateY(0)",
-          opacity: soldOut ? 0.65 : 1,
         }}
       >
         {/* Top bar */}
         <div
           style={{
             height: "3px",
-            background: `linear-gradient(90deg, ${p.color}, transparent)`,
-            opacity: hovered && !soldOut ? 1 : 0.3,
-            transition: "opacity 0.3s ease",
+            background: `linear-gradient(90deg, ${colorSet.color}, transparent)`,
+            marginBottom: "16px",
+            borderRadius: "2px",
           }}
         />
 
-        {/* Cover area */}
-        <div style={{ padding: "24px 24px 0", position: "relative" }}>
-          {bc && (
-            <div
-              style={{
-                position: "absolute",
-                top: "32px",
-                right: "32px",
-                zIndex: 1,
-                fontSize: "9px",
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                padding: "4px 10px",
-                background: bc.bg,
-                borderRadius: "100px",
-                color: bc.color,
-                fontWeight: 600,
-              }}
-            >
-              {p.badge}
-            </div>
-          )}
-          <BookCover color="#fff" title={p.title} category={p.category} />
-        </div>
-
+        {/* Category + Level */}
         <div
           style={{
-            padding: "20px 24px 0",
-            flex: 1,
             display: "flex",
-            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: "12px",
           }}
         >
-          <div
+          <span
             style={{
               fontSize: "10px",
               letterSpacing: "0.12em",
               textTransform: "uppercase",
-              color: p.color,
-              marginBottom: "6px",
+              color: colorSet.color,
             }}
           >
-            {p.category}
-          </div>
-          <h3
+            {course.category}
+          </span>
+          <span
             style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "clamp(15px, 1.2vw, 17px)",
-              color: "#fff",
-              letterSpacing: "-0.01em",
-              lineHeight: 1.25,
-              margin: "0 0 4px",
+              fontSize: "9px",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              padding: "3px 10px",
+              background: levelColor.bg,
+              borderRadius: "100px",
+              color: levelColor.color,
             }}
           >
-            {p.title}
-          </h3>
-          <p style={{ fontSize: "12px", color: "#fff", marginBottom: "12px" }}>
-            {p.author}
-          </p>
-          <Stars rating={p.rating} reviews={p.reviews} />
-          <p
-            style={{
-              fontSize: "11px",
-              color: "#fff",
-              marginTop: "8px",
-              marginBottom: "0",
-            }}
-          >
-            {p.format} · {p.pages}
-          </p>
+            {course.level}
+          </span>
         </div>
+
+        {/* Title */}
+        <h3
+          style={{
+            fontSize: "clamp(17px, 1.2vw, 20px)",
+            color: "#fff",
+            letterSpacing: "-0.01em",
+            lineHeight: 1.25,
+            margin: "0 0 8px",
+          }}
+        >
+          {course.title}
+        </h3>
+
+        {/* Subtitle */}
+        <p style={{ fontSize: "13px", color: "#fff9", marginBottom: "12px" }}>
+          {course.subtitle}
+        </p>
+
+        {/* Meta */}
+        <div
+          style={{
+            fontSize: "12px",
+            color: "#fff8",
+            marginBottom: "16px",
+            display: "flex",
+            gap: "12px",
+            flexWrap: "wrap",
+          }}
+        >
+          <span>◷ {course.duration}</span>
+          <span>▤ {course.lessons} lessons</span>
+        </div>
+
+        {/* Description */}
+        <p
+          style={{
+            fontSize: "13px",
+            lineHeight: 1.6,
+            color: "rgba(255,255,255,0.6)",
+            marginBottom: "20px",
+            flex: 1,
+          }}
+        >
+          {course.description.substring(0, 100)}...
+        </p>
 
         {/* Divider */}
         <div
           style={{
             height: "1px",
-            background: "#648181",
-            margin: "16px 24px 0",
+            background: "rgba(255,255,255,0.05)",
+            margin: "16px 0",
           }}
         />
 
         {/* Footer */}
         <div
           style={{
-            padding: "16px 24px 24px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -613,85 +390,205 @@ function ProductCard({ p, i }: { p: (typeof products)[0]; i: number }) {
           <div>
             <span
               style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "20px",
+                fontSize: "18px",
                 fontWeight: 700,
-                color: soldOut ? "#fff" : "#fff",
+                color: "#fff",
               }}
             >
-              {p.price}
+              {course.price}
             </span>
-            {p.originalPrice && (
-              <span
+            {course.originalPrice && (
+              <div
                 style={{
-                  fontSize: "12px",
-                  color: "#fff9",
+                  fontSize: "11px",
+                  color: "#fff8",
                   textDecoration: "line-through",
-                  marginLeft: "6px",
                 }}
               >
-                {p.originalPrice}
-              </span>
+                {course.originalPrice}
+              </div>
             )}
           </div>
-          {soldOut ? (
-            <span
-              style={{
-                borderRadius: "5px",
-                fontSize: "11px",
-                padding: "9px 16px",
-                border: "1px solid #fff9",
-                letterSpacing: "0.08em",
-                color: "#fff",
-                textTransform: "uppercase",
-              }}
-            >
-              Sold Out
-            </span>
-          ) : (
-            <button
-              onClick={() => setAdded(true)}
-              style={{
-                padding: "9px 16px",
-                background: added ? "#6FB3C8" : hovered ? "#6FB3C8" : "#fff)",
-                border: added
-                  ? "1px solid #6FB3C8"
-                  : `1px solid ${hovered ? "#6FB3C8" : "#fff"}`,
-                borderRadius: "5px",
-                fontSize: "11px",
-                fontWeight: 700,
-                letterSpacing: "0.07em",
-                textTransform: "uppercase",
-                color: added ? "#fff" : hovered ? "#fff" : "#fff",
-                cursor: "pointer",
-                transition: "all 0.25s ease",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {added ? "Added" : "Add to Cart"}
-            </button>
-          )}
+          <Link
+            href={`/enrollment?courseId=${course.id}`}
+            style={{
+              padding: "9px 16px",
+              background: colorSet.color,
+              border: `1px solid ${colorSet.color}44`,
+              borderRadius: "5px",
+              fontSize: "11px",
+              fontWeight: 700,
+              letterSpacing: "0.07em",
+              textTransform: "uppercase",
+              color: "#fff",
+              textDecoration: "none",
+              cursor: "pointer",
+              transition: "all 0.25s ease",
+              whiteSpace: "nowrap",
+              display: "inline-block",
+            }}
+          >
+            Enroll
+          </Link>
         </div>
       </div>
     </AnimatedSection>
   );
 }
 
-/* ─── Page ───────────────────────────────────────────────────── */
-export default function ShopPage() {
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [activeSort, setActiveSort] = useState("Featured");
-  const [cartCount, setCartCount] = useState(0);
+/* ─── Skeleton Loader ────────────────────────────────────────── */
+function CardSkeleton() {
+  return (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "240px 1fr",
+        gap: 0,
+        background: "#648181",
+        border: "1px solid rgba(255,255,255,0.06)",
+        borderRadius: "12px",
+        overflow: "hidden",
+        animation: "pulse 2s infinite",
+      }}
+    >
+      {/* Left panel (image) */}
+      <div
+        style={{
+          background: "rgba(255,255,255,0.05)",
+          minHeight: "300px",
+        }}
+      />
+      {/* Right panel (info) */}
+      <div
+        style={{
+          padding: "28px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "16px",
+        }}
+      >
+        <div
+          style={{
+            height: "12px",
+            background: "rgba(255,255,255,0.1)",
+            borderRadius: "4px",
+            width: "80px",
+          }}
+        />
+        <div
+          style={{
+            height: "20px",
+            background: "rgba(255,255,255,0.1)",
+            borderRadius: "4px",
+            width: "60%",
+          }}
+        />
+        <div
+          style={{
+            height: "12px",
+            background: "rgba(255,255,255,0.05)",
+            borderRadius: "4px",
+            width: "40%",
+            marginTop: "8px",
+          }}
+        />
+        <div
+          style={{
+            height: "60px",
+            background: "rgba(255,255,255,0.05)",
+            borderRadius: "4px",
+            marginTop: "auto",
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+/* ─── Main Shop Page Component ───────────────────────────────── */
+export default function UnifiedShopPage() {
+  const [books, setBooks] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [loadingBooks, setLoadingBooks] = useState(true);
+  const [loadingCourses, setLoadingCourses] = useState(true);
+  const [errorBooks, setErrorBooks] = useState(null);
+  const [errorCourses, setErrorCourses] = useState(null);
+
+  /* ─── Fetch Books from Product API ──────────────────────── */
+  useEffect(() => {
+    async function fetchBooks() {
+      try {
+        setLoadingBooks(true);
+        const data = await getAllProducts();
+        setBooks(data);
+      } catch (err) {
+        setErrorBooks("Failed to load books");
+        console.error("Error fetching books:", err);
+      } finally {
+        setLoadingBooks(false);
+      }
+    }
+    fetchBooks();
+  }, []);
+
+  /* ─── Fetch Courses ──────────────────────────────────────── */
+  useEffect(() => {
+    async function fetchCourses() {
+      try {
+        setLoadingCourses(true);
+        const response = await fetch(`${API_BASE_URL}/course`);
+        if (!response.ok) throw new Error("Failed to fetch courses");
+
+        const data = await response.json();
+        if (data.status && Array.isArray(data.data)) {
+          const normalized = data.data
+            .filter((c) => c.status === "active")
+            .slice(0, 4)
+            .map((course, index) => ({
+              id: course.id,
+              title: course.title,
+              subtitle: course.short_description || "Learn professional skills",
+              category:
+                course.course_type === "video"
+                  ? "Video Course"
+                  : course.course_type === "pdf"
+                    ? "PDF Course"
+                    : "Online Learning",
+              level: ["Beginner", "Intermediate", "Advanced"][index % 3],
+              duration: "6 weeks",
+              lessons: 8 + (course.id % 20),
+              price: `$${parseFloat(course.price || 0).toFixed(2)}`,
+              originalPrice:
+                course.discount_price &&
+                parseFloat(course.discount_price) < parseFloat(course.price)
+                  ? `$${parseFloat(course.price).toFixed(2)}`
+                  : null,
+              description:
+                course.description?.replace(/<[^>]*>/g, "") ||
+                course.short_description ||
+                "Professional course",
+            }));
+          setCourses(normalized);
+        }
+      } catch (err) {
+        setErrorCourses("Failed to load courses");
+      } finally {
+        setLoadingCourses(false);
+      }
+    }
+    fetchCourses();
+  }, []);
 
   return (
     <>
       <Navbar />
-      <PageHero title="Shop Page" currentPage="Shop" />
-      {/* ── Hero ── */}
+      <PageHero title="Shop" currentPage="Shop" />
+
+      {/* ── Hero Section ── */}
       <section
         style={{
-          paddingTop: "50px",
-          paddingBottom: "50px",
+          paddingTop: "20px",
+          paddingBottom: "20px",
           background: "var(--bg)",
           position: "relative",
           overflow: "hidden",
@@ -743,7 +640,6 @@ export default function ShopPage() {
 
             <h1
               style={{
-                fontFamily: "var(--font-display)",
                 fontSize: "clamp(44px, 6.5vw, 88px)",
                 lineHeight: 1,
                 letterSpacing: "-0.03em",
@@ -752,7 +648,7 @@ export default function ShopPage() {
                 margin: "0 0 24px",
               }}
             >
-              Books worth
+              Books & Courses
               <br />
               <span
                 style={{
@@ -760,7 +656,7 @@ export default function ShopPage() {
                   WebkitTextStroke: "1px rgba(201,168,76,0.55)",
                 }}
               >
-                owning.
+                worth exploring.
               </span>
             </h1>
 
@@ -773,192 +669,197 @@ export default function ShopPage() {
                 marginBottom: "40px",
               }}
             >
-              Curated titles across fiction, design, illustration, and
-              photography — from independent authors and small presses
-              worldwide.
+              Curated titles and courses on creative publishing, design,
+              illustration, and digital craft — from independent creators and
+              professionals worldwide.
             </p>
-
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-                flexWrap: "wrap",
-              }}
-            >
-              <Link
-                href="#shop"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "14px 28px",
-                  background: "var(--gold)",
-                  color: "#0a0a0a",
-                  borderRadius: "6px",
-                  fontWeight: 700,
-                  fontSize: "13px",
-                  letterSpacing: "0.06em",
-                  textDecoration: "none",
-                  textTransform: "uppercase",
-                }}
-              >
-                Browse Books ↓
-              </Link>
-            </div>
           </AnimatedSection>
         </div>
       </section>
 
-      {/* ── Stats Bar ── */}
-      <section
-        style={{
-          borderTop: "1px solid rgba(255,255,255,0.05)",
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
-          background: "#648181",
-          padding: "28px 0",
-        }}
-      >
-        <div className="container">
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "clamp(24px, 5vw, 72px)",
-              flexWrap: "wrap",
-            }}
-          >
-            {[
-              { value: "2.1M+", label: "Books Sold" },
-              { value: "480+", label: "Titles Available" },
-              { value: "Free", label: "Shipping over $60" },
-              { value: "30 Days", label: "Return Policy" },
-            ].map((s) => (
-              <div key={s.label} style={{ textAlign: "center" }}>
-                <div
-                  style={{
-                    fontSize: "26px",
-                    fontWeight: 700,
-                    color: "#fff",
-                    letterSpacing: "-0.02em",
-                  }}
-                >
-                  {s.value}
-                </div>
-                <div
-                  style={{
-                    fontSize: "11px",
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    color: "#fff",
-                    marginTop: "4px",
-                  }}
-                >
-                  {s.label}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Featured ── */}
+      {/* ── Books Section ── */}
       <section
         style={{
           background: "#648181",
           paddingTop: "80px",
-          paddingBottom: "0",
+          paddingBottom: "80px",
         }}
       >
         <div className="container">
-          <FeaturedProduct />
-        </div>
-      </section>
-
-      {/* ── Grid ── */}
-      <section
-        id="shop"
-        style={{ background: "#648181", padding: "56px 0 120px" }}
-      >
-        <div className="container">
-          {/* Filter + Sort row */}
           <AnimatedSection>
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "space-between",
-                flexWrap: "wrap",
-                gap: "16px",
+                gap: "10px",
                 marginBottom: "40px",
               }}
             >
-              {/* Category filters */}
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                {categories.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setActiveCategory(cat)}
-                    style={{
-                      padding: "7px 16px",
-                      fontSize: "12px",
-                      letterSpacing: "0.06em",
-                      background:
-                        activeCategory === cat ? "#6FB3C8" : "transparent",
-                      border: `1px solid ${activeCategory === cat ? "rgba(201,168,76,0.35)" : "rgba(255,255,255,0.08)"}`,
-                      borderRadius: "100px",
-                      color: activeCategory === cat ? "#fff" : "#fff",
-                      cursor: "pointer",
-                      transition: "all 0.2s ease",
-                    }}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-
-              {/* Sort */}
-              <select
-                value={activeSort}
-                onChange={(e) => setActiveSort(e.target.value)}
+              <span
                 style={{
-                  padding: "7px 14px",
-                  background: "#6FB3C8",
-                  border: "1px solid #6FB3C8",
-                  borderRadius: "6px",
-                  color: "#fff",
-                  fontSize: "12px",
-                  letterSpacing: "0.04em",
-                  cursor: "pointer",
-                  outline: "none",
+                  display: "inline-block",
+                  width: "24px",
+                  height: "1px",
+                  background: "var(--gold)",
+                }}
+              />
+              <span
+                style={{
+                  fontSize: "11px",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "var(--gold)",
                 }}
               >
-                {sortOptions.map((o) => (
-                  <option key={o} value={o} style={{ background: "#6FB3C8" }}>
-                    {o}
-                  </option>
-                ))}
-              </select>
+                Published Books
+              </span>
             </div>
           </AnimatedSection>
 
-          {/* Cards */}
-          <div
+          <h2
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-              gap: "20px",
+              fontSize: "clamp(32px, 4vw, 52px)",
+              color: "#fff",
+              letterSpacing: "-0.02em",
+              lineHeight: 1.1,
+              marginBottom: "48px",
             }}
           >
-            {products.map((p, i) => (
-              <ProductCard key={p.id} p={p} i={i} />
-            ))}
-          </div>
+            Discover Our Collection
+          </h2>
+
+          {errorBooks && (
+            <div
+              style={{
+                textAlign: "center",
+                padding: "40px 20px",
+                color: "rgba(255,255,255,0.5)",
+              }}
+            >
+              <p>{errorBooks}</p>
+            </div>
+          )}
+
+          {loadingBooks ? (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "40px",
+              }}
+            >
+              {[1, 2, 3, 4].map((i) => (
+                <CardSkeleton key={i} />
+              ))}
+            </div>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "48px",
+              }}
+            >
+              {books.map((book, i) => (
+                <BookCard key={book.id} book={book} index={i} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* ── CTA ── */}
+      {/* ── Courses Section ── */}
+      <section
+        style={{
+          background: "#648181",
+          paddingTop: "80px",
+          paddingBottom: "120px",
+        }}
+      >
+        <div className="container">
+          <AnimatedSection>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                marginBottom: "40px",
+              }}
+            >
+              <span
+                style={{
+                  display: "inline-block",
+                  width: "24px",
+                  height: "1px",
+                  background: "var(--gold)",
+                }}
+              />
+              <span
+                style={{
+                  fontSize: "11px",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "var(--gold)",
+                }}
+              >
+                Learn & Master
+              </span>
+            </div>
+          </AnimatedSection>
+
+          <h2
+            style={{
+              fontSize: "clamp(32px, 4vw, 52px)",
+              color: "#fff",
+              letterSpacing: "-0.02em",
+              lineHeight: 1.1,
+              marginBottom: "48px",
+            }}
+          >
+            Professional Courses
+          </h2>
+
+          {errorCourses && (
+            <div
+              style={{
+                textAlign: "center",
+                padding: "40px 20px",
+                color: "rgba(255,255,255,0.5)",
+              }}
+            >
+              <p>{errorCourses}</p>
+            </div>
+          )}
+
+          {loadingCourses ? (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                gap: "20px",
+              }}
+            >
+              {[1, 2, 3, 4].map((i) => (
+                <CardSkeleton key={i} />
+              ))}
+            </div>
+          ) : (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                gap: "20px",
+              }}
+            >
+              {courses.map((course, i) => (
+                <CourseCard key={course.id} course={course} index={i} />
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ── CTA Section ── */}
       <section
         style={{
           background: "#fff",
@@ -980,7 +881,6 @@ export default function ShopPage() {
               />
               <h2
                 style={{
-                  fontFamily: "var(--font-display)",
                   fontSize: "clamp(28px, 3.5vw, 44px)",
                   color: "#000",
                   letterSpacing: "-0.03em",
@@ -988,7 +888,7 @@ export default function ShopPage() {
                   margin: "0 0 20px",
                 }}
               >
-                Sell your book here.
+                Create with us.
               </h2>
               <p
                 style={{
@@ -998,8 +898,8 @@ export default function ShopPage() {
                   marginBottom: "36px",
                 }}
               >
-                Are you an author or small press? List your titles in our
-                curated shop and reach readers who care about craft.
+                Are you an author, designer, or educator? List your books and
+                teach courses to reach a community of creative professionals.
               </p>
               <div
                 style={{
@@ -1021,7 +921,6 @@ export default function ShopPage() {
                     borderRadius: "6px",
                     fontWeight: 700,
                     fontSize: "13px",
-                    border: "1px solid #fff",
                     letterSpacing: "0.08em",
                     textDecoration: "none",
                     textTransform: "uppercase",
@@ -1030,7 +929,7 @@ export default function ShopPage() {
                   Start Selling
                 </Link>
                 <Link
-                  href="/success-stories"
+                  href="/teach"
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
@@ -1045,7 +944,7 @@ export default function ShopPage() {
                     textTransform: "uppercase",
                   }}
                 >
-                  Read Success Stories
+                  Teach a Course
                 </Link>
               </div>
             </div>
@@ -1054,6 +953,30 @@ export default function ShopPage() {
       </section>
 
       <Footer />
+
+      <style>{`
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 clamp(16px, 4vw, 40px);
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.6; }
+        }
+        .book-card:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 24px 60px rgba(0,0,0,0.4) !important;
+        }
+        @media(max-width: 768px) {
+          .book-card {
+            grid-template-columns: 1fr !important;
+          }
+          .book-card > div:first-child {
+            min-height: 260px !important;
+          }
+        }
+      `}</style>
     </>
   );
 }

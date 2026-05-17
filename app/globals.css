@@ -19,7 +19,7 @@ html {
   --primary-light: #a8d6e5;
   --primary-dim: rgba(130, 195, 216, 0.15);
 
-  --text: #203647;
+  --text: #648181;
   --text-muted: #5f6f7a;
   --text-dim: #8fa3ad;
 
@@ -40,7 +40,7 @@ html {
 
 body {
   background: #f4f7f6;
-  color: #203647;
+  color: #648181;
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.7;
@@ -221,6 +221,6 @@ h6 {
 .marquee-track {
   animation: marquee 30s linear infinite;
 }
-.drawer-card{
-    z-index: 1000;
+.drawer-card {
+  z-index: 1000;
 }

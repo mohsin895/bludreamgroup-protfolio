@@ -1,12 +1,8 @@
 "use client";
 
-import {
-  selectIsDrawerOpen,
-  selectTotalItems,
-  toggleDrawer,
-} from "@/store/cartSlice";
+import { selectIsDrawerOpen, selectTotalItems } from "@/store/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { ChevronDown, Menu, ShoppingCart, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -74,7 +70,7 @@ export default function Navbar() {
           right: 0,
           zIndex: 1000,
           transition: "all 0.4s ease",
-          background: solidNav ? "#648181" : "#648181",
+          background: solidNav ? "#F7F7F7" : "#F7F7F7",
           backdropFilter: solidNav ? "blur(20px)" : "none",
           borderBottom: solidNav
             ? "1px solid rgba(255,255,255,0.06)"
@@ -110,7 +106,10 @@ export default function Navbar() {
               className="desktop-nav"
             >
               {primaryNav.map((item) => (
-                <div key={item.label} style={{ position: "relative" }}>
+                <div
+                  key={item.label}
+                  style={{ position: "relative", color: "#000" }}
+                >
                   {item.children ? (
                     <button
                       onClick={() =>
@@ -131,9 +130,8 @@ export default function Navbar() {
                         fontWeight: 500,
                         letterSpacing: "0.04em",
                         color:
-                          activeDropdown === item.label ? "#82c3d8" : "#ffffff",
+                          activeDropdown === item.label ? "#82c3d8" : "#000",
                         transition: "color 0.2s",
-                        fontFamily: "var(--font-body)",
                       }}
                       onMouseEnter={() => setActiveDropdown(item.label)}
                     >
@@ -158,7 +156,7 @@ export default function Navbar() {
                         fontSize: "13px",
                         fontWeight: 500,
                         letterSpacing: "0.04em",
-                        color: pathname === item.href ? "#82c3d8" : "#ffffff",
+                        color: pathname === item.href ? "#82c3d8" : "#000",
                         textDecoration: "none",
                         transition: "color 0.2s",
                       }}
@@ -202,7 +200,7 @@ export default function Navbar() {
                             padding: "9px 16px",
                             fontSize: "13px",
                             fontWeight: 400,
-                            color: "#ffff",
+                            color: "#000",
                             textDecoration: "none",
                             borderRadius: "4px",
                             transition: "all 0.15s",
@@ -218,7 +216,7 @@ export default function Navbar() {
               ))}
 
               {/* Cart */}
-              <button
+              {/* <button
                 onClick={() => dispatch(toggleDrawer())}
                 className="relative flex items-center gap-2 cursor-pointer text-sm text-white hover:text-[#82c3d8] transition-colors"
                 aria-label="Open cart"
@@ -232,7 +230,7 @@ export default function Navbar() {
                   )}
                 </div>
                 <span>Cart</span>
-              </button>
+              </button> */}
 
               <Link
                 href="/contact"

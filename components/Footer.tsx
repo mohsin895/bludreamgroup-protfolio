@@ -127,19 +127,6 @@ export default function Footer() {
         >
           {/* Brand */}
           <div>
-            <Link
-              href="/"
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "28px",
-                color: "#fff",
-                textDecoration: "none",
-                display: "block",
-                marginBottom: "20px",
-              }}
-            >
-              <span style={{ color: "var(--gold)" }}>Blue</span> Dream
-            </Link>
             <p
               style={{
                 fontSize: "14px",
@@ -240,7 +227,7 @@ export default function Footer() {
         <div
           style={{
             marginTop: "60px",
-            paddingTop: "24px",
+            paddingTop: "14px",
             borderTop: "1px solid rgba(255,255,255,0.05)",
             display: "flex",
             alignItems: "center",
@@ -249,8 +236,42 @@ export default function Footer() {
             gap: "16px",
           }}
         >
-          <p style={{ fontSize: "12px", color: "#fff" }}>
-            © {new Date().getFullYear()} blue dream. All rights reserved.
+          <p
+            style={{
+              fontSize: "0.82rem",
+              color: "#ffffffcc",
+              margin: 0,
+              textAlign: "center",
+              lineHeight: 1.7,
+            }}
+          >
+            © 2010 - {new Date().getFullYear()}{" "}
+            <strong style={{ color: "#fff" }}>
+              KSM Shopnil Chowdhury Shohag
+            </strong>
+            . All Rights Reserved. <br className="sm:hidden" />
+            Powered by{" "}
+            <a
+              href="https://nelsistech.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: "#fff",
+                fontWeight: 600,
+                textDecoration: "none",
+                borderBottom: "1px solid rgba(255,255,255,0.4)",
+                paddingBottom: "1px",
+                transition: "0.3s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = "0.8";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = "1";
+              }}
+            >
+              Nelsis Tech
+            </a>
           </p>
           <div style={{ display: "flex", gap: "24px" }}>
             {["Privacy Policy", "Terms of Service", "Cookie Policy"].map(
