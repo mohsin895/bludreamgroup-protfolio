@@ -1,6 +1,5 @@
 "use client";
 
-import AnimatedSection from "@/components/AnimatedSection";
 import Footer from "@/components/Footer";
 import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
@@ -10,273 +9,29 @@ import {
   type ApiBlogCategory,
   type MappedBlog,
 } from "@/lib/api/blog";
-import { AlertCircle } from "lucide-react";
+
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-
-// ─── Skeleton card ────────────────────────────────────────────────────────────
-
-function SkeletonCard() {
-  return (
-    <div
-      className="post-card"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "12px",
-        pointerEvents: "none",
-      }}
-    >
-      <div
-        style={{
-          width: "60px",
-          height: "10px",
-          borderRadius: "2px",
-          background: "rgba(184,147,58,0.15)",
-          animation: "shimmer 1.5s ease-in-out infinite",
-        }}
-      />
-      <div
-        style={{
-          width: "90%",
-          height: "18px",
-          borderRadius: "2px",
-          background: "var(--border)",
-          animation: "shimmer 1.5s ease-in-out infinite 0.1s",
-        }}
-      />
-      <div
-        style={{
-          width: "75%",
-          height: "18px",
-          borderRadius: "2px",
-          background: "rgba(14,13,11,0.06)",
-          animation: "shimmer 1.5s ease-in-out infinite 0.15s",
-        }}
-      />
-      <div
-        style={{
-          width: "100%",
-          height: "13px",
-          borderRadius: "2px",
-          background: "rgba(14,13,11,0.05)",
-          animation: "shimmer 1.5s ease-in-out infinite 0.2s",
-        }}
-      />
-      <div
-        style={{
-          width: "85%",
-          height: "13px",
-          borderRadius: "2px",
-          background: "rgba(14,13,11,0.05)",
-          animation: "shimmer 1.5s ease-in-out infinite 0.25s",
-        }}
-      />
-      <div
-        style={{ height: "1px", background: "var(--border)", margin: "8px 0" }}
-      />
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <div
-          style={{
-            width: "120px",
-            height: "11px",
-            borderRadius: "2px",
-            background: "rgba(14,13,11,0.06)",
-            animation: "shimmer 1.5s ease-in-out infinite 0.3s",
-          }}
-        />
-        <div
-          style={{
-            width: "28px",
-            height: "28px",
-            borderRadius: "50%",
-            background: "rgba(14,13,11,0.06)",
-            animation: "shimmer 1.5s ease-in-out infinite 0.35s",
-          }}
-        />
-      </div>
-    </div>
-  );
-}
-
-function SkeletonFeatured() {
-  return (
-    <section className="featured-strip">
-      <div className="container" style={{ padding: 0 }}>
-        <div className="featured-inner">
-          {/* Left dark panel */}
-          <div className="featured-left" style={{ justifyContent: "flex-end" }}>
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "14px" }}
-            >
-              <div
-                style={{
-                  width: "100px",
-                  height: "10px",
-                  borderRadius: "2px",
-                  background: "rgba(255,255,255,0.1)",
-                  animation: "shimmer 1.5s ease-in-out infinite",
-                }}
-              />
-              <div
-                style={{
-                  width: "85%",
-                  height: "28px",
-                  borderRadius: "2px",
-                  background: "rgba(255,255,255,0.08)",
-                  animation: "shimmer 1.5s ease-in-out infinite 0.1s",
-                }}
-              />
-              <div
-                style={{
-                  width: "70%",
-                  height: "28px",
-                  borderRadius: "2px",
-                  background: "rgba(255,255,255,0.06)",
-                  animation: "shimmer 1.5s ease-in-out infinite 0.15s",
-                }}
-              />
-              <div
-                style={{
-                  width: "95%",
-                  height: "13px",
-                  borderRadius: "2px",
-                  background: "rgba(255,255,255,0.05)",
-                  animation: "shimmer 1.5s ease-in-out infinite 0.2s",
-                }}
-              />
-              <div
-                style={{
-                  width: "80%",
-                  height: "13px",
-                  borderRadius: "2px",
-                  background: "rgba(255,255,255,0.04)",
-                  animation: "shimmer 1.5s ease-in-out infinite 0.25s",
-                }}
-              />
-            </div>
-          </div>
-          {/* Right light panel */}
-          <div className="featured-right">
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "12px" }}
-            >
-              <div
-                style={{
-                  width: "80px",
-                  height: "10px",
-                  borderRadius: "2px",
-                  background: "#fff",
-                  animation: "shimmer 1.5s ease-in-out infinite",
-                }}
-              />
-              <div
-                style={{
-                  width: "90%",
-                  height: "22px",
-                  borderRadius: "2px",
-                  background: "rgba(14,13,11,0.06)",
-                  animation: "shimmer 1.5s ease-in-out infinite 0.1s",
-                }}
-              />
-              <div
-                style={{
-                  width: "70%",
-                  height: "22px",
-                  borderRadius: "2px",
-                  background: "rgba(14,13,11,0.05)",
-                  animation: "shimmer 1.5s ease-in-out infinite 0.15s",
-                }}
-              />
-              <div
-                style={{
-                  width: "100%",
-                  height: "13px",
-                  borderRadius: "2px",
-                  background: "rgba(14,13,11,0.05)",
-                  animation: "shimmer 1.5s ease-in-out infinite 0.2s",
-                }}
-              />
-              <div
-                style={{
-                  width: "85%",
-                  height: "13px",
-                  borderRadius: "2px",
-                  background: "rgba(14,13,11,0.04)",
-                  animation: "shimmer 1.5s ease-in-out infinite 0.25s",
-                }}
-              />
-              <div
-                style={{
-                  width: "130px",
-                  height: "44px",
-                  borderRadius: "2px",
-                  background: "var(--border)",
-                  marginTop: "12px",
-                  animation: "shimmer 1.5s ease-in-out infinite 0.3s",
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── Post thumbnail ───────────────────────────────────────────────────────────
-
-function PostThumbnail({ url, title }: { url: string | null; title: string }) {
-  const [err, setErr] = useState(false);
-  if (!url || err) return null;
-  return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        borderRadius: "2px",
-        overflow: "hidden",
-        marginBottom: "4px",
-        background: "rgba(14,13,11,0.05)",
-      }}
-    >
-      <Image
-        src={url}
-        alt={title}
-        width={480}
-        height={180}
-        style={{ objectFit: "cover", width: "100%", height: "100%" }}
-        onError={() => setErr(true)}
-      />
-    </div>
-  );
-}
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function BlogPage() {
   const [posts, setPosts] = useState<MappedBlog[]>([]);
   const [categories, setCategories] = useState<ApiBlogCategory[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState("All");
-  const [email, setEmail] = useState("");
 
   async function loadData() {
     try {
       setLoading(true);
-      setError(null);
+
       const [blogs, cats] = await Promise.all([
         fetchBlogs(),
         fetchBlogCategories(),
       ]);
+
       setPosts(blogs);
       setCategories(cats.filter((c) => c.status === "active"));
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to load blog posts.",
-      );
     } finally {
       setLoading(false);
     }
@@ -286,303 +41,311 @@ export default function BlogPage() {
     loadData();
   }, []);
 
-  const featured = useMemo(
-    () => posts.find((p) => p.featured) ?? posts[0],
-    [posts],
-  );
-  const rest = useMemo(
-    () => posts.filter((p) => p.id !== featured?.id),
-    [posts, featured],
-  );
-
-  // Build category pill labels from API
   const categoryLabels = useMemo(() => {
     const inPosts = new Set(posts.map((p) => p.category));
+
     return [
       "All",
       ...categories.filter((c) => inPosts.has(c.title)).map((c) => c.title),
     ];
   }, [posts, categories]);
 
-  const filtered = useMemo(
-    () =>
-      activeCategory === "All"
-        ? rest
-        : rest.filter((p) => p.category === activeCategory),
-    [rest, activeCategory],
-  );
+  const filteredPosts = useMemo(() => {
+    if (activeCategory === "All") return posts;
+
+    return posts.filter((p) => p.category === activeCategory);
+  }, [posts, activeCategory]);
 
   return (
     <>
-      <style>{`
-   
-        :root {
-  --bg: #F4F7F6;
-  --card: #648181;
-  --gold: #c9a84c;
-  --text: rgba(255,255,255,0.7);
-  --muted: rgba(255,255,255,0.45);
-  --border: rgba(130,195,216,0.15);
-}
-        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); }
-
-        .blog-hero { padding: 160px 0 80px; background: var(--ink); position: relative; overflow: hidden; }
-        .blog-hero::before {
-          content: '"'; position: absolute; right: 5%; top: -40px;
-          font-family: 'Playfair Display', serif; font-size: 420px;
-          color: rgba(255,255,255,0.03); line-height: 1; pointer-events: none; user-select: none;
-        }
-        .hero-label {
-          font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
-          color: var(--gold); margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
-        }
-        .hero-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--gold); }
-        .hero-title { font-family:'Playfair Display',serif; font-size:clamp(52px,7vw,96px); color:#000; line-height:0.95; font-weight:400; margin:0 0 24px; }
-        .hero-title em { font-style:italic; color:var(--gold); }
-        .hero-sub { color:#000; font-size:15px; font-weight:300; max-width:400px; line-height:1.8; margin:0 0 40px; }
-        .hero-back { display:inline-flex; align-items:center; gap:8px; color:#000; font-size:13px; text-decoration:none; transition:color 0.2s; }
-        .hero-back:hover { color:#000; }
-
-        .featured-strip { background:#648181; border-bottom:1px solid var(--border); }
-        .featured-inner { display:grid; grid-template-columns:1fr 1fr; min-height:420px; }
-        @media(max-width:768px){ .featured-inner { grid-template-columns:1fr; } }
-        .featured-left {
-          background:var(--ink); padding:56px 48px; display:flex; flex-direction:column;
-          justify-content:flex-end; position:relative; overflow:hidden;
-        }
-        .featured-left::after {
-          content:''; position:absolute; inset:0;
-          background:#648181,transparent 60%); pointer-events:none;
-        }
-        .featured-tag {
-          display:inline-block; font-size:10px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase;
-          color:var(--gold); border:1px solid rgba(184,147,58,0.35); padding:4px 10px; border-radius:2px; margin-bottom:20px; width:fit-content;
-        }
-        .featured-title { font-family:'Playfair Display',serif; font-size:clamp(24px,3vw,36px); color:#fff; line-height:1.25; font-weight:600; margin:0 0 16px; }
-        .featured-excerpt { color:rgba(255,255,255,0.5); font-size:14px; line-height:1.8; font-weight:300; margin:0 0 28px; }
-        .featured-meta { display:flex; align-items:center; gap:16px; font-size:12px; color:rgba(255,255,255,0.3); letter-spacing:0.05em; flex-wrap:wrap; }
-        .featured-meta span::before { content:'·'; margin-right:16px; }
-        .featured-meta span:first-child::before { display:none; }
-        .featured-right { padding:56px 0px 0px 40px; display:flex; flex-direction:column; justify-content:center; border-left:1px solid var(--border); }
-        .featured-right-label { font-size:10px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:#fff; margin-bottom:24px; }
-        .read-btn {
-          display:inline-flex; align-items:center; gap:10px; background:#6FB3C8; color:#fff;
-          padding:14px 24px; font-size:13px; font-weight:500; letter-spacing:0.06em; text-decoration:none;
-          border-radius:2px; transition:background 0.2s, gap 0.2s; width:fit-content; margin-top:24px;
-        }
-        .read-btn:hover { background:#6FB3C8; gap:14px; }
-
-        .filter-bar { padding:32px 0; border-bottom:1px solid #E9ECEB; background:#E9ECEB; position:sticky; top:0; z-index:10; }
-        .filter-scroll { display:flex; gap:4px; overflow-x:auto; scrollbar-width:none; }
-        .filter-scroll::-webkit-scrollbar { display:none; }
-        .filter-btn {
-          flex-shrink:0; background:transparent; border:1px solid transparent; padding:7px 18px;
-          font-size:13px; font-weight:400; color:var(--muted); border-radius:2px; cursor:pointer;
-          font-family:'DM Sans',sans-serif; letter-spacing:0.02em; transition:all 0.18s;
-        }
-        .filter-btn:hover { color:var(--ink); border-color:var(--border); }
-        .filter-btn.active { background:var(--ink); color:#fff; border-color:var(--ink); }
-
-        .posts-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1px; background:var(--border); }
-        .post-card {
-          background:var(--parchment); padding:36px 32px; display:flex; flex-direction:column;
-          gap:12px; transition:background 0.2s; cursor:pointer; text-decoration:none; color:inherit;
-        }
-        .post-card:hover { background:#fff; }
-        .post-card-tag {
-          display:inline-block; font-size:10px; font-weight:500; letter-spacing:0.15em; text-transform:uppercase;
-          color:var(--gold); background:var(--gold-light); padding:3px 8px; border-radius:2px; width:fit-content;
-        }
-        .post-card-title { font-family:'Playfair Display',serif; font-size:19px; font-weight:600; line-height:1.3; color:#000; margin:4px 0; flex:1; }
-        .post-card-excerpt { font-size:14px; color:#000; line-height:1.75; font-weight:300; }
-        .post-card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:8px; padding-top:16px; border-top:1px solid #0002; }
-        .post-card-meta { font-size:12px; color:#000; display:flex; gap:12px; }
-        .post-arrow {
-          width:28px; height:28px; border-radius:50%; border:1px solid #000;
-          display:flex; align-items:center; justify-content:center; font-size:14px; color:#000;
-          transition:all 0.2s; flex-shrink:0;
-        }
-        .post-card:hover .post-arrow { background:var(--ink); color:#000; border-color:var(--ink); }
-        .empty-state { padding:80px 32px; text-align:center; color:var(--muted); font-size:15px; background:var(--parchment); grid-column:1/-1; }
-
-        .newsletter-strip { background:#f4f7f6; padding:80px 0; text-align:center; }
-        .newsletter-eyebrow { font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:16px; }
-        .newsletter-title { font-family:'Playfair Display',serif; font-size:clamp(28px,4vw,48px); color:#000; font-weight:400; margin:0 0 12px; }
-        .newsletter-title em { font-style:italic; color:var(--gold); }
-        .newsletter-sub { color:#0001; font-size:14px; font-weight:300; margin-bottom:36px; }
-        .newsletter-form { display:flex; gap:0; max-width:400px; margin:0 auto; border:1px solid #0009; border-radius:2px; overflow:hidden; }
-        .newsletter-input { flex:1; background:rgba(255,255,255,0.06); border:none; padding:14px 18px; font-size:14px; color:#000; font-family:'DM Sans',sans-serif; outline:none; }
-        .newsletter-input::placeholder { color:rgba(255,255,255,0.25); }
-        .newsletter-submit { background:var(--gold); border:none; padding:14px 22px; font-size:13px; font-weight:500; color:#000; font-family:'DM Sans',sans-serif; cursor:pointer; transition:opacity 0.2s; letter-spacing:0.05em; }
-        .newsletter-submit:hover { opacity:0.85; }
-
-        .container { max-width:1160px; margin:0 auto; padding:0 24px; }
-
-        @keyframes shimmer { 0%,100%{opacity:0.5} 50%{opacity:1} }
-      `}</style>
-
       <Navbar />
 
-      {/* ── Hero ── */}
-      <PageHero title="Our Blog" currentPage="Blogs" />
+      <PageHero title="Our Blog" currentPage="Blog" />
 
-      {/* ── Featured Post ── */}
-      {loading && <SkeletonFeatured />}
+      <section className="blog-section">
+        <div className="container">
+          {/* category buttons */}
+          <motion.div
+            className="category-wrap"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            {categoryLabels.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`category-btn ${
+                  activeCategory === cat ? "active" : ""
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </motion.div>
 
-      {!loading && !error && featured && (
-        <section className="featured-strip">
-          <div className="container" style={{ padding: 0 }}>
-            <div className="featured-inner">
-              <div className="featured-left">
-                <div className="featured-tag">Featured Essay</div>
-                <h2 className="featured-title">{featured.title}</h2>
-                <p className="featured-excerpt">{featured.excerpt}</p>
-                <div className="featured-meta">
-                  <span>{featured.date}</span>
-                  <span>{featured.readTime}</span>
-                  <span>{featured.category}</span>
-                </div>
-              </div>
-              <div className="featured-right">
-                <div className="featured-right-label">Latest essay</div>
-                <h3
+          {/* blog list */}
+          <div className="blog-list">
+            {filteredPosts.map((post, index) => (
+              <motion.div
+                key={post.id}
+                initial={{ opacity: 0, y: 70 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{
+                  duration: 0.7,
+                  delay: index * 0.08,
+                  ease: "easeOut",
+                }}
+              >
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="blog-card flex gap-8 items-center"
                   style={{
-                    fontFamily: "'Playfair Display',serif",
-                    fontSize: "22px",
-                    fontWeight: 600,
-                    lineHeight: 1.3,
-                    marginBottom: "12px",
-                    color: "#fff",
+                    margin: "40px 0px",
                   }}
                 >
-                  {featured.title}
-                </h3>
-                <p
-                  style={{
-                    fontSize: "14px",
-                    color: "var(--muted)",
-                    lineHeight: 1.75,
-                    fontWeight: 300,
-                  }}
-                >
-                  {featured.excerpt}
-                </p>
-                <Link href={`/blog/${featured.slug}`} className="read-btn">
-                  Read Essay →
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── Error ── */}
-      {!loading && error && (
-        <div
-          style={{
-            background: "var(--parchment)",
-            padding: "48px 24px",
-            textAlign: "center",
-          }}
-        >
-          <AlertCircle
-            size={32}
-            style={{ color: "#c0392b", marginBottom: "12px", opacity: 0.6 }}
-          />
-          <p
-            style={{
-              color: "var(--muted)",
-              fontSize: "15px",
-              marginBottom: "20px",
-            }}
-          >
-            {error}
-          </p>
-          <button
-            onClick={loadData}
-            style={{
-              padding: "10px 24px",
-              background: "var(--ink)",
-              color: "#fff",
-              border: "none",
-              borderRadius: "2px",
-              fontSize: "13px",
-              cursor: "pointer",
-              fontFamily: "inherit",
-              letterSpacing: "0.06em",
-            }}
-          >
-            Try Again
-          </button>
-        </div>
-      )}
-
-      {/* ── Filter Bar ── */}
-      {!loading && !error && (
-        <div className="filter-bar">
-          <div className="container">
-            <div className="filter-scroll">
-              {categoryLabels.map((cat) => (
-                <button
-                  key={cat}
-                  className={`filter-btn${activeCategory === cat ? " active" : ""}`}
-                  onClick={() => setActiveCategory(cat)}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Posts Grid ── */}
-      <section
-        style={{ background: "var(--parchment)", paddingBottom: "30px" }}
-      >
-        <div className="container" style={{ padding: 0 }}>
-          {loading ? (
-            <div className="posts-grid">
-              {[1, 2, 3, 4, 5, 6].map((n) => (
-                <SkeletonCard key={n} />
-              ))}
-            </div>
-          ) : (
-            !error && (
-              <div className="posts-grid">
-                {filtered.length === 0 ? (
-                  <div className="empty-state">
-                    No posts in this category yet.
+                  {/* image */}
+                  <div className="blog-image">
+                    <Image
+                      src={post.imageUrl || "/placeholder.jpg"}
+                      alt={post.title}
+                      fill
+                    />
                   </div>
-                ) : (
-                  filtered.map((post, i) => (
-                    <AnimatedSection key={post.id} delay={i * 0.06}>
-                      <Link
-                        href={`/blog/${post.slug}`}
-                        className="post-card"
-                        style={{ display: "flex" }}
-                      >
-                        <PostThumbnail url={post.imageUrl} title={post.title} />
-                        <span className="post-card-tag">{post.tag}</span>
-                        <h3 className="post-card-title">{post.title}</h3>
-                        <p className="post-card-excerpt">{post.excerpt}</p>
-                        <div className="post-card-footer">
-                          <div className="post-card-meta">
-                            <span>{post.date}</span>
-                            <span>{post.readTime}</span>
-                          </div>
-                          <div className="post-arrow">→</div>
-                        </div>
-                      </Link>
-                    </AnimatedSection>
-                  ))
-                )}
-              </div>
-            )
-          )}
+
+                  {/* content */}
+                  <div className="blog-content">
+                    <span className="blog-category">{post.category}</span>
+
+                    <h2 className="hover:text-white">{post.title}</h2>
+
+                    <p>{post.excerpt}</p>
+
+                    <div className="blog-footer">
+                      <div className="meta">
+                        <span>{post.date}</span>
+                        <span>{post.readTime}</span>
+                      </div>
+
+                      <motion.div whileHover={{ x: 5 }} className="read-btn">
+                        Continue Reading →
+                      </motion.div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
+
       <Footer />
+
+      <style>{`
+        .blog-section {
+          background: #f4f7f6;
+          padding: 80px 0;
+        }
+
+        .container {
+          max-width: 1280px;
+          margin: auto;
+          padding: 0 20px;
+        }
+
+        .category-wrap {
+          display: flex;
+          gap: 12px;
+          flex-wrap: wrap;
+          margin-bottom: 60px;
+        }
+
+        .category-btn {
+          border: 1px solid #d8d8d8;
+          background: transparent;
+          padding: 10px 20px;
+          border-radius: 50px;
+          cursor: pointer;
+          transition: 0.3s;
+          font-size: 14px;
+          margin-bottom: 20px;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+          background: #6fb3c8;
+          color: white;
+          border-color: #648181;
+        }
+
+        .blog-image {
+          width: 320px;
+          min-width: 320px;
+          height: 220px;
+          position: relative;
+          overflow: hidden;
+          border-radius: 12px;
+          flex-shrink: 0;
+        }
+        .blog-card {
+          display: flex;
+          align-items: center;
+          gap: 35px;
+          text-decoration: none;
+          padding: 28px;
+          border-radius: 24px;
+          transition: all 0.45s ease;
+          background: transparent;
+          overflow: hidden;
+          position: relative;
+        }
+        .blog-card:hover {
+          background: #648181;
+          transform: scale(1.02);
+          box-shadow: 0 20px 50px rgba(100, 129, 129, 0.2);
+        }
+
+        .blog-card:hover .blog-image img {
+          transform: scale(1.12) rotate(1deg);
+        }
+        .blog-image img {
+          object-fit: cover;
+          transition: transform 0.7s ease;
+        }
+        .blog-card:hover h2 {
+        color:#fff}
+        
+        .blog-card:hover p,
+        .blog-card:hover .meta,
+        .blog-card:hover .blog-category {
+          color: #fff;
+        }
+        .blog-card:hover .read-btn {
+          background: #fff;
+          border-color: #fff;
+          color: #648181;
+        }
+
+        .blog-image img {
+          object-fit: cover;
+          transition: 0.6s;
+        }
+
+        .blog-category {
+          font-size: 12px;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          color: #b28c52;
+          display: inline-block;
+          margin-bottom: 14px;
+        }
+
+        .blog-content h2 {
+          font-size: 32px;
+          line-height: 1.3;
+          margin-bottom: 18px;
+          color: #111;
+          font-family: serif;
+          transition: 0.3s;
+        }
+
+        .blog-card:hover h2 {
+          color: #fff;
+        }
+
+        .blog-content p {
+          color: #666;
+          font-size: 15px;
+          line-height: 1.9;
+          margin-bottom: 25px;
+          max-width: 700px;
+        }
+
+        .blog-footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 20px;
+          flex-wrap: wrap;
+        }
+
+        .meta {
+          display: flex;
+          gap: 18px;
+          color: #777;
+          font-size: 14px;
+        }
+
+        .read-btn {
+          border: 1px solid #c9a84c;
+          padding: 12px 22px;
+          border-radius: 40px;
+          color: #111;
+          font-size: 14px;
+          transition: 0.3s;
+        }
+
+        .blog-card:hover .read-btn {
+          background: #6FB3C8;
+          border-color: #fff;
+          color: white;
+        }
+
+        @media (max-width: 992px) {
+          .blog-card {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 24px;
+          }
+
+          .blog-image {
+            width: 100%;
+            min-width: 100%;
+            height: 260px;
+          }
+
+          .blog-content {
+            width: 100%;
+          }
+
+          .blog-content h2 {
+            font-size: 28px;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .blog-section {
+            padding: 60px 0;
+          }
+
+          .blog-card {
+            gap: 18px;
+            padding-bottom: 35px;
+          }
+
+          .blog-image {
+            width: 100%;
+            height: 220px;
+            border-radius: 10px;
+          }
+
+          .blog-content h2 {
+            font-size: 22px;
+            line-height: 1.4;
+          }
+
+          .blog-content p {
+            font-size: 14px;
+            line-height: 1.8;
+          }
+
+          .blog-footer {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+        }
+      `}</style>
     </>
   );
 }

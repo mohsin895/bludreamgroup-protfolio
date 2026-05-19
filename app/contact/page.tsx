@@ -32,7 +32,7 @@ function FaqItem({ q, a, i }: { q: string; a: string; i: number }) {
       <div
         style={{
           borderBottom: "1px solid rgba(255,255,255,0.06)",
-          padding: "0",
+          padding: "0px 10px",
         }}
       >
         <button
@@ -64,7 +64,7 @@ function FaqItem({ q, a, i }: { q: string; a: string; i: number }) {
           <span
             style={{
               fontSize: "18px",
-              color: "var(--gold)",
+              color: "#fff",
               fontWeight: 300,
               flexShrink: 0,
               transition: "transform 0.25s ease",
@@ -113,7 +113,7 @@ export default function ContactPage() {
 
   const inputStyle = (field: string) => ({
     width: "100%",
-    background: focused === field ? "#648181" : "#fff9)",
+    background: focused === field ? "#648181" : "#648181",
     border: `1px solid ${focused === field ? "rgba(201,168,76,0.4)" : "rgba(255,255,255,0.08)"}`,
     borderRadius: "8px",
     padding: "14px 18px",
@@ -129,7 +129,7 @@ export default function ContactPage() {
     fontSize: "11px",
     letterSpacing: "0.1em",
     textTransform: "uppercase" as const,
-    color: "rgba(255,255,255,0.35)",
+    color: "#000",
     marginBottom: "8px",
   };
 
@@ -148,9 +148,9 @@ export default function ContactPage() {
       {/* ── Contact Form + FAQ ── */}
       <section
         style={{
-          background: "#648181",
+          background: "#F0F4FC",
           borderTop: "1px solid rgba(255,255,255,0.04)",
-          padding: "100px 0",
+          padding: "20px 0",
         }}
       >
         <div className="container">
@@ -179,7 +179,7 @@ export default function ContactPage() {
                         display: "inline-block",
                         width: "20px",
                         height: "1px",
-                        background: "var(--gold)",
+                        background: "#000",
                       }}
                     />
                     <span
@@ -187,7 +187,7 @@ export default function ContactPage() {
                         fontSize: "11px",
                         letterSpacing: "0.15em",
                         textTransform: "uppercase",
-                        color: "var(--gold)",
+                        color: "#000",
                       }}
                     >
                       Send a Message
@@ -197,7 +197,7 @@ export default function ContactPage() {
                     style={{
                       fontFamily: "var(--font-display)",
                       fontSize: "clamp(28px, 2.5vw, 38px)",
-                      color: "#fff",
+                      color: "#000",
                       letterSpacing: "-0.02em",
                       lineHeight: 1.15,
                       margin: 0,
@@ -404,7 +404,7 @@ export default function ContactPage() {
                       <p
                         style={{
                           fontSize: "12px",
-                          color: "#fff9",
+                          color: "#000",
                           margin: 0,
                           lineHeight: 1.6,
                         }}
@@ -418,7 +418,7 @@ export default function ContactPage() {
                         style={{
                           padding: "14px 32px",
                           background: "var(--gold)",
-                          color: "#fff",
+                          color: "#000",
                           border: "1px solid #82c3d8",
 
                           borderRadius: "6px",
@@ -456,7 +456,7 @@ export default function ContactPage() {
                         display: "inline-block",
                         width: "20px",
                         height: "1px",
-                        background: "rgba(255,255,255,0.2)",
+                        background: "#648181",
                       }}
                     />
                     <span
@@ -464,7 +464,7 @@ export default function ContactPage() {
                         fontSize: "11px",
                         letterSpacing: "0.15em",
                         textTransform: "uppercase",
-                        color: "rgba(255,255,255,0.3)",
+                        color: "#000",
                       }}
                     >
                       Common Questions
@@ -474,7 +474,7 @@ export default function ContactPage() {
                     style={{
                       fontFamily: "var(--font-display)",
                       fontSize: "clamp(28px, 2.5vw, 38px)",
-                      color: "#fff",
+                      color: "#000",
                       letterSpacing: "-0.02em",
                       lineHeight: 1.15,
                       margin: "0 0 8px",
@@ -482,14 +482,19 @@ export default function ContactPage() {
                   >
                     Before you write,
                     <br />
-                    <span style={{ color: "rgba(255,255,255,0.35)" }}>
-                      check here first.
-                    </span>
+                    <span style={{ color: "#000" }}>check here first.</span>
                   </h2>
                 </div>
               </AnimatedSection>
 
-              <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+              <div
+                style={{
+                  borderTop: "1px solid rgba(255,255,255,0.06)",
+                  background: "#648181",
+                  padding: "10px",
+                  borderRadius: "10px",
+                }}
+              >
                 {faqs.map((f, i) => (
                   <FaqItem key={i} q={f.q} a={f.a} i={i} />
                 ))}
@@ -501,7 +506,7 @@ export default function ContactPage() {
                   style={{
                     marginTop: "40px",
                     padding: "24px",
-                    background: "#82c3d8",
+                    background: "#648181",
                     border: "1px solid #fff",
                     borderRadius: "10px",
                   }}
@@ -543,7 +548,7 @@ export default function ContactPage() {
                         <span
                           style={{
                             fontSize: "13px",
-                            color: "#fff",
+                            color: "#000",
                           }}
                         >
                           {row.day}

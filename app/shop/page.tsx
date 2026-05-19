@@ -12,6 +12,17 @@ import {
 } from "@/lib/api/product";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { CourseCard, type NormalizedCourse } from "../courses/page";
+type Course = {
+  id: number;
+  title: string;
+  price: string;
+  discount_price?: string;
+  status: string;
+  short_description?: string;
+  course_type: string;
+  thumbnail?: string;
+};
 
 /* ─── API Configuration ─────────────────────────────────────── */
 const API_BASE_URL =
@@ -259,182 +270,182 @@ function BookCard({ book, index }: { book: Product; index: number }) {
 }
 
 /* ─── Course Card Component ──────────────────────────────────── */
-function CourseCard({ course, index }) {
-  const colorSet = colors[index % colors.length];
-  const levelColor = levelColors[course.level] || levelColors.Beginner;
+// function CourseCard({ course, index }) {
+//   const colorSet = colors[index % colors.length];
+//   const levelColor = levelColors[course.level] || levelColors.Beginner;
 
-  return (
-    <AnimatedSection delay={index * 0.06}>
-      <div
-        style={{
-          position: "relative",
-          background: "#648181",
-          border: `1px solid rgba(255,255,255,0.06)`,
-          borderRadius: "12px",
-          overflow: "hidden",
-          padding: "28px",
-          display: "flex",
-          flexDirection: "column",
-          height: "100%",
-          transition: "all 0.32s cubic-bezier(0.16,1,0.3,1)",
-        }}
-      >
-        {/* Top bar */}
-        <div
-          style={{
-            height: "3px",
-            background: `linear-gradient(90deg, ${colorSet.color}, transparent)`,
-            marginBottom: "16px",
-            borderRadius: "2px",
-          }}
-        />
+//   return (
+//     <AnimatedSection delay={index * 0.06}>
+//       <div
+//         style={{
+//           position: "relative",
+//           background: "#648181",
+//           border: `1px solid rgba(255,255,255,0.06)`,
+//           borderRadius: "12px",
+//           overflow: "hidden",
+//           padding: "28px",
+//           display: "flex",
+//           flexDirection: "column",
+//           height: "100%",
+//           transition: "all 0.32s cubic-bezier(0.16,1,0.3,1)",
+//         }}
+//       >
+//         {/* Top bar */}
+//         <div
+//           style={{
+//             height: "3px",
+//             background: `linear-gradient(90deg, ${colorSet.color}, transparent)`,
+//             marginBottom: "16px",
+//             borderRadius: "2px",
+//           }}
+//         />
 
-        {/* Category + Level */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: "12px",
-          }}
-        >
-          <span
-            style={{
-              fontSize: "10px",
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: colorSet.color,
-            }}
-          >
-            {course.category}
-          </span>
-          <span
-            style={{
-              fontSize: "9px",
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              padding: "3px 10px",
-              background: levelColor.bg,
-              borderRadius: "100px",
-              color: levelColor.color,
-            }}
-          >
-            {course.level}
-          </span>
-        </div>
+//         {/* Category + Level */}
+//         <div
+//           style={{
+//             display: "flex",
+//             alignItems: "center",
+//             justifyContent: "space-between",
+//             marginBottom: "12px",
+//           }}
+//         >
+//           <span
+//             style={{
+//               fontSize: "10px",
+//               letterSpacing: "0.12em",
+//               textTransform: "uppercase",
+//               color: colorSet.color,
+//             }}
+//           >
+//             {course.category}
+//           </span>
+//           <span
+//             style={{
+//               fontSize: "9px",
+//               letterSpacing: "0.08em",
+//               textTransform: "uppercase",
+//               padding: "3px 10px",
+//               background: levelColor.bg,
+//               borderRadius: "100px",
+//               color: levelColor.color,
+//             }}
+//           >
+//             {course.level}
+//           </span>
+//         </div>
 
-        {/* Title */}
-        <h3
-          style={{
-            fontSize: "clamp(17px, 1.2vw, 20px)",
-            color: "#fff",
-            letterSpacing: "-0.01em",
-            lineHeight: 1.25,
-            margin: "0 0 8px",
-          }}
-        >
-          {course.title}
-        </h3>
+//         {/* Title */}
+//         <h3
+//           style={{
+//             fontSize: "clamp(17px, 1.2vw, 20px)",
+//             color: "#fff",
+//             letterSpacing: "-0.01em",
+//             lineHeight: 1.25,
+//             margin: "0 0 8px",
+//           }}
+//         >
+//           {course.title}
+//         </h3>
 
-        {/* Subtitle */}
-        <p style={{ fontSize: "13px", color: "#fff9", marginBottom: "12px" }}>
-          {course.subtitle}
-        </p>
+//         {/* Subtitle */}
+//         <p style={{ fontSize: "13px", color: "#fff9", marginBottom: "12px" }}>
+//           {course.subtitle}
+//         </p>
 
-        {/* Meta */}
-        <div
-          style={{
-            fontSize: "12px",
-            color: "#fff8",
-            marginBottom: "16px",
-            display: "flex",
-            gap: "12px",
-            flexWrap: "wrap",
-          }}
-        >
-          <span>◷ {course.duration}</span>
-          <span>▤ {course.lessons} lessons</span>
-        </div>
+//         {/* Meta */}
+//         <div
+//           style={{
+//             fontSize: "12px",
+//             color: "#fff8",
+//             marginBottom: "16px",
+//             display: "flex",
+//             gap: "12px",
+//             flexWrap: "wrap",
+//           }}
+//         >
+//           <span>◷ {course.duration}</span>
+//           <span>▤ {course.lessons} lessons</span>
+//         </div>
 
-        {/* Description */}
-        <p
-          style={{
-            fontSize: "13px",
-            lineHeight: 1.6,
-            color: "rgba(255,255,255,0.6)",
-            marginBottom: "20px",
-            flex: 1,
-          }}
-        >
-          {course.description.substring(0, 100)}...
-        </p>
+//         {/* Description */}
+//         <p
+//           style={{
+//             fontSize: "13px",
+//             lineHeight: 1.6,
+//             color: "rgba(255,255,255,0.6)",
+//             marginBottom: "20px",
+//             flex: 1,
+//           }}
+//         >
+//           {course.description.substring(0, 100)}...
+//         </p>
 
-        {/* Divider */}
-        <div
-          style={{
-            height: "1px",
-            background: "rgba(255,255,255,0.05)",
-            margin: "16px 0",
-          }}
-        />
+//         {/* Divider */}
+//         <div
+//           style={{
+//             height: "1px",
+//             background: "rgba(255,255,255,0.05)",
+//             margin: "16px 0",
+//           }}
+//         />
 
-        {/* Footer */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "12px",
-          }}
-        >
-          <div>
-            <span
-              style={{
-                fontSize: "18px",
-                fontWeight: 700,
-                color: "#fff",
-              }}
-            >
-              {course.price}
-            </span>
-            {course.originalPrice && (
-              <div
-                style={{
-                  fontSize: "11px",
-                  color: "#fff8",
-                  textDecoration: "line-through",
-                }}
-              >
-                {course.originalPrice}
-              </div>
-            )}
-          </div>
-          <Link
-            href={`/enrollment?courseId=${course.id}`}
-            style={{
-              padding: "9px 16px",
-              background: colorSet.color,
-              border: `1px solid ${colorSet.color}44`,
-              borderRadius: "5px",
-              fontSize: "11px",
-              fontWeight: 700,
-              letterSpacing: "0.07em",
-              textTransform: "uppercase",
-              color: "#fff",
-              textDecoration: "none",
-              cursor: "pointer",
-              transition: "all 0.25s ease",
-              whiteSpace: "nowrap",
-              display: "inline-block",
-            }}
-          >
-            Enroll
-          </Link>
-        </div>
-      </div>
-    </AnimatedSection>
-  );
-}
+//         {/* Footer */}
+//         <div
+//           style={{
+//             display: "flex",
+//             alignItems: "center",
+//             justifyContent: "space-between",
+//             gap: "12px",
+//           }}
+//         >
+//           <div>
+//             <span
+//               style={{
+//                 fontSize: "18px",
+//                 fontWeight: 700,
+//                 color: "#fff",
+//               }}
+//             >
+//               {course.price}
+//             </span>
+//             {course.originalPrice && (
+//               <div
+//                 style={{
+//                   fontSize: "11px",
+//                   color: "#fff8",
+//                   textDecoration: "line-through",
+//                 }}
+//               >
+//                 {course.originalPrice}
+//               </div>
+//             )}
+//           </div>
+//           <Link
+//             href={`/enrollment?courseId=${course.id}`}
+//             style={{
+//               padding: "9px 16px",
+//               background: colorSet.color,
+//               border: `1px solid ${colorSet.color}44`,
+//               borderRadius: "5px",
+//               fontSize: "11px",
+//               fontWeight: 700,
+//               letterSpacing: "0.07em",
+//               textTransform: "uppercase",
+//               color: "#fff",
+//               textDecoration: "none",
+//               cursor: "pointer",
+//               transition: "all 0.25s ease",
+//               whiteSpace: "nowrap",
+//               display: "inline-block",
+//             }}
+//           >
+//             Enroll
+//           </Link>
+//         </div>
+//       </div>
+//     </AnimatedSection>
+//   );
+// }
 
 /* ─── Skeleton Loader ────────────────────────────────────────── */
 function CardSkeleton() {
@@ -507,12 +518,12 @@ function CardSkeleton() {
 
 /* ─── Main Shop Page Component ───────────────────────────────── */
 export default function UnifiedShopPage() {
-  const [books, setBooks] = useState([]);
-  const [courses, setCourses] = useState([]);
+  const [books, setBooks] = useState<Product[]>([]);
+  const [courses, setCourses] = useState<NormalizedCourse[]>([]);
   const [loadingBooks, setLoadingBooks] = useState(true);
   const [loadingCourses, setLoadingCourses] = useState(true);
-  const [errorBooks, setErrorBooks] = useState(null);
-  const [errorCourses, setErrorCourses] = useState(null);
+  const [errorBooks, setErrorBooks] = useState<string | null>(null);
+  const [errorCourses, setErrorCourses] = useState<string | null>(null);
 
   /* ─── Fetch Books from Product API ──────────────────────── */
   useEffect(() => {
@@ -541,33 +552,56 @@ export default function UnifiedShopPage() {
 
         const data = await response.json();
         if (data.status && Array.isArray(data.data)) {
-          const normalized = data.data
-            .filter((c) => c.status === "active")
+          const normalized: NormalizedCourse[] = data.data
+            .filter((c: Course) => c.status === "active")
             .slice(0, 4)
-            .map((course, index) => ({
-              id: course.id,
-              title: course.title,
-              subtitle: course.short_description || "Learn professional skills",
-              category:
-                course.course_type === "video"
-                  ? "Video Course"
-                  : course.course_type === "pdf"
-                    ? "PDF Course"
-                    : "Online Learning",
-              level: ["Beginner", "Intermediate", "Advanced"][index % 3],
-              duration: "6 weeks",
-              lessons: 8 + (course.id % 20),
-              price: `$${parseFloat(course.price || 0).toFixed(2)}`,
-              originalPrice:
-                course.discount_price &&
-                parseFloat(course.discount_price) < parseFloat(course.price)
-                  ? `$${parseFloat(course.price).toFixed(2)}`
+            .map((course: Course, index: number) => {
+              const rawPrice = parseFloat(course.price || "0");
+              const rawDiscount = course.discount_price
+                ? parseFloat(course.discount_price)
+                : null;
+
+              const hasDiscount =
+                rawDiscount !== null && rawDiscount < rawPrice;
+
+              const sellingPrice = hasDiscount ? rawDiscount : rawPrice;
+
+              return {
+                id: course.id,
+                title: course.title,
+                subtitle:
+                  course.short_description || "Learn professional skills",
+
+                category:
+                  course.course_type === "video"
+                    ? "Video Course"
+                    : course.course_type === "pdf"
+                      ? "PDF Course"
+                      : "Online Learning",
+
+                level: ["Beginner", "Intermediate", "Advanced"][
+                  index % 3
+                ] as NormalizedCourse["level"],
+
+                lessons: 8 + (course.id % 20),
+
+                students: 500 + (course.id % 3000),
+
+                price:
+                  sellingPrice === 0 ? "FREE" : `$${sellingPrice.toFixed(2)}`,
+
+                isFree: sellingPrice === 0,
+
+                originalPrice: hasDiscount ? `$${rawPrice.toFixed(2)}` : null,
+
+                thumbnail: course.thumbnail
+                  ? `${IMAGE_BASE_URL}${course.thumbnail}`
                   : null,
-              description:
-                course.description?.replace(/<[^>]*>/g, "") ||
-                course.short_description ||
-                "Professional course",
-            }));
+
+                rawData: course,
+              };
+            });
+
           setCourses(normalized);
         }
       } catch (err) {
@@ -771,7 +805,7 @@ export default function UnifiedShopPage() {
       {/* ── Courses Section ── */}
       <section
         style={{
-          background: "#648181",
+          background: "#F1F4FC",
           paddingTop: "80px",
           paddingBottom: "120px",
         }}
@@ -791,7 +825,7 @@ export default function UnifiedShopPage() {
                   display: "inline-block",
                   width: "24px",
                   height: "1px",
-                  background: "var(--gold)",
+                  background: "#000",
                 }}
               />
               <span
@@ -799,7 +833,7 @@ export default function UnifiedShopPage() {
                   fontSize: "11px",
                   letterSpacing: "0.18em",
                   textTransform: "uppercase",
-                  color: "var(--gold)",
+                  color: "#000",
                 }}
               >
                 Learn & Master
@@ -810,7 +844,7 @@ export default function UnifiedShopPage() {
           <h2
             style={{
               fontSize: "clamp(32px, 4vw, 52px)",
-              color: "#fff",
+              color: "#000",
               letterSpacing: "-0.02em",
               lineHeight: 1.1,
               marginBottom: "48px",
@@ -824,7 +858,7 @@ export default function UnifiedShopPage() {
               style={{
                 textAlign: "center",
                 padding: "40px 20px",
-                color: "rgba(255,255,255,0.5)",
+                color: "#0009",
               }}
             >
               <p>{errorCourses}</p>
@@ -852,7 +886,7 @@ export default function UnifiedShopPage() {
               }}
             >
               {courses.map((course, i) => (
-                <CourseCard key={course.id} course={course} index={i} />
+                <CourseCard key={course.id} c={course} index={i} />
               ))}
             </div>
           )}
@@ -860,7 +894,7 @@ export default function UnifiedShopPage() {
       </section>
 
       {/* ── CTA Section ── */}
-      <section
+      {/* <section
         style={{
           background: "#fff",
           borderTop: "1px solid #fff",
@@ -950,7 +984,7 @@ export default function UnifiedShopPage() {
             </div>
           </AnimatedSection>
         </div>
-      </section>
+      </section> */}
 
       <Footer />
 

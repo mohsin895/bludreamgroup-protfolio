@@ -241,7 +241,7 @@ export default function Testimonial() {
         <div className="container">
           {/* Header */}
           <AnimatedSection
-            style={{ textAlign: "center", marginBottom: "56px" }}
+            style={{ textAlign: "center", color: "#fff", marginBottom: "56px" }}
           >
             <div className="section-label" style={{ justifyContent: "center" }}>
               Social Proof

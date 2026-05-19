@@ -1,5 +1,14 @@
 "use client";
-import { Globe, Link as LinkIcon, Mail, Rss, Share2 } from "lucide-react";
+
+import {
+  faFacebookF,
+  faInstagram,
+  faLinkedinIn,
+  faYoutube,
+} from "@fortawesome/free-brands-svg-icons";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import Link from "next/link";
 
 const footerLinks = {
@@ -8,7 +17,6 @@ const footerLinks = {
     { label: "About", href: "/about" },
     { label: "Books", href: "/books" },
     { label: "Blog", href: "/blog" },
-    { label: "Resources", href: "/resources" },
     { label: "Events", href: "/events" },
   ],
   Resources: [
@@ -16,7 +24,6 @@ const footerLinks = {
     { label: "Resources", href: "/resources" },
     { label: "Success Stories", href: "/success-stories" },
     { label: "FAQ", href: "/faq" },
-    { label: "Success Stories", href: "/success-stories" },
   ],
   Media: [
     { label: "Gallery", href: "/media" },
@@ -28,11 +35,26 @@ const footerLinks = {
 };
 
 const socials = [
-  { icon: Globe, href: "#", label: "Website" },
-  { icon: Share2, href: "#", label: "Twitter" },
-  { icon: LinkIcon, href: "#", label: "LinkedIn" },
-  { icon: Rss, href: "#", label: "YouTube" },
-  { icon: Mail, href: "mailto:hello@bluedream.com", label: "Email" },
+  {
+    icon: faFacebookF,
+    href: "https://www.facebook.com/shopnillchowdhuryshohag/",
+    label: "Facebook",
+  },
+  {
+    icon: faInstagram,
+    href: "https://instagram.com/",
+    label: "Instagram",
+  },
+  {
+    icon: faLinkedinIn,
+    href: "https://linkedin.com/",
+    label: "LinkedIn",
+  },
+  {
+    icon: faYoutube,
+    href: "https://youtube.com/",
+    label: "YouTube",
+  },
 ];
 
 export default function Footer() {
@@ -116,7 +138,10 @@ export default function Footer() {
       </div>
 
       {/* Main footer */}
-      <div className="container" style={{ padding: "60px 40px" }}>
+      <div
+        className="container"
+        style={{ padding: "10px 40px", paddingTop: "40px" }}
+      >
         <div
           style={{
             display: "grid",
@@ -171,7 +196,7 @@ export default function Footer() {
                     el.style.background = "rgba(130,195,216,0.05)";
                   }}
                 >
-                  <Icon size={14} />
+                  <FontAwesomeIcon icon={Icon} style={{ fontSize: "14px" }} />
                 </a>
               ))}
             </div>

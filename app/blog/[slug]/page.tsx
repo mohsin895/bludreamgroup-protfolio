@@ -190,7 +190,7 @@ export default function BlogDetailPage() {
         :root {
           --ink:#E3EFF1; --parchment:#f7f3ee; --gold:#b8933a;
           --gold-light:rgba(184,147,58,0.13); --muted:#7a7369;
-          --border:rgba(14,13,11,0.1); --reading-col:680px;
+          --border:rgba(14,13,11,0.1); --reading-col:980px;
         }
         body { font-family:'DM Sans',sans-serif; background:var(--parchment); color:var(--ink); margin:0; }
 
@@ -334,6 +334,14 @@ export default function BlogDetailPage() {
             <article id="article-body">
               <div className="article-inner">
                 <AnimatedSection>
+                  <h2
+                    className="text-4xl  text-black"
+                    style={{
+                      margin: "0px 0px 50px 0px",
+                    }}
+                  >
+                    {post.slug}
+                  </h2>
                   {/* Hero image */}
                   <HeroImage url={post.imageUrl} title={post.title} />
 
@@ -390,36 +398,6 @@ export default function BlogDetailPage() {
                 </AnimatedSection>
 
                 {/* Share strip */}
-                <div className="share-strip">
-                  <span className="share-label">Share this essay</span>
-                  <div className="share-btns">
-                    <a
-                      href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="share-btn"
-                    >
-                      𝕏 Twitter
-                    </a>
-                    <a
-                      href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="share-btn"
-                    >
-                      in LinkedIn
-                    </a>
-                    <button
-                      className="share-btn"
-                      onClick={() =>
-                        typeof navigator !== "undefined" &&
-                        navigator.clipboard?.writeText(window.location.href)
-                      }
-                    >
-                      ⎘ Copy link
-                    </button>
-                  </div>
-                </div>
 
                 {/* Author card */}
                 {primaryWriter && (

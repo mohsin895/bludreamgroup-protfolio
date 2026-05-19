@@ -1,5 +1,6 @@
 "use client";
 import Footer from "@/components/Footer";
+import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -66,8 +67,6 @@ const PAYMENT_METHODS = [
   { value: "bank_transfer", label: "Bank Transfer" },
   { value: "credit_card", label: "Credit Card" },
   { value: "debit_card", label: "Debit Card" },
-  { value: "wallet", label: "Digital Wallet" },
-  { value: "crypto", label: "Cryptocurrency" },
 ];
 
 /* ─── Selling price helper ──────────────────────────────────── */
@@ -111,18 +110,14 @@ function FormInput({
   const [focused, setFocused] = useState(false);
 
   const borderColor = error
-    ? "rgba(255,79,79,0.4)"
+    ? "#000"
     : focused
-      ? "rgba(201,168,76,0.6)"
+      ? "#000"
       : value
-        ? "rgba(201,168,76,0.3)"
-        : "rgba(255,255,255,0.1)";
+        ? "#000"
+        : "#000";
 
-  const bgColor = disabled
-    ? "rgba(255,255,255,0.02)"
-    : focused
-      ? "rgba(255,255,255,0.08)"
-      : "rgba(255,255,255,0.05)";
+  const bgColor = disabled ? "#000" : focused ? "#000" : "#0009";
 
   return (
     <div style={{ marginBottom: "22px" }}>
@@ -132,7 +127,7 @@ function FormInput({
           display: "block",
           fontSize: "11px",
           fontWeight: 600,
-          color: "rgba(255,255,255,0.6)",
+          color: "#000",
           marginBottom: "8px",
           letterSpacing: "0.1em",
           textTransform: "uppercase",
@@ -228,7 +223,7 @@ function FormSelect({
           display: "block",
           fontSize: "11px",
           fontWeight: 600,
-          color: "rgba(255,255,255,0.6)",
+          color: "#000",
           marginBottom: "8px",
           letterSpacing: "0.1em",
           textTransform: "uppercase",
@@ -236,7 +231,7 @@ function FormSelect({
       >
         {label}
         {required && (
-          <span style={{ color: "var(--gold)", marginLeft: "4px" }}>*</span>
+          <span style={{ color: "#000", marginLeft: "4px" }}>*</span>
         )}
       </label>
       <select
@@ -254,7 +249,7 @@ function FormSelect({
               ? "1px solid rgba(201,168,76,0.3)"
               : "1px solid rgba(255,255,255,0.1)",
           borderRadius: "8px",
-          color: value ? "#fff" : "rgba(255,255,255,0.35)",
+          color: value ? "#000" : "#000",
           fontSize: "14px",
           fontFamily: "inherit",
           transition: "all 0.2s ease",
@@ -270,10 +265,7 @@ function FormSelect({
         }}
       >
         {placeholder && (
-          <option
-            value=""
-            style={{ background: "#111", color: "rgba(255,255,255,0.4)" }}
-          >
+          <option value="" style={{ background: "#F1F4FC", color: "#000" }}>
             {placeholder}
           </option>
         )}
@@ -281,7 +273,7 @@ function FormSelect({
           <option
             key={opt.value}
             value={opt.value}
-            style={{ background: "#111", color: "#fff" }}
+            style={{ background: "#F1F4FC", color: "#000" }}
           >
             {opt.label}
           </option>
@@ -291,7 +283,7 @@ function FormSelect({
         <p
           style={{
             fontSize: "12px",
-            color: "rgba(255,79,79,0.9)",
+            color: "#CA2A30",
             marginTop: "6px",
             display: "flex",
             alignItems: "center",
@@ -311,15 +303,13 @@ function SectionHeading({ children }: { children: string }): ReactNode {
     <div style={{ marginBottom: "28px" }}>
       <h3
         style={{
-          fontSize: "13px",
+          fontSize: "16px",
           fontWeight: 700,
-          color: "rgba(255,255,255,0.5)",
+          color: "#000",
           letterSpacing: "0.12em",
           textTransform: "uppercase",
           margin: 0,
           display: "flex",
-          alignItems: "center",
-          gap: "12px",
         }}
       >
         <span
@@ -327,7 +317,7 @@ function SectionHeading({ children }: { children: string }): ReactNode {
             display: "inline-block",
             width: "20px",
             height: "1px",
-            background: "var(--gold)",
+            background: "#000",
           }}
         />
         {children}
@@ -335,7 +325,7 @@ function SectionHeading({ children }: { children: string }): ReactNode {
       <div
         style={{
           height: "1px",
-          background: "rgba(255,255,255,0.05)",
+          background: "#000",
           marginTop: "16px",
         }}
       />
@@ -653,106 +643,19 @@ export default function EnrollmentPage(): ReactNode {
       <Navbar />
 
       {/* ── Hero Section ── */}
-      <section
-        style={{
-          paddingTop: "120px",
-          paddingBottom: "60px",
-          background: "var(--bg)",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            top: "-100px",
-            right: "-250px",
-            width: "600px",
-            height: "600px",
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 70%)",
-            pointerEvents: "none",
-          }}
-        />
-
-        <div className="container">
-          <div style={{ maxWidth: "640px" }}>
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "10px",
-                marginBottom: "24px",
-              }}
-            >
-              <Link
-                href="/courses"
-                style={{
-                  fontSize: "12px",
-                  color: "rgba(255,255,255,0.3)",
-                  textDecoration: "none",
-                  letterSpacing: "0.04em",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                }}
-              >
-                ← Courses
-              </Link>
-              <span
-                style={{ color: "rgba(255,255,255,0.15)", fontSize: "12px" }}
-              >
-                /
-              </span>
-              <span
-                style={{
-                  fontSize: "11px",
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  color: "var(--gold)",
-                }}
-              >
-                Enrollment
-              </span>
-            </div>
-
-            <h1
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(32px, 4.5vw, 52px)",
-                lineHeight: 1.1,
-                letterSpacing: "-0.02em",
-                color: "#fff",
-                margin: "0 0 16px",
-              }}
-            >
-              Enroll in{" "}
-              <span style={{ color: "var(--gold)" }}>{courseInfo.title}</span>
-            </h1>
-
-            <p
-              style={{
-                fontSize: "15px",
-                color: "rgba(255,255,255,0.45)",
-                lineHeight: 1.7,
-              }}
-            >
-              {courseInfo.short_description}
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero title={courseInfo.title} currentPage="Course Details" />
 
       {/* ── Main Content ── */}
-      <section style={{ background: "#0a0a0a", padding: "60px 0 120px" }}>
+      <section style={{ background: "#F1F4FC", padding: "60px 0 120px" }}>
         <div className="container">
           <div
+            className="enrollment-grid"
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 300px",
-              gap: "40px",
-              maxWidth: "920px",
+              gridTemplateColumns: "1fr 400px",
+              gap: "50px",
+              maxWidth: "1120px",
+              margin: "0 auto",
             }}
           >
             {/* ── Form Column ── */}
@@ -779,7 +682,7 @@ export default function EnrollmentPage(): ReactNode {
                       alignItems: "center",
                       justifyContent: "center",
                       fontSize: "28px",
-                      color: "#7DD4B0",
+                      color: "#000",
                       margin: "0 auto 20px",
                     }}
                   >
@@ -789,7 +692,7 @@ export default function EnrollmentPage(): ReactNode {
                     style={{
                       fontFamily: "var(--font-display)",
                       fontSize: "24px",
-                      color: "#fff",
+                      color: "#0009",
                       marginBottom: "12px",
                       letterSpacing: "-0.01em",
                     }}
@@ -798,7 +701,7 @@ export default function EnrollmentPage(): ReactNode {
                   </h2>
                   <p
                     style={{
-                      color: "rgba(255,255,255,0.5)",
+                      color: "#fff",
                       fontSize: "14px",
                       marginBottom: "8px",
                     }}
@@ -806,7 +709,7 @@ export default function EnrollmentPage(): ReactNode {
                     Transaction ID:{" "}
                     <strong
                       style={{
-                        color: "var(--gold)",
+                        color: "#000",
                         fontFamily: "monospace",
                         fontSize: "13px",
                       }}
@@ -816,7 +719,7 @@ export default function EnrollmentPage(): ReactNode {
                   </p>
                   <p
                     style={{
-                      color: "rgba(255,255,255,0.3)",
+                      color: "#000",
                       fontSize: "13px",
                     }}
                   >
@@ -863,10 +766,11 @@ export default function EnrollmentPage(): ReactNode {
                   )}
 
                   {/* ── Personal Information ── */}
-                  <div style={{ marginBottom: "44px" }}>
+                  <div style={{ marginBottom: "44px", color: "#fff" }}>
                     <SectionHeading>Personal Information</SectionHeading>
 
                     <div
+                      className="personal-grid"
                       style={{
                         display: "grid",
                         gridTemplateColumns: "1fr 1fr",
@@ -932,14 +836,14 @@ export default function EnrollmentPage(): ReactNode {
                     >
                       <p
                         style={{
-                          color: "rgba(201,168,76,0.8)",
+                          color: "#000",
                           fontSize: "13px",
                           margin: 0,
                           lineHeight: 1.6,
                         }}
                       >
                         Please complete your payment of{" "}
-                        <strong style={{ color: "var(--gold)" }}>
+                        <strong style={{ color: "#0009" }}>
                           ${actualPrice.toFixed(2)}
                         </strong>{" "}
                         to our account, then enter the transaction details
@@ -996,11 +900,9 @@ export default function EnrollmentPage(): ReactNode {
                     style={{
                       width: "100%",
                       padding: "16px",
-                      background: submitting
-                        ? "rgba(201,168,76,0.4)"
-                        : "var(--gold)",
-                      color: submitting ? "rgba(0,0,0,0.4)" : "#fff",
-                      border: "none",
+                      background: submitting ? "#6FB3C8" : "#6FB3C8",
+                      color: submitting ? "#0002" : "#fff",
+                      border: "1px solid #6FB3C8",
                       borderRadius: "8px",
                       fontWeight: 700,
                       fontSize: "14px",
@@ -1020,8 +922,8 @@ export default function EnrollmentPage(): ReactNode {
                           style={{
                             width: "16px",
                             height: "16px",
-                            border: "2px solid rgba(0,0,0,0.2)",
-                            borderTopColor: "rgba(0,0,0,0.5)",
+                            border: "2px solid #000",
+                            borderTopColor: "#000",
                             borderRadius: "50%",
                             animation: "spin 0.7s linear infinite",
                             display: "inline-block",
@@ -1037,7 +939,7 @@ export default function EnrollmentPage(): ReactNode {
                   <p
                     style={{
                       fontSize: "12px",
-                      color: "rgba(255,255,255,0.2)",
+                      color: "#000",
                       textAlign: "center",
                       marginTop: "16px",
                     }}
@@ -1051,6 +953,7 @@ export default function EnrollmentPage(): ReactNode {
             {/* ── Sidebar ── */}
             <div>
               <div
+                className="sticky-card"
                 style={{
                   position: "sticky",
                   top: "100px",
@@ -1074,7 +977,7 @@ export default function EnrollmentPage(): ReactNode {
                 <div
                   style={{
                     padding: "24px",
-                    background: "#0f0f0f",
+                    background: "#648181",
                     border: "1px solid rgba(201,168,76,0.2)",
                     borderRadius: courseInfo.thumbnail
                       ? "0 0 12px 12px"
@@ -1281,6 +1184,46 @@ export default function EnrollmentPage(): ReactNode {
           }
         }
       `}</style>
+      <style>{`
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 clamp(16px, 4vw, 40px);
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  input::placeholder {
+    color: rgba(0,0,0,0.45);
+  }
+
+  input:disabled {
+    cursor: not-allowed;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 900px) {
+    .enrollment-grid {
+      grid-template-columns: 1fr !important;
+      gap: 32px !important;
+    }
+
+    .sticky-card {
+      position: static !important;
+      top: unset !important;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .personal-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+`}</style>
     </>
   );
 }

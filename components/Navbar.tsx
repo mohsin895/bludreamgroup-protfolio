@@ -2,7 +2,7 @@
 
 import { selectIsDrawerOpen, selectTotalItems } from "@/store/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -10,7 +10,19 @@ import { CartDrawer } from "@/components/CartDrawer";
 import { useSetting } from "@/hooks/useSetting";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-const primaryNav = [
+
+type NavChild = {
+  label: string;
+  href: string;
+};
+
+type NavItem = {
+  label: string;
+  href: string;
+  children?: NavChild[];
+};
+
+const primaryNav: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Books", href: "/books" },
@@ -18,7 +30,6 @@ const primaryNav = [
   { label: "Courses", href: "/courses" },
   { label: "Shop", href: "/shop" },
   { label: "Achievement", href: "/achievements" },
-
   { label: "Contact", href: "/contact" },
 ];
 
@@ -110,44 +121,7 @@ export default function Navbar() {
                   key={item.label}
                   style={{ position: "relative", color: "#000" }}
                 >
-                  {item.children ? (
-                    <button
-                      onClick={() =>
-                        setActiveDropdown(
-                          activeDropdown === item.label ? null : item.label,
-                        )
-                      }
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "5px",
-                        padding: "8px 14px",
-                        background: "none",
-                        border: "none",
-                        cursor: "pointer",
-                        fontSize: "13px",
-                        zIndex: "999",
-                        fontWeight: 500,
-                        letterSpacing: "0.04em",
-                        color:
-                          activeDropdown === item.label ? "#82c3d8" : "#000",
-                        transition: "color 0.2s",
-                      }}
-                      onMouseEnter={() => setActiveDropdown(item.label)}
-                    >
-                      {item.label}
-                      <ChevronDown
-                        size={12}
-                        style={{
-                          transition: "transform 0.2s",
-                          transform:
-                            activeDropdown === item.label
-                              ? "rotate(180deg)"
-                              : "rotate(0deg)",
-                        }}
-                      />
-                    </button>
-                  ) : (
+                  {item.href && (
                     <Link
                       href={item.href}
                       style={{
