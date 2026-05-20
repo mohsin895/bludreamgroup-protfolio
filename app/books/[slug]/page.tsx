@@ -12,11 +12,9 @@ import {
 } from "@/lib/api/product";
 
 import {
-  ArrowLeft,
   BookOpen,
   Building2,
   Calendar,
-  ChevronRight,
   CreditCard,
   FileText,
   Globe,
@@ -261,12 +259,12 @@ function FormatSelector({
               padding: "12px 20px",
               borderRadius: "8px",
               border: isActive
-                ? `2px solid ${accent ?? "var(--gold)"}`
+                ? `2px solid ${accent ?? "#000"}`
                 : "2px solid rgba(255,255,255,0.08)",
               background: isActive
                 ? `${accent ?? "var(--gold)"}14`
                 : "rgba(255,255,255,0.02)",
-              color: isActive ? (accent ?? "var(--gold)") : "var(--text-muted)",
+              color: isActive ? (accent ?? "#000") : "#000",
               cursor: "pointer",
               fontWeight: 600,
               fontSize: "13px",
@@ -299,7 +297,7 @@ function FormatSelector({
                   textTransform: "uppercase",
                   letterSpacing: "0.1em",
                   background: accent ? `${accent}22` : "rgba(201,168,76,0.2)",
-                  color: accent ?? "var(--gold)",
+                  color: accent ?? "#000",
                   padding: "2px 6px",
                   borderRadius: "4px",
                 }}
@@ -341,7 +339,7 @@ function MetaRow({
       <span
         style={{
           fontSize: "12px",
-          color: "var(--text-dim)",
+          color: "#000",
           width: "90px",
           flexShrink: 0,
           letterSpacing: "0.06em",
@@ -353,7 +351,7 @@ function MetaRow({
       <span
         style={{
           fontSize: "14px",
-          color: "var(--text-muted)",
+          color: "#000",
           fontWeight: 500,
         }}
       >
@@ -411,7 +409,7 @@ function RelatedCard({ book }: { book: Product }) {
             <BookOpen
               size={32}
               style={{
-                color: book.cover_accent ?? "var(--gold)",
+                color: book.cover_accent ?? "#000",
                 opacity: 0.3,
               }}
             />
@@ -420,8 +418,8 @@ function RelatedCard({ book }: { book: Product }) {
         <div style={{ padding: "18px" }}>
           <p
             style={{
-              fontSize: "11px",
-              color: "var(--text-dim)",
+              fontSize: "14px",
+              color: "#000",
               marginBottom: "6px",
               letterSpacing: "0.06em",
             }}
@@ -430,8 +428,7 @@ function RelatedCard({ book }: { book: Product }) {
           </p>
           <h4
             style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "17px",
+              fontSize: "20px",
               color: "var(--text)",
               lineHeight: 1.2,
             }}
@@ -441,8 +438,8 @@ function RelatedCard({ book }: { book: Product }) {
           {cheapest && (
             <p
               style={{
-                fontSize: "13px",
-                color: book.cover_accent ?? "var(--gold)",
+                fontSize: "16px",
+                color: "#000",
                 marginTop: "8px",
                 fontWeight: 600,
               }}
@@ -760,9 +757,7 @@ export default function BookDetailPage() {
             gap: "16px",
           }}
         >
-          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "32px" }}>
-            Book not found
-          </h2>
+          <h2 style={{ fontSize: "32px" }}>Book not found</h2>
           <Link href="/books" className="btn-outline">
             ← Back to Books
           </Link>
@@ -771,7 +766,8 @@ export default function BookDetailPage() {
       </>
     );
 
-  const accent = product.cover_accent ?? "var(--gold)";
+  const accent = product.cover_accent ?? "#6FB3C8";
+
   const coverImg = imageUrl(
     product.main_image?.large ?? product.main_image?.original,
   );
@@ -786,7 +782,7 @@ export default function BookDetailPage() {
 
       <section
         style={{
-          paddingTop: "100px",
+          paddingTop: "60px",
           background: `linear-gradient(180deg, ${product.cover_color ?? "#0f0f14"}33 0%, transparent 100%), var(--bg)`,
           position: "relative",
           overflow: "hidden",
@@ -803,32 +799,6 @@ export default function BookDetailPage() {
 
         <div className="container" style={{ position: "relative" }}>
           {/* Breadcrumb — unchanged */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              fontSize: "12px",
-              color: "var(--text-dim)",
-              marginBottom: "40px",
-              letterSpacing: "0.06em",
-            }}
-          >
-            <Link
-              href="/books"
-              style={{
-                color: "var(--text-dim)",
-                textDecoration: "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "4px",
-              }}
-            >
-              <ArrowLeft size={12} /> Books
-            </Link>
-            <ChevronRight size={10} />
-            <span style={{ color: "var(--text-muted)" }}>{product.title}</span>
-          </div>
 
           {/* Main grid — unchanged layout */}
           <div
@@ -943,52 +913,13 @@ export default function BookDetailPage() {
             {/* ── RIGHT: Details ── */}
             <AnimatedSection delay={0.1}>
               {/* Tags — unchanged */}
-              <div
-                style={{
-                  display: "flex",
-                  gap: "8px",
-                  flexWrap: "wrap",
-                  marginBottom: "16px",
-                }}
-              >
-                {product.category && (
-                  <span className="tag">{product.category.name}</span>
-                )}
-                {product.genre && (
-                  <span
-                    className="tag"
-                    style={{
-                      background:
-                        accent !== "var(--gold)" ? `${accent}14` : undefined,
-                      borderColor:
-                        accent !== "var(--gold)" ? `${accent}44` : undefined,
-                      color: accent !== "var(--gold)" ? accent : undefined,
-                    }}
-                  >
-                    {product.genre}
-                  </span>
-                )}
-                {product.status === "inactive" && (
-                  <span
-                    className="tag"
-                    style={{
-                      background: "rgba(239,68,68,0.1)",
-                      borderColor: "#ef444444",
-                      color: "#ef4444",
-                    }}
-                  >
-                    Unavailable
-                  </span>
-                )}
-              </div>
 
               {/* Title — unchanged */}
               <h1
                 style={{
-                  fontFamily: "var(--font-display)",
                   fontSize: "clamp(38px, 4.5vw, 64px)",
                   lineHeight: 1.0,
-                  color: "var(--text)",
+                  color: "#000",
                 }}
               >
                 {product.title}
@@ -998,7 +929,7 @@ export default function BookDetailPage() {
                 <p
                   style={{
                     fontSize: "18px",
-                    color: accent,
+                    color: "#000",
                     marginTop: "10px",
                     fontStyle: "italic",
                   }}
@@ -1010,7 +941,7 @@ export default function BookDetailPage() {
                 <p
                   style={{
                     fontSize: "15px",
-                    color: "var(--text-dim)",
+                    color: "#000",
                     marginTop: "12px",
                     fontStyle: "italic",
                     letterSpacing: "0.02em",
@@ -1034,7 +965,7 @@ export default function BookDetailPage() {
                   <p
                     style={{
                       fontSize: "11px",
-                      color: "var(--text-dim)",
+                      color: "#000",
                       letterSpacing: "0.1em",
                       textTransform: "uppercase",
                       fontWeight: 700,
@@ -1065,11 +996,11 @@ export default function BookDetailPage() {
                     padding: "8px 16px",
                     marginTop: "16px",
                     fontSize: "13px",
-                    color: "#f87171",
+                    color: "#fff",
                     fontWeight: 600,
                   }}
                 >
-                  🎉{" "}
+                  {" "}
                   {product.discount_type === "percent"
                     ? `${product.discount_amount}% OFF`
                     : `${formatPrice(product.discount_amount)} OFF`}
@@ -1099,7 +1030,7 @@ export default function BookDetailPage() {
                     marginTop: "16px",
                     marginLeft: hasDiscount ? "8px" : "0",
                     fontSize: "13px",
-                    color: "#a5b4fc",
+                    color: "#ffff",
                     fontWeight: 600,
                   }}
                 >
@@ -1123,7 +1054,7 @@ export default function BookDetailPage() {
                   <p
                     style={{
                       fontSize: "16px",
-                      color: "var(--text-muted)",
+                      color: "#000",
                       fontStyle: "italic",
                       lineHeight: 1.7,
                     }}
@@ -1137,7 +1068,7 @@ export default function BookDetailPage() {
                         marginTop: "10px",
                         fontSize: "12px",
                         fontStyle: "normal",
-                        color: accent,
+                        color: "#fff",
                         letterSpacing: "0.08em",
                         fontWeight: 600,
                       }}
@@ -1163,7 +1094,7 @@ export default function BookDetailPage() {
                 >
                   <ShoppingCart
                     size={22}
-                    color={accent === "var(--gold)" ? "#c9a84c" : accent}
+                    color={accent === "#000" ? "#000" : "#000"}
                   />
                   <h2 style={{ color: "#000", fontSize: "28px", margin: 0 }}>
                     Place Your Order
@@ -1514,19 +1445,19 @@ export default function BookDetailPage() {
                   <p
                     style={{
                       fontSize: "14px",
-                      color: "var(--text-muted)",
+                      color: "#000",
                       fontWeight: 600,
                     }}
                   >
-                    by <span style={{ color: accent }}>{product.author}</span>
+                    by <span style={{ color: "#000" }}>{product.author}</span>
                   </p>
                   {product.author_bio && (
                     <p
                       style={{
-                        fontSize: "13px",
-                        color: "var(--text-dim)",
+                        fontSize: "14px",
+                        color: "#0009",
                         marginTop: "6px",
-                        lineHeight: 1.6,
+                        lineHeight: 1.9,
                         maxWidth: "520px",
                       }}
                     >
@@ -1548,7 +1479,7 @@ export default function BookDetailPage() {
                   <p
                     style={{
                       fontSize: "11px",
-                      color: "var(--text-dim)",
+                      color: "#000",
                       letterSpacing: "0.1em",
                       textTransform: "uppercase",
                       fontWeight: 700,
@@ -1560,7 +1491,7 @@ export default function BookDetailPage() {
                   <div
                     style={{
                       fontSize: "15px",
-                      color: "var(--text-muted)",
+                      color: "#0009",
                       lineHeight: 1.85,
                       maxWidth: "600px",
                     }}
@@ -1584,7 +1515,6 @@ export default function BookDetailPage() {
               </div>
               <h2
                 style={{
-                  fontFamily: "var(--font-display)",
                   fontSize: "clamp(28px, 3vw, 40px)",
                   marginBottom: "40px",
                 }}
@@ -1595,7 +1525,7 @@ export default function BookDetailPage() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
                 gap: "24px",
               }}
             >

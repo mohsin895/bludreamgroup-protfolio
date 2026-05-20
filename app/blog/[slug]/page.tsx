@@ -188,7 +188,7 @@ export default function BlogDetailPage() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap');
         :root {
-          --ink:#E3EFF1; --parchment:#f7f3ee; --gold:#b8933a;
+          --ink:#E3EFF1; --parchment:#F4F7F6; --gold:#b8933a;
           --gold-light:rgba(184,147,58,0.13); --muted:#7a7369;
           --border:rgba(14,13,11,0.1); --reading-col:980px;
         }
@@ -218,7 +218,7 @@ export default function BlogDetailPage() {
         .meta-item { font-size:12px; color:rgba(255,255,255,0.3); letter-spacing:0.04em; }
         .hero-notch { height:48px; background:var(--ink); clip-path:polygon(0 0,100% 0,100% 30%,0 100%); margin-bottom:-1px; }
 
-        .article-wrap { background:#E3EFF1; padding:42px 24px 80px; }
+        .article-wrap { background:#F4F7F6; padding:42px 24px 80px; }
         .article-inner { max-width:var(--reading-col); margin:0 auto; }
         .article-p { font-family:'DM Sans',sans-serif; font-size:18px; font-weight:300; line-height:1.85; color:#fff; margin:0 0 28px; }
         .article-h2 { font-family:'Playfair Display',serif; font-size:26px; font-weight:600; color:#000; margin:52px 0 20px; line-height:1.25; }
@@ -398,48 +398,6 @@ export default function BlogDetailPage() {
                 </AnimatedSection>
 
                 {/* Share strip */}
-
-                {/* Author card */}
-                {primaryWriter && (
-                  <div className="author-card">
-                    <WriterAvatar writer={primaryWriter} size={56} />
-                    <div style={{ flex: 1 }}>
-                      <h3 className="author-card-name">{primaryWriter.name}</h3>
-                      <div className="author-card-role">
-                        {primaryWriter.designation}
-                      </div>
-                      {primaryWriter.description && (
-                        <p className="author-card-bio">
-                          {primaryWriter.description}
-                        </p>
-                      )}
-                      {(primaryWriter.twitter || primaryWriter.linkedin) && (
-                        <div className="author-card-social">
-                          {primaryWriter.twitter && (
-                            <a
-                              href={primaryWriter.twitter}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="author-social-link"
-                            >
-                              Twitter
-                            </a>
-                          )}
-                          {primaryWriter.linkedin && (
-                            <a
-                              href={primaryWriter.linkedin}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="author-social-link"
-                            >
-                              LinkedIn
-                            </a>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
               </div>
             </article>
           </div>
@@ -457,13 +415,6 @@ export default function BlogDetailPage() {
               </div>
             </section>
           )}
-
-          {/* Back bar */}
-          <div className="back-bar">
-            <Link href="/blog" className="back-link">
-              ← Back to the Journal
-            </Link>
-          </div>
         </>
       )}
 

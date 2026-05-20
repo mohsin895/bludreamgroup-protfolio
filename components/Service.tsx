@@ -285,8 +285,8 @@ export default function ServicesSection() {
                 <div
                   style={{
                     display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
+                    alignItems: "end",
+                    justifyContent: "end",
                   }}
                 >
                   <span
@@ -300,7 +300,7 @@ export default function ServicesSection() {
                   >
                     {mode}
                   </span>
-                  <Link
+                  {/* <Link
                     href={`/services${s.slug ? `/${s.slug}` : ""}`}
                     style={{
                       display: "inline-flex",
@@ -315,7 +315,7 @@ export default function ServicesSection() {
                     }}
                   >
                     Learn More <ArrowRight size={12} />
-                  </Link>
+                  </Link> */}
                 </div>
               </motion.div>
             );
@@ -331,7 +331,7 @@ export default function ServicesSection() {
           style={{ textAlign: "center", marginTop: 56 }}
         >
           <Link
-            href="/services"
+            href="/contact"
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -349,7 +349,7 @@ export default function ServicesSection() {
             }}
             className="services-cta"
           >
-            View All Services <ArrowRight size={14} />
+            Book a Service <ArrowRight size={14} />
           </Link>
         </motion.div>
       </div>

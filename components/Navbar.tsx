@@ -125,7 +125,7 @@ export default function Navbar() {
                       style={{
                         display: "block",
                         padding: "8px 14px",
-                        fontSize: "13px",
+                        fontSize: "16px",
                         fontWeight: 500,
                         letterSpacing: "0.04em",
                         color: pathname === item.href ? "#6c7e7f" : "#1f2937",
@@ -171,7 +171,7 @@ export default function Navbar() {
                           style={{
                             display: "block",
                             padding: "9px 16px",
-                            fontSize: "13px",
+                            fontSize: "14px",
                             fontWeight: 400,
                             color: "#1f2937",
                             textDecoration: "none",
@@ -189,18 +189,18 @@ export default function Navbar() {
               ))}
 
               <Link
-                href="/contact"
+                href="/books"
                 className="hover:bg-[#95a49a]"
                 style={{
                   marginLeft: "16px",
-                  fontSize: "12px",
-                  padding: "10px 24px",
+                  fontSize: "16px",
+                  padding: "10px 16px",
                   background: "#6c7e7f",
                   color: "#fff",
                   border: "1px solid #6c7e7f",
                 }}
               >
-                Work With Me
+                Find Your Next Read
               </Link>
             </div>
 
@@ -253,7 +253,7 @@ export default function Navbar() {
       >
         <div
           className="container"
-          style={{ paddingTop: "32px", paddingBottom: "32px" }}
+          style={{ paddingTop: "26px", paddingBottom: "26px" }}
         >
           <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
             {primaryNav.map((item, i) => (

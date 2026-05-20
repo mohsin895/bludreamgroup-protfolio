@@ -5,7 +5,6 @@ import Footer from "@/components/Footer";
 import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
 import { getMediaItems, type MediaItem, type MediaType } from "@/lib/api/media";
-import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -260,189 +259,14 @@ function MediaCard({ item, delay, onClick }: MediaCardProps) {
             <div style={{ fontSize: 42, marginBottom: 16, opacity: 0.7 }}>
               📰
             </div>
-            {item.title && (
-              <h3
-                style={{
-                  fontSize: 16,
-                  fontWeight: 500,
-                  lineHeight: 1.4,
-                  color: "#fff",
-                  margin: "0 0 8px",
-                  maxWidth: "90%",
-                }}
-              >
-                {item.title.length > 60
-                  ? item.title.slice(0, 60) + "..."
-                  : item.title}
-              </h3>
-            )}
-            {item.subtitle && (
-              <p
-                style={{
-                  fontSize: 12,
-                  color: "#0009",
-                  margin: 0,
-                  maxWidth: "90%",
-                }}
-              >
-                {item.subtitle.length > 80
-                  ? item.subtitle.slice(0, 80) + "..."
-                  : item.subtitle}
-              </p>
-            )}
-            {hovered && (
-              <div
-                style={{
-                  marginTop: 16,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: 11,
-                    color: item.accent_color || "#C9A84C",
-                    fontWeight: 500,
-                  }}
-                >
-                  Read article →
-                </span>
-              </div>
-            )}
           </div>
         )}
 
         {/* Top meta */}
-        <div
-          style={{
-            position: "absolute",
-            top: 16,
-            left: 16,
-            right: 16,
-            display: "flex",
-            justifyContent: "space-between",
-            zIndex: 2,
-          }}
-        >
-          <span
-            style={{
-              fontSize: 10,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: item.accent_color || "#C9A84C",
-              background: `${item.accent_color || "#C9A84C"}14`,
-              border: `1px solid ${item.accent_color || "#C9A84C"}30`,
-              padding: "4px 10px",
-              borderRadius: 3,
-              backdropFilter: "blur(4px)",
-            }}
-          >
-            {typeLabel}
-          </span>
-          <span
-            style={{
-              fontSize: 11,
-              color: "rgba(255,255,255,0.5)",
-              background: "rgba(0,0,0,0.3)",
-              padding: "2px 8px",
-              borderRadius: 12,
-            }}
-          >
-            {item.date}
-          </span>
-        </div>
 
         {/* Featured badge */}
-        {item.is_featured && (
-          <div
-            style={{
-              position: "absolute",
-              top: 46,
-              left: 16,
-              fontSize: 9,
-              letterSpacing: "0.1em",
-              color: item.accent_color || "#C9A84C",
-              opacity: 0.8,
-              background: "rgba(0,0,0,0.3)",
-              padding: "2px 8px",
-              borderRadius: 12,
-            }}
-          >
-            ★ Featured
-          </div>
-        )}
 
         {/* Bottom content */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            padding: "48px 20px 20px",
-            background:
-              "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.6) 70%, transparent 100%)",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 10,
-              letterSpacing: "0.1em",
-              color: "rgba(255,255,255,0.4)",
-              marginBottom: 6,
-            }}
-          >
-            {item.category}
-          </div>
-          <h3
-            style={{
-              fontSize: 14,
-              fontWeight: 500,
-              lineHeight: 1.4,
-              color: "#fff",
-              margin: "0 0 6px",
-            }}
-          >
-            {item.title}
-          </h3>
-          <p
-            style={{
-              fontSize: 12,
-              color: "rgba(255,255,255,0.5)",
-              margin: 0,
-            }}
-          >
-            {item.subtitle}
-          </p>
-          {hovered && (
-            <div
-              style={{
-                marginTop: 12,
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-              }}
-            >
-              <span
-                style={{
-                  fontSize: 11,
-                  color: item.accent_color || "#C9A84C",
-                }}
-              >
-                {item.type === "press" ? "Read article" : `View ${typeLabel}`}
-              </span>
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                <path
-                  d="M2 6H10M7 3l3 3-3 3"
-                  stroke={item.accent_color || "#C9A84C"}
-                  strokeWidth="1.2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
-          )}
-        </div>
 
         {/* Video play icon */}
         {item.type === "video" && !imgError && mediaUrl && (
@@ -626,141 +450,6 @@ function Lightbox({ item, onClose, onPrev, onNext }: LightboxProps) {
         </div>
 
         {/* Content area */}
-        <div
-          style={{
-            padding: "24px 28px",
-            overflowY: "auto",
-            maxHeight: "40vh",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-            }}
-          >
-            <div style={{ flex: 1 }}>
-              <div
-                style={{
-                  fontSize: 10,
-                  letterSpacing: "0.12em",
-                  color: item.accent_color || "#C9A84C",
-                  marginBottom: 8,
-                }}
-              >
-                {item.category} · {item.date}
-              </div>
-              <h2
-                style={{
-                  fontSize: "clamp(18px, 2.5vw, 26px)",
-                  margin: "0 0 8px",
-                }}
-              >
-                {item.title}
-              </h2>
-              <p
-                style={{
-                  fontSize: 13,
-                  color: "#0009",
-                }}
-              >
-                {item.subtitle}
-              </p>
-              {item.description && (
-                <div
-                  style={{
-                    fontSize: 14,
-                    color: "rgba(255,255,255,0.7)",
-                    marginTop: 16,
-                    lineHeight: 1.6,
-                    borderLeft: `2px solid ${item.accent_color || "#C9A84C"}`,
-                    paddingLeft: 16,
-                  }}
-                >
-                  {item.description}
-                </div>
-              )}
-              {item.type === "press" && item.press_url && !mediaUrl && (
-                <a
-                  href={item.press_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: "inline-block",
-                    marginTop: 20,
-                    padding: "8px 20px",
-                    background: item.accent_color || "#C9A84C",
-                    color: "#000",
-                    borderRadius: 4,
-                    fontSize: 13,
-                    fontWeight: 500,
-                    textDecoration: "none",
-                  }}
-                >
-                  Read Full Article →
-                </a>
-              )}
-            </div>
-            <button
-              onClick={onClose}
-              style={{
-                background: "rgba(255,255,255,0.05)",
-                border: "none",
-                borderRadius: "50%",
-                width: 36,
-                height: 36,
-                cursor: "pointer",
-                fontSize: 20,
-                color: "rgba(255,255,255,0.7)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginLeft: 16,
-              }}
-            >
-              ×
-            </button>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginTop: 24,
-              borderTop: "1px solid rgba(255,255,255,0.08)",
-              paddingTop: 16,
-            }}
-          >
-            <button
-              onClick={onPrev}
-              style={{
-                background: "rgba(255,255,255,0.05)",
-                border: "none",
-                padding: "8px 20px",
-                borderRadius: 6,
-                cursor: "pointer",
-                fontSize: 12,
-                color: "white",
-              }}
-            >
-              ← Previous
-            </button>
-            <button
-              onClick={onNext}
-              style={{
-                background: "rgba(255,255,255,0.05)",
-                border: "none",
-                padding: "8px 20px",
-                borderRadius: 6,
-                cursor: "pointer",
-                fontSize: 12,
-                color: "white",
-              }}
-            >
-              Next →
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -862,111 +551,9 @@ export default function MediaGalleryPage() {
 
       {/* Hero Section */}
       <PageHero title="Media & Gallery" currentPage="Media" />
-      <section
-        style={{
-          padding: "40px 0 72px",
-          background: "#F4F7F6",
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
-        }}
-      >
-        <div className="container">
-          <AnimatedSection>
-            <div
-              style={{
-                fontSize: 12,
-                letterSpacing: "0.12em",
-                color: "#C9A84C",
-                marginBottom: 16,
-              }}
-            >
-              Media & Gallery
-            </div>
-            <h1
-              style={{
-                fontSize: "clamp(42px, 6vw, 80px)",
-                fontFamily: "var(--font-display, Georgia, serif)",
-                letterSpacing: "-0.02em",
-                lineHeight: 1.05,
-                fontWeight: 600,
-              }}
-            >
-              Press, Events
-              <br />
-              <span style={{ color: "#C9A84C" }}>& Gallery</span>
-            </h1>
-            <p
-              style={{
-                color: "#0009",
-                maxWidth: 520,
-                marginTop: 20,
-                fontSize: 16,
-              }}
-            >
-              Photographs, interviews, press coverage, and event highlights.
-              Click any card to expand and explore.
-            </p>
-
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 48,
-                marginTop: 48,
-              }}
-            >
-              {[
-                { label: "Total Items", value: stats.total },
-                {
-                  label: "Press Features",
-                  value: stats.press,
-                },
-                {
-                  label: "Event Photos",
-                  value: stats.event,
-                },
-                {
-                  label: "Video Interviews",
-                  value: stats.video,
-                },
-              ].map((stat) => (
-                <div key={stat.label}>
-                  <div
-                    style={{
-                      fontSize: 42,
-                      fontFamily: "var(--font-display, Georgia, serif)",
-                      color: "#C9A84C",
-                      lineHeight: 1,
-                      fontWeight: 500,
-                    }}
-                  >
-                    {stat.value}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 11,
-                      letterSpacing: "0.1em",
-                      color: "#000",
-                      marginTop: 6,
-                    }}
-                  >
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <Link
-              href="/"
-              className="btn-outline"
-              style={{ marginTop: 48, display: "inline-flex" }}
-            >
-              ← Back to Home
-            </Link>
-          </AnimatedSection>
-        </div>
-      </section>
 
       {/* Gallery Section */}
-      <section style={{ background: "#648181", padding: "64px 0 120px" }}>
+      <section style={{ background: "#F4F7F6", padding: "64px 0 120px" }}>
         <div className="container">
           <AnimatedSection>
             <div
@@ -995,10 +582,10 @@ export default function MediaGalleryPage() {
                       borderRadius: 100,
                       border: "1px solid",
                       borderColor:
-                        activeFilter === f.value ? "#C9A84C" : "#6FB3C8",
+                        activeFilter === f.value ? "#C9A84C" : "#6c7e7f",
                       background:
-                        activeFilter === f.value ? "#6FB3C8" : "transparent",
-                      color: activeFilter === f.value ? "#fff" : "#6FB3C8",
+                        activeFilter === f.value ? "#6c7e7f" : "transparent",
+                      color: activeFilter === f.value ? "#fff" : "#6c7e7f",
                       fontSize: 12,
                       letterSpacing: "0.06em",
                       cursor: "pointer",
@@ -1023,7 +610,7 @@ export default function MediaGalleryPage() {
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 style={{
-                  background: "#6FB3C8",
+                  background: "#6c7e7f",
                   border: "1px solid #fff",
                   color: "white",
                   padding: "8px 16px",
@@ -1115,128 +702,6 @@ export default function MediaGalleryPage() {
               ))}
             </div>
           )}
-
-          <AnimatedSection delay={0.3}>
-            <div
-              style={{
-                marginTop: 100,
-                textAlign: "center",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 11,
-                  letterSpacing: "0.14em",
-                  color: "#fff",
-                  marginBottom: 36,
-                }}
-              >
-                AS FEATURED IN
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  justifyContent: "center",
-                  gap: 48,
-                  rowGap: 24,
-                }}
-              >
-                {FEATURED_IN.map((pub) => (
-                  <span
-                    key={pub}
-                    style={{
-                      fontFamily: "var(--font-display, Georgia, serif)",
-                      fontSize: 13,
-                      letterSpacing: "0.08em",
-                      color: "#fff9",
-                      transition: "color 0.2s",
-                    }}
-                  >
-                    {pub}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </AnimatedSection>
-
-          <AnimatedSection delay={0.4}>
-            <div
-              style={{
-                marginTop: 100,
-                padding: "56px 52px",
-                background: "#fff",
-                border: "1px solid rgba(201,168,76,0.15)",
-                borderRadius: 20,
-                display: "flex",
-                flexWrap: "wrap",
-                justifyContent: "space-between",
-                alignItems: "center",
-                gap: 32,
-              }}
-            >
-              <div>
-                <h3
-                  style={{
-                    fontSize: "clamp(24px, 3vw, 34px)",
-                    marginBottom: 12,
-                    fontWeight: 500,
-                  }}
-                >
-                  Press & Media Inquiries
-                </h3>
-                <p
-                  style={{
-                    color: "#0009",
-                    maxWidth: 420,
-                    fontSize: 14,
-                  }}
-                >
-                  High-resolution photos, press kit, interview requests, and
-                  event photography available on request.
-                </p>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  gap: 14,
-                }}
-              >
-                <Link
-                  href="/contact"
-                  style={{
-                    display: "inline-flex",
-                    padding: "12px 28px",
-                    border: "1px solid #6FB3C8",
-                    color: "#000",
-                    borderRadius: 6,
-                    fontSize: 13,
-                    fontWeight: 600,
-                    letterSpacing: "0.06em",
-                    textDecoration: "none",
-                  }}
-                >
-                  Request Press Kit
-                </Link>
-                <Link
-                  href="/contact"
-                  style={{
-                    display: "inline-flex",
-                    padding: "12px 28px",
-                    background: "#6FB3C8",
-                    color: "#fff",
-                    borderRadius: 6,
-                    fontSize: 13,
-                    fontWeight: 600,
-                    letterSpacing: "0.06em",
-                    textDecoration: "none",
-                  }}
-                >
-                  Book Interview
-                </Link>
-              </div>
-            </div>
-          </AnimatedSection>
         </div>
       </section>
 

@@ -4,6 +4,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import Footer from "@/components/Footer";
 import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
+import ServicesSection from "@/components/Service";
 import {
   fetchAboutPageData,
   type MappedAbout,
@@ -276,7 +277,7 @@ export default function AboutPage() {
       <PageHero title="About Us" currentPage="About" />
 
       {/* ── Bio section ── */}
-      <section style={{ background: "#648181", padding: "80px 0" }}>
+      <section style={{ background: "#F4F7F6", padding: "80px 0" }}>
         <div
           className="container"
           style={{
@@ -301,7 +302,7 @@ export default function AboutPage() {
                   display: "flex",
                   alignItems: "flex-start",
                   gap: "10px",
-                  color: "rgba(255,255,255,0.35)",
+                  color: "#000",
                   fontSize: "14px",
                 }}
               >
@@ -318,7 +319,7 @@ export default function AboutPage() {
                       background: "transparent",
                       border: "1px solid rgba(255,255,255,0.12)",
                       borderRadius: "4px",
-                      color: "rgba(255,255,255,0.4)",
+                      color: "#000",
                       fontSize: "12px",
                       cursor: "pointer",
                       fontFamily: "inherit",
@@ -338,7 +339,7 @@ export default function AboutPage() {
                     fontFamily: "var(--font-display)",
                     fontSize: "38px",
                     marginBottom: "24px",
-                    color: "#fff",
+                    color: "#000",
                   }}
                 >
                   {about.aboutTitle}
@@ -347,7 +348,7 @@ export default function AboutPage() {
                 {/* Rich text description from API */}
                 <div
                   style={{
-                    color: "#dbe2e9",
+                    color: "#000",
                     lineHeight: 1.8,
                     marginBottom: "32px",
                     fontSize: "15px",
@@ -423,7 +424,7 @@ export default function AboutPage() {
                         size={16}
                         style={{ color: "#F59E0B", flexShrink: 0 }}
                       />
-                      <span style={{ fontSize: "13px", color: "#ffffff" }}>
+                      <span style={{ fontSize: "13px", color: "#000" }}>
                         {label}
                       </span>
                     </div>
@@ -437,8 +438,10 @@ export default function AboutPage() {
         <style>{`@media(max-width:768px){section > .container{grid-template-columns:1fr!important;}}`}</style>
       </section>
 
+      <ServicesSection />
+
       {/* ── Timeline ── */}
-      <section className="section" style={{ background: "var(--bg)" }}>
+      <section className="section" style={{ background: "#fff" }}>
         <div className="container">
           <AnimatedSection
             style={{ textAlign: "center", marginBottom: "60px" }}

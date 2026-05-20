@@ -988,7 +988,7 @@ export default function EnrollmentPage(): ReactNode {
                   <p
                     style={{
                       fontSize: "10px",
-                      color: "rgba(255,255,255,0.3)",
+                      color: "#fff",
                       letterSpacing: "0.1em",
                       textTransform: "uppercase",
                       margin: "0 0 14px",
@@ -1018,7 +1018,7 @@ export default function EnrollmentPage(): ReactNode {
                     <p
                       style={{
                         fontSize: "11px",
-                        color: "rgba(255,255,255,0.3)",
+                        color: "#fff",
                         margin: 0,
                       }}
                     >
@@ -1037,7 +1037,7 @@ export default function EnrollmentPage(): ReactNode {
                     <span
                       style={{
                         fontSize: "13px",
-                        color: "rgba(255,255,255,0.4)",
+                        color: "#fff",
                       }}
                     >
                       Price
@@ -1046,7 +1046,7 @@ export default function EnrollmentPage(): ReactNode {
                       <span
                         style={{
                           fontSize: "13px",
-                          color: "rgba(255,255,255,0.25)",
+                          color: "#fff",
                           textDecoration: "line-through",
                         }}
                       >
@@ -1057,7 +1057,7 @@ export default function EnrollmentPage(): ReactNode {
                         style={{
                           fontFamily: "var(--font-display)",
                           fontSize: "20px",
-                          color: "var(--gold)",
+                          color: "#fff",
                           fontWeight: 700,
                         }}
                       >
@@ -1078,16 +1078,15 @@ export default function EnrollmentPage(): ReactNode {
                       <span
                         style={{
                           fontSize: "13px",
-                          color: "#7DD4B0",
+                          color: "#fff",
                         }}
                       >
                         Discounted
                       </span>
                       <span
                         style={{
-                          fontFamily: "var(--font-display)",
                           fontSize: "20px",
-                          color: "var(--gold)",
+                          color: "#fff",
                           fontWeight: 700,
                         }}
                       >
@@ -1112,7 +1111,7 @@ export default function EnrollmentPage(): ReactNode {
                     <span
                       style={{
                         fontSize: "12px",
-                        color: "rgba(255,255,255,0.5)",
+                        color: "#fff",
                         letterSpacing: "0.04em",
                       }}
                     >
@@ -1149,7 +1148,7 @@ export default function EnrollmentPage(): ReactNode {
                           alignItems: "center",
                           gap: "8px",
                           fontSize: "12px",
-                          color: "rgba(255,255,255,0.35)",
+                          color: "#fff",
                         }}
                       >
                         <span style={{ color: "#7DD4B0", fontSize: "11px" }}>
@@ -1175,7 +1174,7 @@ export default function EnrollmentPage(): ReactNode {
           padding: 0 clamp(16px, 4vw, 40px);
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        input::placeholder, select option[value=""] { color: rgba(255,255,255,0.25); }
+        input::placeholder, select option[value=""] { color: "#fff"; }
         input:disabled { cursor: not-allowed; }
         @media (max-width: 700px) {
           section:last-of-type > div > div {

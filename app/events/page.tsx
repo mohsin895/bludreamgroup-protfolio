@@ -1,1095 +1,1094 @@
 "use client";
 
-import AnimatedSection from "@/components/AnimatedSection";
 import Footer from "@/components/Footer";
 import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  fetchEventCategories,
-  fetchMappedEvents,
-  type ApiEventCategory,
-  type EventStatus,
-  type EventType,
-  type MappedEvent,
-} from "@/lib/api/event";
-import {
-  AlertCircle,
   Calendar,
+  ChevronLeft,
   ChevronRight,
   Clock,
-  Loader2,
   MapPin,
-  Navigation,
-  Users,
+  Search,
+  X,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-// ─── Type / color maps ────────────────────────────────────────────────────────
+/* ─── ENV ─── */
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 
-const TYPE_LABELS: Record<EventType, string> = {
-  reading: "Reading",
-  workshop: "Workshop",
-  signing: "Signing",
-  festival: "Festival",
-  talk: "Talk / Keynote",
+/* ─── Types ─── */
+interface EventItem {
+  id: number;
+  event_category_id: string;
+  title: string;
+  description?: string;
+  event_date?: string;
+  start_time?: string;
+  end_time?: string;
+  location?: string;
+  status?: string;
+  image?: string | null;
+}
+
+interface Category {
+  id: number;
+  name: string;
+}
+
+/* ─── Category config ─── */
+const CATEGORY_MAP: Record<
+  string,
+  { label: string; color: string; bg: string }
+> = {
+  "1": { label: "Workshop", color: "#ffffff", bg: "#6c7e7f" },
+  "2": { label: "Seminar", color: "#ffffff", bg: "#7a9190" },
+  "3": { label: "Book Launch", color: "#ffffff", bg: "#95a49a" },
+  "4": { label: "Masterclass", color: "#ffffff", bg: "#5a6e6f" },
+  "5": { label: "Training", color: "#ffffff", bg: "#9aa6aa" },
+  "6": { label: "Conference", color: "#ffffff", bg: "#6c7e7f" },
+  default: { label: "Event", color: "#ffffff", bg: "#9aa6aa" },
 };
 
-const TYPE_COLORS: Record<EventType, string> = {
-  reading: "#C9A84C",
-  workshop: "#7C9A7E",
-  signing: "#9B8BC4",
-  festival: "#C47C5A",
-  talk: "#5A8EC4",
-};
+/* ─── Gradient palettes for image placeholders (cycles by id) ─── */
+const GRADIENTS = [
+  "linear-gradient(140deg,#4a6163 0%,#6c7e7f 40%,#95a49a 100%)",
+  "linear-gradient(140deg,#5b7070 0%,#7a9190 40%,#9aa6aa 100%)",
+  "linear-gradient(140deg,#3e5657 0%,#6c7e7f 50%,#8a9e99 100%)",
+  "linear-gradient(140deg,#607878 0%,#9aa6aa 50%,#c5d0cc 100%)",
+  "linear-gradient(140deg,#2d4748 0%,#5b7070 45%,#95a49a 100%)",
+  "linear-gradient(140deg,#526a6b 0%,#95a49a 50%,#bcc9c5 100%)",
+];
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+/* ─── Strip HTML ─── */
+function stripHtml(html?: string): string {
+  if (!html) return "";
+  return html
+    .replace(/<[^>]*>/g, "")
+    .replace(/&amp;/g, "&")
+    .replace(/&nbsp;/g, " ")
+    .trim();
+}
 
-function StatusBadge({ status }: { status: EventStatus }) {
-  const styles: Record<
-    EventStatus,
-    { bg: string; color: string; label: string }
-  > = {
-    upcoming: {
-      bg: "rgba(124,154,126,0.12)",
-      color: "#7C9A7E",
-      label: "Upcoming",
-    },
-    soldout: {
-      bg: "rgba(201,168,76,0.1)",
-      color: "#C9A84C",
-      label: "Sold Out",
-    },
-    past: {
-      bg: "rgba(255,255,255,0.05)",
-      color: "rgba(255,255,255,0.3)",
-      label: "Past Event",
-    },
+/* ─── Format helpers ─── */
+function formatDate(d?: string) {
+  if (!d) return "";
+  const dt = new Date(d);
+  return dt.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+function formatShortDate(d?: string) {
+  if (!d) return { day: "--", month: "---", year: "----" };
+  const dt = new Date(d);
+  return {
+    day: dt.getDate().toString().padStart(2, "0"),
+    month: dt.toLocaleString("en-US", { month: "short" }).toUpperCase(),
+    year: dt.getFullYear().toString(),
   };
-  const s = styles[status];
+}
+function formatTime(t?: string) {
+  if (!t) return "";
+  const [h, m] = t.split(":");
+  const hour = parseInt(h, 10);
+  const ampm = hour >= 12 ? "PM" : "AM";
+  const h12 = hour % 12 || 12;
+  return `${h12}:${m} ${ampm}`;
+}
+
+/* ─── Motion variants ─── */
+const containerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.1 } },
+};
+const cardVariants = {
+  hidden: { opacity: 0, y: 48, scale: 0.96 },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] as const },
+  },
+};
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
+  },
+};
+
+/* ═══════════════════════════════════════════
+   EVENT CARD  (matches reference layout)
+═══════════════════════════════════════════ */
+function EventCard({ event, index }: { event: EventItem; index: number }) {
+  const cat = CATEGORY_MAP[event.event_category_id] ?? CATEGORY_MAP.default;
+  const grad = GRADIENTS[event.id % GRADIENTS.length];
+  const desc = stripHtml(event.description);
+  const { day, month, year } = formatShortDate(event.event_date);
+  const startT = formatTime(event.start_time);
+  const endT = formatTime(event.end_time);
+  const timeStr = startT && endT ? `${startT} – ${endT}` : startT || endT || "";
+  const isActive = event.status === "active";
+
   return (
-    <span
+    <motion.article
+      variants={cardVariants}
+      className="ev-card"
       style={{
-        fontSize: "10px",
-        letterSpacing: "0.1em",
-        textTransform: "uppercase",
-        background: s.bg,
-        color: s.color,
-        padding: "4px 10px",
-        borderRadius: "3px",
-        fontWeight: 500,
+        background: "#ffffff",
+        borderRadius: 16,
+        overflow: "hidden",
+        border: "1px solid #e8eceb",
+        display: "flex",
+        flexDirection: "column",
+        boxShadow: "0 2px 16px rgba(108,126,127,0.07)",
+        transition: "box-shadow 0.3s, transform 0.3s, border-color 0.3s",
       }}
     >
-      {s.label}
-    </span>
-  );
-}
-
-function CapacityBar({ total, left }: { total: number; left: number }) {
-  const pct = Math.round(((total - left) / total) * 100);
-  const color =
-    left === 0 ? "#C9A84C" : left < total * 0.25 ? "#C47C5A" : "#7C9A7E";
-  return (
-    <div style={{ marginTop: "14px" }}>
+      {/* ── Image / Gradient ── */}
       <div
         style={{
-          display: "flex",
-          justifyContent: "space-between",
-          fontSize: "11px",
-          color: "rgba(255,255,255,0.3)",
-          marginBottom: "6px",
-          letterSpacing: "0.05em",
-        }}
-      >
-        <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <Users size={11} />
-          {left === 0 ? "Fully booked" : `${left} spots remaining`}
-        </span>
-        <span>{pct}% filled</span>
-      </div>
-      <div
-        style={{
-          height: "3px",
-          background: "#fff",
-          borderRadius: "2px",
+          position: "relative",
+          aspectRatio: "16/10",
           overflow: "hidden",
+          flexShrink: 0,
         }}
       >
+        {event.image ? (
+          <img
+            src={event.image}
+            alt={event.title}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              transition: "transform 0.55s ease",
+            }}
+            className="ev-img"
+          />
+        ) : (
+          <div
+            className="ev-img"
+            style={{
+              width: "100%",
+              height: "100%",
+              background: grad,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "relative",
+              transition: "transform 0.55s ease",
+            }}
+          >
+            {/* Decorative patterns */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                opacity: 0.06,
+                backgroundImage:
+                  "radial-gradient(circle, #fff 1px, transparent 1px)",
+                backgroundSize: "28px 28px",
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                bottom: "15%",
+                right: "10%",
+                width: 100,
+                height: 100,
+                borderRadius: "50%",
+                border: "2px solid rgba(255,255,255,0.15)",
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                top: "20%",
+                left: "8%",
+                width: 60,
+                height: 60,
+                borderRadius: "50%",
+                border: "1px solid rgba(255,255,255,0.1)",
+              }}
+            />
+
+            {/* Floating date badge in image */}
+            <div
+              style={{
+                background: "rgba(255,255,255,0.18)",
+                backdropFilter: "blur(10px)",
+                border: "1px solid rgba(255,255,255,0.28)",
+                borderRadius: 14,
+                padding: "14px 20px",
+                textAlign: "center",
+                zIndex: 1,
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 36,
+                  fontWeight: 800,
+                  color: "#fff",
+                  lineHeight: 1,
+                  fontFamily: "'Playfair Display', serif",
+                }}
+              >
+                {day}
+              </div>
+              <div
+                style={{
+                  fontSize: 13,
+                  color: "rgba(255,255,255,0.85)",
+                  fontWeight: 700,
+                  letterSpacing: "0.1em",
+                  marginTop: 2,
+                }}
+              >
+                {month}
+              </div>
+              <div
+                style={{
+                  fontSize: 11,
+                  color: "rgba(255,255,255,0.65)",
+                  marginTop: 2,
+                }}
+              >
+                {year}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Status badge — bottom-left */}
         <div
           style={{
-            height: "100%",
-            width: `${pct}%`,
-            background: color,
-            borderRadius: "2px",
-            transition: "width 0.6s ease",
+            position: "absolute",
+            bottom: 12,
+            left: 12,
+            background: isActive ? "rgba(255,255,255,0.92)" : "rgba(0,0,0,0.5)",
+            backdropFilter: "blur(8px)",
+            borderRadius: 20,
+            padding: "5px 14px",
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
           }}
-        />
+        >
+          <span
+            style={{
+              width: 7,
+              height: 7,
+              borderRadius: "50%",
+              background: isActive ? "#6c7e7f" : "#9ca3af",
+              boxShadow: isActive ? "0 0 6px #6c7e7f88" : "none",
+              display: "inline-block",
+            }}
+          />
+          <span
+            style={{
+              fontSize: 10,
+              fontWeight: 800,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: isActive ? "#6c7e7f" : "#9ca3af",
+            }}
+          >
+            {isActive ? "Upcoming" : "Ended"}
+          </span>
+        </div>
+
+        {/* Category badge — bottom-right */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: 12,
+            right: 12,
+            background: cat.bg,
+            color: cat.color,
+            borderRadius: 20,
+            padding: "5px 14px",
+            fontSize: 10,
+            fontWeight: 800,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            boxShadow: `0 4px 12px ${cat.bg}55`,
+          }}
+        >
+          {cat.label}
+        </div>
       </div>
-    </div>
+
+      {/* ── Body ── */}
+      <div
+        style={{
+          padding: "22px 24px 24px",
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {/* Title */}
+        <h3
+          style={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: "clamp(17px, 2vw, 21px)",
+            fontWeight: 700,
+            color: "#1a2427",
+            lineHeight: 1.25,
+            margin: "0 0 14px",
+            letterSpacing: "-0.01em",
+          }}
+        >
+          {event.title}
+        </h3>
+
+        {/* Meta row */}
+        <div
+          className="ev-meta"
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "8px 20px",
+            marginBottom: 14,
+          }}
+        >
+          {event.event_date && (
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                fontSize: 12,
+                color: "#6b7280",
+                fontWeight: 500,
+              }}
+            >
+              <Calendar size={13} color="#6c7e7f" />
+              {formatDate(event.event_date)}
+            </span>
+          )}
+          {timeStr && (
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                fontSize: 12,
+                color: "#6b7280",
+                fontWeight: 500,
+              }}
+            >
+              <Clock size={13} color="#95a49a" />
+              {timeStr}
+            </span>
+          )}
+          {event.location && (
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                fontSize: 12,
+                color: "#6b7280",
+                fontWeight: 500,
+              }}
+            >
+              <MapPin size={13} color="#9aa6aa" />
+              {event.location}
+            </span>
+          )}
+        </div>
+
+        {/* Divider */}
+        <div style={{ height: 1, background: "#f0f2f1", marginBottom: 14 }} />
+
+        {/* Description */}
+        {desc && (
+          <p
+            style={
+              {
+                fontSize: 13,
+                color: "#6b7280",
+                lineHeight: 1.75,
+                margin: "0 0 20px",
+                flex: 1,
+                display: "-webkit-box",
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              } as React.CSSProperties
+            }
+          >
+            {desc}
+          </p>
+        )}
+
+        {/* CTA row */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginTop: "auto",
+          }}
+        >
+          <Link
+            href={`/events/${event.id}`}
+            className="ev-details-btn"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 7,
+              background: "#6c7e7f",
+              color: "#fff",
+              padding: "10px 20px",
+              borderRadius: 8,
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              transition: "all 0.25s",
+              boxShadow: "0 4px 14px rgba(108,126,127,0.28)",
+            }}
+          >
+            View Details
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </Link>
+
+          {/* Time-to-event chip */}
+          {event.event_date && (
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: "#95a49a",
+                background: "#95a49a12",
+                borderRadius: 20,
+                padding: "5px 12px",
+                border: "1px solid #95a49a30",
+              }}
+            >
+              {(() => {
+                const diff = new Date(event.event_date).getTime() - Date.now();
+                const days = Math.ceil(diff / 86400000);
+                if (days < 0) return "Ended";
+                if (days === 0) return "Today";
+                if (days === 1) return "Tomorrow";
+                return `In ${days} days`;
+              })()}
+            </div>
+          )}
+        </div>
+      </div>
+    </motion.article>
   );
 }
 
-// ─── Skeleton card ────────────────────────────────────────────────────────────
-
+/* ═══════════════════════════════════════════
+   SKELETON CARD
+═══════════════════════════════════════════ */
 function SkeletonCard() {
   return (
     <div
       style={{
         background: "#fff",
-        border: "1px solid rgba(255,255,255,0.06)",
-        borderRadius: "8px",
-        padding: "28px",
+        borderRadius: 16,
+        border: "1px solid #e8eceb",
         overflow: "hidden",
+        animation: "pulse 1.8s ease-in-out infinite",
       }}
     >
-      <div style={{ display: "flex", gap: "20px" }}>
+      <div style={{ aspectRatio: "16/10", background: "#e8ecea" }} />
+      <div
+        style={{
+          padding: "22px 24px 24px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+        }}
+      >
         <div
           style={{
-            width: "56px",
-            height: "76px",
-            borderRadius: "6px",
-            background: "#fff",
-            animation: "shimmer 1.5s ease-in-out infinite",
+            height: 24,
+            width: "70%",
+            background: "#e8ecea",
+            borderRadius: 6,
           }}
         />
         <div
           style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-          }}
-        >
-          <div
-            style={{
-              height: "14px",
-              width: "40%",
-              borderRadius: "3px",
-              background: "rgba(255,255,255,0.06)",
-              animation: "shimmer 1.5s ease-in-out infinite",
-            }}
-          />
-          <div
-            style={{
-              height: "16px",
-              width: "85%",
-              borderRadius: "3px",
-              background: "rgba(255,255,255,0.06)",
-              animation: "shimmer 1.5s ease-in-out infinite 0.1s",
-            }}
-          />
-          <div
-            style={{
-              height: "12px",
-              width: "60%",
-              borderRadius: "3px",
-              background: "rgba(255,255,255,0.06)",
-              animation: "shimmer 1.5s ease-in-out infinite 0.2s",
-            }}
-          />
-        </div>
-      </div>
-      <div
-        style={{
-          marginTop: "18px",
-          height: "40px",
-          borderRadius: "3px",
-          background: "rgba(255,255,255,0.04)",
-          animation: "shimmer 1.5s ease-in-out infinite 0.3s",
-        }}
-      />
-    </div>
-  );
-}
-
-// ─── Error state ──────────────────────────────────────────────────────────────
-
-function ErrorState({
-  message,
-  onRetry,
-}: {
-  message: string;
-  onRetry: () => void;
-}) {
-  return (
-    <div style={{ textAlign: "center", padding: "80px 0" }}>
-      <AlertCircle
-        size={40}
-        style={{ color: "#C47C5A", marginBottom: "16px", opacity: 0.7 }}
-      />
-      <p
-        style={{
-          color: "rgba(255,255,255,0.4)",
-          fontSize: "15px",
-          margin: "0 0 24px",
-        }}
-      >
-        {message}
-      </p>
-      <button
-        onClick={onRetry}
-        style={{
-          padding: "10px 24px",
-          background: "rgba(255,255,255,0.06)",
-          border: "1px solid rgba(255,255,255,0.1)",
-          borderRadius: "4px",
-          color: "rgba(255,255,255,0.6)",
-          fontSize: "12px",
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
-          cursor: "pointer",
-          fontFamily: "inherit",
-        }}
-      >
-        Try Again
-      </button>
-    </div>
-  );
-}
-
-// ─── Event Card ───────────────────────────────────────────────────────────────
-
-function EventCard({ event, delay }: { event: MappedEvent; delay: number }) {
-  const typeColor = TYPE_COLORS[event.type] ?? "#C9A84C";
-  const isPast = event.status === "past";
-
-  return (
-    <AnimatedSection delay={delay}>
-      <div
-        className="card bg-white"
-        style={{
-          padding: "0",
-          overflow: "hidden",
-          opacity: isPast ? 0.9 : 1,
-          transition: "opacity 0.2s ease",
-          position: "relative",
-        }}
-      >
-        {/* Colour bar */}
-        <div
-          style={{
-            height: "3px",
-            background: `#fff`,
+            height: 14,
+            width: "90%",
+            background: "#f0f2f1",
+            borderRadius: 4,
           }}
         />
-
-        <div style={{ padding: "28px" }}>
-          {/* Header */}
-          <div
-            style={{ display: "flex", alignItems: "flex-start", gap: "20px" }}
-          >
-            {/* Date block */}
-            <div
-              style={{
-                flexShrink: 0,
-                width: "56px",
-                textAlign: "center",
-                background: `#fff`,
-                border: `1px solid ${typeColor}25`,
-                borderRadius: "6px",
-                padding: "10px 0",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "22px",
-                  fontFamily: "var(--font-display)",
-                  color: "#000",
-                  lineHeight: 1,
-                  letterSpacing: "-0.02em",
-                  background: "#fff",
-                }}
-              >
-                {event.day}
-              </div>
-              <div
-                style={{
-                  fontSize: "9px",
-                  letterSpacing: "0.14em",
-                  color: "#000",
-                  marginTop: "4px",
-                  textTransform: "uppercase",
-                }}
-              >
-                {event.month}
-              </div>
-              <div
-                style={{
-                  fontSize: "9px",
-                  color: "#000",
-                  marginTop: "2px",
-                }}
-              >
-                {event.year}
-              </div>
-            </div>
-
-            {/* Content */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  flexWrap: "wrap",
-                  marginBottom: "8px",
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: "10px",
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    color: "#000",
-                    background: `#fff`,
-                    border: `1px solid ${typeColor}25`,
-                    padding: "3px 8px",
-                    borderRadius: "3px",
-                  }}
-                >
-                  {TYPE_LABELS[event.type] ?? event.categoryTitle}
-                </span>
-                <StatusBadge status={event.status} />
-              </div>
-
-              <h3
-                style={{
-                  fontSize: "15px",
-                  fontWeight: 500,
-                  lineHeight: 1.4,
-                  margin: "0 0 10px",
-                  color: isPast ? "#000" : "#f00",
-                }}
-              >
-                {event.title}
-              </h3>
-
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: "5px" }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "7px",
-                    fontSize: "12px",
-                    color: "#000",
-                  }}
-                >
-                  <MapPin
-                    size={11}
-                    style={{ color: typeColor, flexShrink: 0 }}
-                  />
-                  <span>{event.venue}</span>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "7px",
-                    fontSize: "12px",
-                    color: "#000",
-                  }}
-                >
-                  <Clock
-                    size={11}
-                    style={{ color: "typeColor", flexShrink: 0 }}
-                  />
-                  <span>{event.time}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Description */}
-          <p
-            style={{
-              fontSize: "13px",
-              lineHeight: 1.75,
-              color: "#000",
-              margin: "18px 0 0",
-            }}
-          >
-            {event.description}
-          </p>
-
-          {/* Footer */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginTop: "20px",
-              paddingTop: "18px",
-              borderTop: "1px solid rgba(255,255,255,0.06)",
-              flexWrap: "wrap",
-              gap: "12px",
-            }}
-          >
-            <a
-              href={`https://maps.google.com/?q=${encodeURIComponent(event.address)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "5px",
-                fontSize: "11px",
-                color: "#000",
-                textDecoration: "none",
-                letterSpacing: "0.05em",
-                transition: "color 0.2s ease",
-              }}
-            >
-              <Navigation size={11} />
-              Get Directions
-            </a>
-
-            {isPast ? (
-              <span
-                style={{
-                  fontSize: "11px",
-                  color: "rgba(255,255,255,0.2)",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                Event Concluded
-              </span>
-            ) : event.status === "soldout" ? (
-              <button
-                disabled
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  padding: "8px 16px",
-                  background: "transparent",
-                  color: typeColor,
-                  border: `1px solid ${typeColor}`,
-                  borderRadius: "4px",
-                  fontSize: "11px",
-                  fontWeight: 600,
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                  cursor: "not-allowed",
-                  opacity: 0.6,
-                  fontFamily: "inherit",
-                }}
-              >
-                Join Waitlist
-              </button>
-            ) : (
-              <span
-                style={{
-                  fontSize: "11px",
-                  color: typeColor,
-                  letterSpacing: "0.05em",
-                }}
-              >
-                Free Entry
-              </span>
-            )}
-          </div>
-        </div>
+        <div
+          style={{
+            height: 14,
+            width: "60%",
+            background: "#f0f2f1",
+            borderRadius: 4,
+          }}
+        />
+        <div style={{ height: 1, background: "#f0f2f1", margin: "4px 0" }} />
+        <div
+          style={{
+            height: 12,
+            width: "95%",
+            background: "#f5f6f5",
+            borderRadius: 4,
+          }}
+        />
+        <div
+          style={{
+            height: 12,
+            width: "80%",
+            background: "#f5f6f5",
+            borderRadius: 4,
+          }}
+        />
+        <div
+          style={{
+            height: 38,
+            width: 130,
+            background: "#e8ecea",
+            borderRadius: 8,
+            marginTop: 8,
+          }}
+        />
       </div>
-    </AnimatedSection>
+    </div>
   );
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
-type FilterTab = "all" | "upcoming" | "past";
+/* ═══════════════════════════════════════════
+   MAIN PAGE
+═══════════════════════════════════════════ */
+const PER_PAGE = 6;
 
 export default function EventsPage() {
-  const [events, setEvents] = useState<MappedEvent[]>([]);
-  const [categories, setCategories] = useState<ApiEventCategory[]>([]);
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [filtered, setFiltered] = useState<EventItem[]>([]);
+  const [categories, setCategories] = useState<{ id: string; label: string }[]>(
+    [],
+  );
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<FilterTab>("upcoming");
-  const [activeType, setActiveType] = useState<string>("all");
+  const [search, setSearch] = useState("");
+  const [activeCat, setActiveCat] = useState("all");
+  const [page, setPage] = useState(1);
+  const [filterOpen, setFilterOpen] = useState(false);
 
-  async function loadData() {
-    try {
-      setLoading(true);
-      setError(null);
-      const [mappedEvents, cats] = await Promise.all([
-        fetchMappedEvents(),
-        fetchEventCategories(),
-      ]);
-      setEvents(mappedEvents);
-      setCategories(cats);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load events.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
+  /* Fetch events */
   useEffect(() => {
-    loadData();
+    setLoading(true);
+    fetch(`${API_BASE}/event`)
+      .then((r) => r.json())
+      .then((json) => {
+        const data: EventItem[] = json?.data ?? json;
+        if (Array.isArray(data)) {
+          setEvents(data);
+          setFiltered(data);
+
+          /* Build categories from data */
+          const catMap = new Map<string, string>();
+          data.forEach((e) => {
+            const cat =
+              CATEGORY_MAP[e.event_category_id] ?? CATEGORY_MAP.default;
+            catMap.set(e.event_category_id, cat.label);
+          });
+          setCategories(
+            Array.from(catMap.entries()).map(([id, label]) => ({ id, label })),
+          );
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
-  // Derived counts
-  const upcomingCount = events.filter((e) => e.status !== "past").length;
-  const pastCount = events.filter((e) => e.status === "past").length;
+  /* Filter */
+  useEffect(() => {
+    let result = [...events];
+    if (activeCat !== "all")
+      result = result.filter((e) => e.event_category_id === activeCat);
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(
+        (e) =>
+          e.title.toLowerCase().includes(q) ||
+          stripHtml(e.description).toLowerCase().includes(q) ||
+          (e.location ?? "").toLowerCase().includes(q),
+      );
+    }
+    setFiltered(result);
+    setPage(1);
+  }, [search, activeCat, events]);
 
-  // Active categories (only what's in the current event list)
-  const activeCategories = categories.filter((cat) =>
-    events.some(
-      (e) => e.categoryTitle.toLowerCase() === cat.title.toLowerCase(),
-    ),
-  );
+  const totalPages = Math.ceil(filtered.length / PER_PAGE);
+  const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
-  const filtered = events.filter((e) => {
-    const tabMatch =
-      activeTab === "all" ||
-      (activeTab === "upcoming" && e.status !== "past") ||
-      (activeTab === "past" && e.status === "past");
-    const typeMatch = activeType === "all" || e.type === activeType;
-    return tabMatch && typeMatch;
-  });
-
-  const featured = events.find((e) => e.isFeatured);
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   return (
     <>
+      {/* ── Google Fonts ── */}
+      <style>{`
+        
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {  background: #f4f7f6; }
+
+        .ev-card:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 20px 52px rgba(108,126,127,0.16) !important;
+          border-color: #95a49a !important;
+        }
+        .ev-card:hover .ev-img { transform: scale(1.05); }
+        .ev-details-btn:hover {
+          background: #5a6b6c !important;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(108,126,127,0.38) !important;
+        }
+        .cat-pill { transition: all 0.22s ease; }
+        .cat-pill:hover { background: #6c7e7f !important; color: #fff !important; border-color: #6c7e7f !important; }
+        .page-btn { transition: all 0.2s; }
+        .page-btn:hover { background: #6c7e7f !important; color: #fff !important; border-color: #6c7e7f !important; }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 0.7; }
+          50%       { opacity: 1; }
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+          .ev-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .hero-inner { padding: 56px 20px 48px !important; }
+        }
+        @media (max-width: 600px) {
+          .ev-grid { grid-template-columns: 1fr !important; }
+          .filter-bar { flex-direction: column !important; gap: 12px !important; }
+          .cat-pills-wrap { overflow-x: auto; padding-bottom: 4px; }
+          .cat-pills-wrap::-webkit-scrollbar { display: none; }
+          .page-controls { gap: 6px !important; }
+        }
+      `}</style>
       <Navbar />
 
-      {/* ── Hero ── */}
-      <PageHero title="Our Events" currentPage="Events" />
+      {/* ══════════════════════════════════
+          HERO HEADER
+      ══════════════════════════════════ */}
+      <PageHero title="Events & Programs" currentPage="Events" />
       <section
         style={{
-          paddingTop: "40px",
-          paddingBottom: "72px",
-          background: "#F4F7F6",
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
+          background:
+            "linear-gradient(135deg, #6c7e7f 0%, #7a9190 40%, #95a49a 100%)",
+          position: "relative",
+          overflow: "hidden",
         }}
       >
-        <div className="container">
-          <AnimatedSection>
-            <div className="section-label">Events</div>
-            <h1
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(48px, 6vw, 80px)",
-                marginTop: "8px",
-                letterSpacing: "-0.02em",
-                lineHeight: 1.05,
-              }}
-            >
-              Readings, Signings
-              <br />
-              <span style={{ color: "var(--gold, #C9A84C)" }}>
-                &amp; Workshops
-              </span>
-            </h1>
-            <p
-              style={{
-                color: "var(--text-muted, rgba(255,255,255,0.5))",
-                fontSize: "16px",
-                maxWidth: "460px",
-                marginTop: "20px",
-                lineHeight: 1.75,
-              }}
-            >
-              Catch a live reading, join a craft workshop, or grab a signed
-              copy. All upcoming events are listed below.
-            </p>
+        {/* dot pattern */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            opacity: 0.07,
+            backgroundImage:
+              "radial-gradient(circle, #fff 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+        />
+        {/* glows */}
+        <div
+          style={{
+            position: "absolute",
+            top: "-30%",
+            right: "-5%",
+            width: 500,
+            height: 500,
+            borderRadius: "50%",
+            background:
+              "radial-gradient(circle,rgba(255,255,255,0.08),transparent 70%)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            bottom: "-40%",
+            left: "5%",
+            width: 400,
+            height: 400,
+            borderRadius: "50%",
+            background:
+              "radial-gradient(circle,rgba(255,255,255,0.05),transparent 70%)",
+          }}
+        />
 
-            {/* Quick stats */}
-            <div
-              style={{
-                display: "flex",
-                gap: "40px",
-                marginTop: "40px",
-                flexWrap: "wrap",
-              }}
-            >
-              {[
-                {
-                  label: "Upcoming Events",
-                  value: loading ? "—" : upcomingCount,
-                },
-                { label: "Past Events", value: loading ? "—" : pastCount },
-                {
-                  label: "Event Types",
-                  value: loading ? "—" : activeCategories.length,
-                },
-              ].map((s) => (
-                <div key={s.label}>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: "38px",
-                      color: "var(--gold, #C9A84C)",
-                      letterSpacing: "-0.03em",
-                      lineHeight: 1,
-                    }}
-                  >
-                    {s.value}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "11px",
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase",
-                      color: "#000",
-                      marginTop: "4px",
-                    }}
-                  >
-                    {s.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </AnimatedSection>
+        {/* Wave */}
+        <div style={{ position: "absolute", bottom: -2, left: 0, right: 0 }}>
+          <svg
+            viewBox="0 0 1440 64"
+            preserveAspectRatio="none"
+            style={{ width: "100%", height: 64, display: "block" }}
+          >
+            <path
+              d="M0,32 C480,64 960,0 1440,32 L1440,64 L0,64 Z"
+              fill="#f4f7f6"
+            />
+          </svg>
         </div>
       </section>
 
-      {/* ── Body ── */}
-      <section
-        className="section"
+      {/* ══════════════════════════════════
+          FILTER BAR
+      ══════════════════════════════════ */}
+      <div
         style={{
-          background: "#648181",
-          paddingTop: "64px",
-          paddingBottom: "120px",
-          marginBottom: "60px",
+          background: "#fff",
+          borderBottom: "1px solid #e8eceb",
+          position: "sticky",
+          top: 0,
+          zIndex: 100,
+          boxShadow: "0 2px 16px rgba(108,126,127,0.06)",
         }}
       >
-        <div className="container">
-          {/* ── Featured Banner (only when data loaded) ── */}
-          {!loading && !error && featured && (
-            <AnimatedSection>
-              <div
+        <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
+          <div
+            className="filter-bar"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 16,
+              padding: "14px 0",
+            }}
+          >
+            {/* Search */}
+            <div style={{ position: "relative", flex: "0 0 260px" }}>
+              <Search
+                size={15}
+                color="#9aa6aa"
                 style={{
-                  marginBottom: "64px",
-                  padding: "40px 44px",
-                  background: "#82c3d8",
-                  border: "1px solid rgba(201,168,76,0.18)",
-                  borderRadius: "12px",
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: "32px",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  position: "relative",
-                  overflow: "hidden",
+                  position: "absolute",
+                  left: 14,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  pointerEvents: "none",
                 }}
-              >
-                {/* Decorative glow */}
-                <div
+              />
+              <input
+                type="text"
+                placeholder="Search events…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "10px 14px 10px 38px",
+                  border: "1px solid #e8eceb",
+                  borderRadius: 10,
+                  outline: "none",
+                  fontSize: 13,
+                  color: "#1a2427",
+                  background: "#f8faf9",
+                  fontFamily: "'DM Sans', sans-serif",
+                  transition: "border-color 0.2s",
+                }}
+                onFocus={(e) => (e.target.style.borderColor = "#6c7e7f")}
+                onBlur={(e) => (e.target.style.borderColor = "#e8eceb")}
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch("")}
                   style={{
                     position: "absolute",
-                    top: "-60px",
-                    right: "-60px",
-                    width: "240px",
-                    height: "240px",
-                    borderRadius: "50%",
-                    background:
-                      "radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%)",
-                    pointerEvents: "none",
-                  }}
-                />
-
-                <div style={{ position: "relative" }}>
-                  <div
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "7px",
-                      fontSize: "10px",
-                      letterSpacing: "0.14em",
-                      textTransform: "uppercase",
-                      color: "var(--gold, #C9A84C)",
-                      marginBottom: "14px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        width: "6px",
-                        height: "6px",
-                        borderRadius: "50%",
-                        background: "var(--gold, #C9A84C)",
-                        display: "inline-block",
-                        animation: "pulse 2s infinite",
-                      }}
-                    />
-                    Featured Upcoming Event
-                  </div>
-
-                  <h2
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: "clamp(20px, 2.5vw, 28px)",
-                      margin: "0 0 10px",
-                      letterSpacing: "-0.02em",
-                      maxWidth: "480px",
-                    }}
-                  >
-                    {featured.title}
-                  </h2>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gap: "16px",
-                      marginTop: "12px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        fontSize: "13px",
-                        color: "rgba(255,255,255,0.45)",
-                      }}
-                    >
-                      <Calendar
-                        size={12}
-                        style={{ color: "var(--gold, #C9A84C)" }}
-                      />
-                      {featured.date}
-                    </span>
-                    <span
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        fontSize: "13px",
-                        color: "rgba(255,255,255,0.45)",
-                      }}
-                    >
-                      <MapPin
-                        size={12}
-                        style={{ color: "var(--gold, #C9A84C)" }}
-                      />
-                      {featured.venue}
-                    </span>
-                    <span
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        fontSize: "13px",
-                        color: "rgba(255,255,255,0.45)",
-                      }}
-                    >
-                      <Clock
-                        size={12}
-                        style={{ color: "var(--gold, #C9A84C)" }}
-                      />
-                      {featured.time}
-                    </span>
-                  </div>
-                </div>
-
-                <a
-                  href={`https://maps.google.com/?q=${encodeURIComponent(featured.address)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    padding: "14px 28px",
-                    background: "var(--gold, #C9A84C)",
-                    color: "#0a0a0a",
-                    borderRadius: "4px",
-                    fontSize: "12px",
-                    fontWeight: 700,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    textDecoration: "none",
-                    flexShrink: 0,
+                    right: 10,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    color: "#9aa6aa",
                   }}
                 >
-                  View on Map
-                  <ChevronRight size={14} />
-                </a>
-              </div>
-            </AnimatedSection>
-          )}
+                  <X size={14} />
+                </button>
+              )}
+            </div>
 
-          {/* ── Tabs + Type filters ── */}
-          {!loading && !error && (
-            <AnimatedSection delay={0.05}>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: "16px",
-                  marginBottom: "36px",
-                }}
-              >
-                {/* Status tabs */}
-                <div
-                  style={{
-                    display: "flex",
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    borderRadius: "6px",
-                    padding: "4px",
-                    gap: "2px",
-                  }}
-                >
-                  {(
-                    [
-                      { key: "upcoming", label: `Upcoming (${upcomingCount})` },
-                      { key: "past", label: `Past (${pastCount})` },
-                      { key: "all", label: "All" },
-                    ] as { key: FilterTab; label: string }[]
-                  ).map((tab) => (
-                    <button
-                      key={tab.key}
-                      onClick={() => setActiveTab(tab.key)}
-                      style={{
-                        padding: "7px 16px",
-                        borderRadius: "4px",
-                        border: "none",
-                        background:
-                          activeTab === tab.key
-                            ? "rgba(201,168,76,0.12)"
-                            : "transparent",
-                        color:
-                          activeTab === tab.key
-                            ? "var(--gold, #C9A84C)"
-                            : "rgba(255,255,255,0.35)",
-                        fontSize: "12px",
-                        letterSpacing: "0.05em",
-                        cursor: "pointer",
-                        transition: "all 0.2s ease",
-                        fontFamily: "inherit",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Category / type pills — built from API categories */}
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                  {/* "All" pill */}
+            {/* Category pills */}
+            <div
+              className="cat-pills-wrap"
+              style={{ flex: 1, display: "flex", gap: 8, alignItems: "center" }}
+            >
+              {[{ id: "all", label: "All Events" }, ...categories].map((c) => {
+                const isActive = activeCat === c.id;
+                const catStyle =
+                  c.id !== "all"
+                    ? (CATEGORY_MAP[c.id] ?? CATEGORY_MAP.default)
+                    : null;
+                return (
                   <button
-                    onClick={() => setActiveType("all")}
+                    key={c.id}
+                    className="cat-pill"
+                    onClick={() => setActiveCat(c.id)}
                     style={{
-                      padding: "5px 12px",
-                      borderRadius: "100px",
-                      border: "1px solid",
-                      borderColor:
-                        activeType === "all"
-                          ? "var(--gold, #C9A84C)"
-                          : "rgba(255,255,255,0.08)",
-                      background:
-                        activeType === "all"
-                          ? "rgba(201,168,76,0.1)"
-                          : "transparent",
-                      color:
-                        activeType === "all"
-                          ? "var(--gold, #C9A84C)"
-                          : "rgba(255,255,255,0.3)",
-                      fontSize: "11px",
-                      letterSpacing: "0.08em",
+                      padding: "7px 16px",
+                      borderRadius: 20,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      letterSpacing: "0.05em",
+                      border: `1.5px solid ${isActive ? (catStyle?.bg ?? "#6c7e7f") : "#e8eceb"}`,
+                      background: isActive
+                        ? (catStyle?.bg ?? "#6c7e7f")
+                        : "transparent",
+                      color: isActive ? "#fff" : "#6b7280",
                       cursor: "pointer",
-                      transition: "all 0.2s ease",
-                      fontFamily: "inherit",
+                      whiteSpace: "nowrap",
+                      fontFamily: "'DM Sans', sans-serif",
                     }}
                   >
-                    All Types
+                    {c.label}
                   </button>
+                );
+              })}
+            </div>
 
-                  {/* One pill per API category */}
-                  {activeCategories.map((cat) => {
-                    const typeKey = cat.title.toLowerCase() as EventType;
-                    const color =
-                      TYPE_COLORS[typeKey] ?? "var(--gold, #C9A84C)";
-                    const isActive = activeType === typeKey;
-                    return (
-                      <button
-                        key={cat.id}
-                        onClick={() => setActiveType(typeKey)}
-                        style={{
-                          padding: "5px 12px",
-                          borderRadius: "100px",
-                          border: "1px solid",
-                          borderColor: isActive
-                            ? color
-                            : "rgba(255,255,255,0.08)",
-                          background: isActive ? `${color}18` : "transparent",
-                          color: isActive ? color : "rgba(255,255,255,0.3)",
-                          fontSize: "11px",
-                          letterSpacing: "0.08em",
-                          textTransform: "capitalize",
-                          cursor: "pointer",
-                          transition: "all 0.2s ease",
-                          fontFamily: "inherit",
-                        }}
-                      >
-                        {TYPE_LABELS[typeKey] ?? cat.title}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </AnimatedSection>
-          )}
-
-          {/* ── Loading skeletons ── */}
-          {loading && (
+            {/* Results count */}
             <div
               style={{
-                display: "grid",
-                gridTemplateColumns:
-                  "repeat(auto-fill, minmax(min(100%, 480px), 1fr))",
-                gap: "20px",
+                fontSize: 12,
+                color: "#9aa6aa",
+                fontWeight: 600,
+                whiteSpace: "nowrap",
+                flexShrink: 0,
               }}
             >
-              {[1, 2, 3, 4].map((n) => (
-                <SkeletonCard key={n} />
-              ))}
+              {loading
+                ? "Loading…"
+                : `${filtered.length} event${filtered.length !== 1 ? "s" : ""}`}
             </div>
-          )}
-
-          {/* ── Loading spinner (inline) ── */}
-          {loading && (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                marginTop: "40px",
-                color: "rgba(255,255,255,0.2)",
-              }}
-            >
-              <Loader2
-                size={20}
-                style={{ animation: "spin 1s linear infinite" }}
-              />
-            </div>
-          )}
-
-          {/* ── Error ── */}
-          {!loading && error && (
-            <ErrorState message={error} onRetry={loadData} />
-          )}
-
-          {/* ── Empty state ── */}
-          {!loading && !error && filtered.length === 0 && (
-            <AnimatedSection>
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "80px 0",
-                  color: "#000",
-                }}
-              >
-                <Calendar
-                  size={36}
-                  style={{ marginBottom: "16px", opacity: 0.4 }}
-                />
-                <p style={{ fontSize: "15px", margin: 0 }}>
-                  No events match this filter.
-                </p>
-              </div>
-            </AnimatedSection>
-          )}
-
-          {/* ── Event grid ── */}
-          {!loading && !error && filtered.length > 0 && (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns:
-                  "repeat(auto-fill, minmax(min(100%, 480px), 1fr))",
-                gap: "20px",
-              }}
-            >
-              {filtered.map((event, i) => (
-                <EventCard key={event.id} event={event} delay={i * 0.07} />
-              ))}
-            </div>
-          )}
-
-          {/* ── Newsletter CTA ── */}
-          {!loading && !error && (
-            <AnimatedSection delay={0.3}>
-              <div
-                style={{
-                  marginTop: "96px",
-                  padding: "52px 48px",
-                  background: "#f4f7f6ff",
-                  border: "1px solid rgba(201,168,76,0.12)",
-                  borderRadius: "12px",
-                  color: "#000",
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: "32px",
-                }}
-              >
-                <div>
-                  <h3
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: "clamp(22px, 3vw, 34px)",
-                      margin: "0 0 10px",
-                      letterSpacing: "-0.02em",
-                    }}
-                  >
-                    Never miss an event
-                  </h3>
-                  <p
-                    style={{
-                      color: "#000",
-                      fontSize: "14px",
-                      lineHeight: 1.7,
-                      margin: 0,
-                      maxWidth: "360px",
-                    }}
-                  >
-                    New events are announced first via the newsletter.
-                    Subscribers also get early access to limited workshop spots
-                    and signed editions.
-                  </p>
-                </div>
-                <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-                  <Link
-                    href="/contact"
-                    className="btn-outline"
-                    style={{ display: "inline-flex" }}
-                  >
-                    Request a Booking
-                  </Link>
-                  <Link
-                    href="/newsletter"
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      padding: "12px 24px",
-                      background: "#6FB3C8",
-                      color: "#0a0a0a",
-                      borderRadius: "4px",
-                      fontSize: "13px",
-                      fontWeight: 600,
-                      letterSpacing: "0.06em",
-                      textTransform: "uppercase",
-                      textDecoration: "none",
-                    }}
-                  >
-                    Join Newsletter
-                  </Link>
-                </div>
-              </div>
-            </AnimatedSection>
-          )}
+          </div>
         </div>
-      </section>
+      </div>
 
+      {/* ══════════════════════════════════
+          GRID
+      ══════════════════════════════════ */}
+      <main
+        style={{ maxWidth: 1240, margin: "0 auto", padding: "48px 24px 80px" }}
+      >
+        <AnimatePresence mode="wait">
+          {loading ? (
+            <motion.div
+              key="skeleton"
+              className="ev-grid"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, 1fr)",
+                gap: 28,
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              {Array.from({ length: 6 }).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </motion.div>
+          ) : filtered.length === 0 ? (
+            <motion.div
+              key="empty"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              style={{ textAlign: "center", padding: "80px 20px" }}
+            >
+              <div style={{ fontSize: 48, marginBottom: 16 }}>📭</div>
+              <h3
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: 24,
+                  color: "#1a2427",
+                  marginBottom: 10,
+                }}
+              >
+                No events found
+              </h3>
+              <p style={{ fontSize: 14, color: "#9aa6aa" }}>
+                Try adjusting your search or filter.
+              </p>
+              <button
+                onClick={() => {
+                  setSearch("");
+                  setActiveCat("all");
+                }}
+                style={{
+                  marginTop: 24,
+                  background: "#6c7e7f",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 8,
+                  padding: "11px 24px",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                }}
+              >
+                Reset Filters
+              </button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key={`page-${page}-${activeCat}-${search}`}
+              className="ev-grid"
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              exit={{ opacity: 0, transition: { duration: 0.2 } }}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, 1fr)",
+                gap: 28,
+              }}
+            >
+              {paginated.map((ev, i) => (
+                <EventCard key={ev.id} event={ev} index={i} />
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ── Pagination ── */}
+        {!loading && totalPages > 1 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="page-controls"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 8,
+              marginTop: 56,
+            }}
+          >
+            {/* Prev */}
+            <button
+              className="page-btn"
+              onClick={() => {
+                setPage((p) => Math.max(1, p - 1));
+                scrollToTop();
+              }}
+              disabled={page === 1}
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: "50%",
+                border: "1.5px solid #e8eceb",
+                background: "#fff",
+                color: "#6b7280",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: page === 1 ? "not-allowed" : "pointer",
+                opacity: page === 1 ? 0.4 : 1,
+              }}
+            >
+              <ChevronLeft size={17} />
+            </button>
+
+            {/* Page numbers */}
+            {Array.from({ length: totalPages }).map((_, i) => {
+              const p = i + 1;
+              const isCurrent = p === page;
+              const isNear =
+                Math.abs(p - page) <= 1 || p === 1 || p === totalPages;
+              if (!isNear && p === page - 2)
+                return (
+                  <span key="dots-l" style={{ fontSize: 14, color: "#9aa6aa" }}>
+                    …
+                  </span>
+                );
+              if (!isNear) return null;
+              return (
+                <button
+                  key={p}
+                  className="page-btn"
+                  onClick={() => {
+                    setPage(p);
+                    scrollToTop();
+                  }}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: "50%",
+                    border: `1.5px solid ${isCurrent ? "#6c7e7f" : "#e8eceb"}`,
+                    background: isCurrent ? "#6c7e7f" : "#fff",
+                    color: isCurrent ? "#fff" : "#6b7280",
+                    fontWeight: isCurrent ? 700 : 500,
+                    fontSize: 13,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    fontFamily: "'DM Sans', sans-serif",
+                    boxShadow: isCurrent
+                      ? "0 4px 14px rgba(108,126,127,0.3)"
+                      : "none",
+                  }}
+                >
+                  {p}
+                </button>
+              );
+            })}
+
+            {/* Next */}
+            <button
+              className="page-btn"
+              onClick={() => {
+                setPage((p) => Math.min(totalPages, p + 1));
+                scrollToTop();
+              }}
+              disabled={page === totalPages}
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: "50%",
+                border: "1.5px solid #e8eceb",
+                background: "#fff",
+                color: "#6b7280",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: page === totalPages ? "not-allowed" : "pointer",
+                opacity: page === totalPages ? 0.4 : 1,
+              }}
+            >
+              <ChevronRight size={17} />
+            </button>
+          </motion.div>
+        )}
+      </main>
       <Footer />
     </>
   );

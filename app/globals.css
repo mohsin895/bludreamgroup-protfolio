@@ -16,7 +16,7 @@ html {
   --border: rgba(32, 54, 71, 0.1);
   --border-hover: rgba(32, 54, 71, 0.2);
 
-  --primary: #82c3d8; /* main color */
+  --primary: #6c7e7f; /* main color */
   --primary-light: #a8d6e5;
   --primary-dim: rgba(130, 195, 216, 0.15);
 
@@ -81,7 +81,7 @@ h6 {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 16px;
 }
 .section {
   padding: 100px 0;
@@ -138,7 +138,7 @@ h6 {
   align-items: center;
   gap: 10px;
   padding: 14px 32px;
-  background: var(--primary);
+  background: #6c7e7f;
   color: #ffffff;
   font-size: 13px;
   font-weight: 700;
@@ -162,13 +162,13 @@ h6 {
   gap: 10px;
   padding: 13px 31px;
   background: transparent;
-  color: #6fb3c8;
+  color: #000;
   font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-decoration: none;
-  border: 1px solid #6fb3c8;
+  border: 1px solid #6c7e7f;
   cursor: pointer;
   transition: all 0.25s ease;
 }

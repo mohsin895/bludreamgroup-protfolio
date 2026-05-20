@@ -35,21 +35,16 @@ const footerLinks = {
     { label: "Home", href: "/" },
     { label: "About", href: "/about" },
     { label: "Books", href: "/books" },
-    { label: "Blog", href: "/blog" },
-    { label: "Events", href: "/events" },
   ],
   Resources: [
     { label: "Courses", href: "/courses" },
-    { label: "Resources", href: "/resources" },
     { label: "Success Stories", href: "/success-stories" },
-    { label: "FAQ", href: "/faq" },
+    { label: "Blog", href: "/blog" },
   ],
   Media: [
     { label: "Gallery", href: "/media" },
-    { label: "Press", href: "/press" },
-    { label: "Testimonials", href: "/testimonials" },
-    { label: "Events", href: "/events" },
     { label: "Contact", href: "/contact" },
+    { label: "Events", href: "/events" },
   ],
 };
 

@@ -53,7 +53,7 @@ function FaqItem({ q, a, i }: { q: string; a: string; i: number }) {
           <span
             style={{
               fontSize: "15px",
-              color: open ? "#fff" : "rgba(255,255,255,0.7)",
+              color: open ? "#fff" : "#fff",
               fontWeight: 500,
               lineHeight: 1.4,
               transition: "color 0.2s ease",
@@ -87,7 +87,7 @@ function FaqItem({ q, a, i }: { q: string; a: string; i: number }) {
             style={{
               fontSize: "14px",
               lineHeight: 1.75,
-              color: "rgba(255,255,255,0.45)",
+              color: "#fff9",
               paddingBottom: "22px",
               margin: 0,
             }}
@@ -148,9 +148,10 @@ export default function ContactPage() {
       {/* ── Contact Form + FAQ ── */}
       <section
         style={{
-          background: "#F0F4FC",
+          background: "#F4F7F6",
           borderTop: "1px solid rgba(255,255,255,0.04)",
-          padding: "20px 0",
+          // padding: "40px 0",
+          paddingBottom: "60px",
         }}
       >
         <div className="container">
@@ -516,7 +517,7 @@ export default function ContactPage() {
                       fontSize: "11px",
                       letterSpacing: "0.12em",
                       textTransform: "uppercase",
-                      color: "#000",
+                      color: "#fff",
                       marginBottom: "12px",
                     }}
                   >
@@ -548,7 +549,7 @@ export default function ContactPage() {
                         <span
                           style={{
                             fontSize: "13px",
-                            color: "#000",
+                            color: "#fff",
                           }}
                         >
                           {row.day}
@@ -558,7 +559,7 @@ export default function ContactPage() {
                             fontSize: "13px",
                             color:
                               row.hours === "Closed"
-                                ? "#f008"
+                                ? "#f00"
                                 : "rgba(255,255,255,0.65)",
                             fontWeight: 500,
                           }}
