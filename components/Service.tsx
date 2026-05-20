@@ -1,301 +1,371 @@
 "use client";
 
-import AnimatedSection from "@/components/AnimatedSection";
-import { fetchServices, type MappedService } from "@/lib/api/service";
-import { ArrowRight, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  Briefcase,
+  Calendar,
+  Mic,
+  Users,
+  Video,
+  Zap,
+} from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-// ─── FA icon → Lucide fallback map ───────────────────────────────────────────
-// We render Font Awesome icons inline since the API uses FA classes.
-// A small <i> tag is all we need; Font Awesome CDN must be in layout.
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 
-function FaIcon({ icon, size = 22 }: { icon: string; size?: number }) {
-  return (
-    <i
-      className={`fa ${icon}`}
-      style={{ fontSize: `${size}px`, color: "#82C3D8" }}
-      aria-hidden="true"
-    />
-  );
+interface Service {
+  id: number;
+  title: string;
+  description?: string;
+  short_description?: string;
+  icon?: string;
+  slug?: string;
+  mode?: string;
 }
 
-// ─── Skeleton card ────────────────────────────────────────────────────────────
+const fallbackServices = [
+  {
+    id: 1,
+    title: "One-on-One Consultation",
+    icon: "Users",
+    desc: "Personalized strategy sessions tailored to your business and life goals.",
+    mode: "Online / Offline",
+  },
+  {
+    id: 2,
+    title: "Motivational Speaking",
+    icon: "Mic",
+    desc: "Powerful keynote addresses that energize teams and shift perspectives.",
+    mode: "On-site",
+  },
+  {
+    id: 3,
+    title: "Business Coaching",
+    icon: "Briefcase",
+    desc: "Structured mentoring programs for entrepreneurs at every stage.",
+    mode: "Online",
+  },
+  {
+    id: 4,
+    title: "Workshops & Training",
+    icon: "Zap",
+    desc: "Hands-on interactive workshops on leadership, mindset, and business.",
+    mode: "On-site / Online",
+  },
+  {
+    id: 5,
+    title: "Corporate Sessions",
+    icon: "Calendar",
+    desc: "Customized corporate training programs for teams and organizations.",
+    mode: "On-site",
+  },
+  {
+    id: 6,
+    title: "Online Masterclass",
+    icon: "Video",
+    desc: "Recorded and live online sessions for growth-focused professionals.",
+    mode: "Online",
+  },
+];
 
-function SkeletonCard() {
-  return (
-    <div
-      className="card"
-      style={{
-        padding: "32px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "14px",
-      }}
-    >
-      <div
-        style={{
-          width: "48px",
-          height: "48px",
-          borderRadius: "8px",
-          background: "rgba(201,168,76,0.06)",
-          animation: "shimmer 1.5s ease-in-out infinite",
-        }}
-      />
-      <div
-        style={{
-          width: "70%",
-          height: "20px",
-          borderRadius: "3px",
-          background: "rgba(255,255,255,0.06)",
-          animation: "shimmer 1.5s ease-in-out infinite 0.1s",
-        }}
-      />
-      <div
-        style={{
-          width: "100%",
-          height: "13px",
-          borderRadius: "3px",
-          background: "rgba(255,255,255,0.04)",
-          animation: "shimmer 1.5s ease-in-out infinite 0.15s",
-        }}
-      />
-      <div
-        style={{
-          width: "80%",
-          height: "13px",
-          borderRadius: "3px",
-          background: "rgba(255,255,255,0.04)",
-          animation: "shimmer 1.5s ease-in-out infinite 0.2s",
-        }}
-      />
-      <div
-        style={{
-          width: "80px",
-          height: "14px",
-          borderRadius: "3px",
-          background: "rgba(201,168,76,0.08)",
-          marginTop: "6px",
-          animation: "shimmer 1.5s ease-in-out infinite 0.25s",
-        }}
-      />
-    </div>
-  );
-}
+const iconMap: Record<
+  string,
+  React.ComponentType<{ size?: number; color?: string }>
+> = {
+  Users,
+  Mic,
+  Briefcase,
+  Zap,
+  Calendar,
+  Video,
+};
 
-// ─── Service card ─────────────────────────────────────────────────────────────
+const fadeUp = {
+  hidden: { opacity: 0, y: 36 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+    },
+  },
+};
+const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.09 } } };
 
-function ServiceCard({
-  service,
-  delay,
-}: {
-  service: MappedService;
-  delay: number;
-}) {
-  return (
-    <AnimatedSection delay={delay}>
-      <Link
-        href={`/services/${service.slug}`}
-        style={{ display: "block", textDecoration: "none", height: "100%" }}
-      >
-        <div
-          className="card service-card"
-          style={{
-            padding: "32px",
-            height: "100%",
-            cursor: "pointer",
-            display: "flex",
-            flexDirection: "column",
-            background: "#648181",
-            border: "1px solid rgba(130,195,216,0.15)",
-          }}
-        >
-          {/* Icon */}
-          <div
-            style={{
-              width: "48px",
-              height: "48px",
-              background: "rgba(130,195,216,0.12)",
-              border: "1px solid rgba(130,195,216,0.25)",
-              borderRadius: "8px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: "20px",
-              flexShrink: 0,
-            }}
-          >
-            <FaIcon icon={service.categoryIcon} size={20} />
-          </div>
-
-          {/* Category label */}
-          {service.categoryTitle !== "General" && (
-            <span
-              style={{
-                fontSize: "10px",
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "#82C3D8",
-                marginBottom: "8px",
-                opacity: 0.7,
-              }}
-            >
-              {service.categoryTitle}
-            </span>
-          )}
-
-          {/* Title */}
-          <h3
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "22px",
-              color: "#ffffff",
-              lineHeight: 1.2,
-              marginBottom: "10px",
-            }}
-          >
-            {service.title}
-          </h3>
-
-          {/* Excerpt */}
-          <p
-            style={{
-              fontSize: "13px",
-              color: "var(--text-muted)",
-              lineHeight: 1.7,
-              flex: 1,
-            }}
-          >
-            {service.excerpt}
-          </p>
-
-          {/* CTA */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-              marginTop: "20px",
-              color: "#82C3D8",
-              fontSize: "12px",
-              fontWeight: 600,
-            }}
-          >
-            Explore <ChevronRight size={12} />
-          </div>
-        </div>
-      </Link>
-    </AnimatedSection>
-  );
-}
-
-// ─── Component ────────────────────────────────────────────────────────────────
-
-export default function Service() {
-  const [services, setServices] = useState<MappedService[]>([]);
+export default function ServicesSection() {
+  const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchServices()
-      .then((data) => setServices(data.slice(0, 4))) // max 4 on homepage
-      .catch((err) =>
-        setError(err instanceof Error ? err.message : "Failed to load."),
-      )
+    fetch(`${API_BASE}/services`)
+      .then((r) => r.json())
+      .then((json) => {
+        const data = json?.data ?? json;
+        if (Array.isArray(data) && data.length > 0)
+          setServices(data.slice(0, 6));
+        else setServices([]);
+      })
+      .catch(() => setServices([]))
       .finally(() => setLoading(false));
   }, []);
 
+  const displayServices =
+    services.length > 0
+      ? services
+      : fallbackServices.map((s) => ({
+          id: s.id,
+          title: s.title,
+          short_description: s.desc,
+          slug: s.title.toLowerCase().replace(/\s+/g, "-"),
+          icon: s.icon,
+        }));
+
   return (
-    <>
-      {/* ── SERVICES ── */}
-      <section className="section" style={{ background: "var(--bg)" }}>
-        <div className="container">
-          <AnimatedSection
+    <section
+      style={{
+        background: "linear-gradient(180deg, #f8f9fa 0%, #eef2f2 100%)",
+        padding: "100px 0",
+      }}
+    >
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
+        {/* Header */}
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          variants={stagger}
+          style={{ textAlign: "center", marginBottom: 64 }}
+        >
+          <motion.span
+            variants={fadeUp}
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-end",
-              marginBottom: "48px",
-              flexWrap: "wrap",
-              gap: "20px",
+              display: "inline-block",
+              background: "#6c7e7f1a",
+              color: "#6c7e7f",
+              borderRadius: 40,
+              padding: "6px 20px",
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              marginBottom: 16,
             }}
           >
-            <div>
-              <div className="section-label">What I Offer</div>
-              <h2
+            Services
+          </motion.span>
+          <motion.h2
+            variants={fadeUp}
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontSize: "clamp(34px, 4vw, 54px)",
+              color: "#1f2937",
+              margin: 0,
+              lineHeight: 1.1,
+            }}
+          >
+            How I Can{" "}
+            <span style={{ color: "#6c7e7f", fontStyle: "italic" }}>
+              Help You Grow
+            </span>
+          </motion.h2>
+          <motion.p
+            variants={fadeUp}
+            style={{
+              fontSize: 16,
+              color: "#6b7280",
+              maxWidth: 480,
+              margin: "20px auto 0",
+              lineHeight: 1.75,
+            }}
+          >
+            From individual mentoring to large-scale corporate training — every
+            service is built around your transformation.
+          </motion.p>
+        </motion.div>
+
+        {/* Grid */}
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          variants={stagger}
+          className="services-grid"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: 24,
+          }}
+        >
+          {displayServices.map((s, i) => {
+            const fb = fallbackServices[i];
+            const IconComp =
+              iconMap[s.icon ?? fb?.icon ?? "Briefcase"] ?? Briefcase;
+            const mode = (s as any).mode ?? fb?.mode ?? "Online";
+
+            return (
+              <motion.div
+                key={s.id}
+                variants={fadeUp}
+                className="service-card"
                 style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "clamp(40px, 4vw, 56px)",
+                  background: "#ffffff",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: 16,
+                  padding: "32px 28px",
+                  display: "flex",
+                  flexDirection: "column",
+                  transition: "all 0.3s ease",
+                  cursor: "default",
+                  position: "relative",
+                  overflow: "hidden",
                 }}
               >
-                Transform Your
-                <br />
-                Leadership
-              </h2>
-            </div>
-            <Link href="/services" className="btn-outline">
-              All Services <ArrowRight size={14} />
-            </Link>
-          </AnimatedSection>
+                {/* Top accent line */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: 3,
+                    background: "linear-gradient(90deg, #6c7e7f, #95a49a)",
+                    opacity: 0,
+                    transition: "opacity 0.3s",
+                  }}
+                  className="service-top-line"
+                />
 
-          {/* ── Loading ── */}
-          {loading && (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(4, 1fr)",
-                gap: "20px",
-              }}
-              className="services-grid"
-            >
-              {[1, 2, 3, 4].map((n) => (
-                <SkeletonCard key={n} />
-              ))}
-            </div>
-          )}
+                {/* Icon */}
+                <div
+                  style={{
+                    width: 52,
+                    height: 52,
+                    background: "#6c7e7f15",
+                    borderRadius: 12,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: 20,
+                  }}
+                >
+                  <IconComp size={24} color="#6c7e7f" />
+                </div>
 
-          {/* ── Error ── */}
-          {!loading && error && (
-            <p
-              style={{
-                color: "rgba(255,255,255,0.25)",
-                fontSize: "14px",
-                padding: "40px 0",
-              }}
-            >
-              Could not load services — {error}
-            </p>
-          )}
+                <h3
+                  style={{
+                    fontFamily: "'Playfair Display', serif",
+                    fontSize: 20,
+                    fontWeight: 700,
+                    color: "#1f2937",
+                    marginBottom: 10,
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {s.title}
+                </h3>
 
-          {/* ── Cards ── */}
-          {!loading && !error && services.length > 0 && (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(4, 1fr)",
-                gap: "20px",
-              }}
-              className="services-grid"
-            >
-              {services.map((s, i) => (
-                <ServiceCard key={s.id} service={s} delay={i * 0.08} />
-              ))}
-            </div>
-          )}
-        </div>
+                <p
+                  style={{
+                    fontSize: 14,
+                    color: "#6b7280",
+                    lineHeight: 1.75,
+                    flex: 1,
+                    marginBottom: 20,
+                  }}
+                >
+                  {(s as any).short_description ??
+                    (s as any).description ??
+                    "Tailored sessions designed to accelerate your personal and professional growth."}
+                </p>
 
-        <style>{`
-          .service-card { transition: transform 0.25s ease, box-shadow 0.25s ease !important; }
-          .service-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-  border-color: #82C3D8;
-}
-          @keyframes shimmer { 0%,100%{opacity:0.5} 50%{opacity:1} }
-          @media(max-width:900px){ .services-grid{grid-template-columns:1fr 1fr!important;} }
-          @media(max-width:480px){ .services-grid{grid-template-columns:1fr!important;} }
-        `}</style>
-      </section>
-    </>
+                {/* Mode badge */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: 11,
+                      color: "#9aa6aa",
+                      fontWeight: 600,
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {mode}
+                  </span>
+                  <Link
+                    href={`/services${s.slug ? `/${s.slug}` : ""}`}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 4,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: "#6c7e7f",
+                      textDecoration: "none",
+                      letterSpacing: "0.06em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Learn More <ArrowRight size={12} />
+                  </Link>
+                </div>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          style={{ textAlign: "center", marginTop: 56 }}
+        >
+          <Link
+            href="/services"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              background: "#6c7e7f",
+              color: "#ffffff",
+              padding: "14px 32px",
+              borderRadius: 6,
+              fontSize: 13,
+              fontWeight: 700,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              transition: "all 0.25s",
+            }}
+            className="services-cta"
+          >
+            View All Services <ArrowRight size={14} />
+          </Link>
+        </motion.div>
+      </div>
+
+      <style>{`
+        .service-card:hover {
+          border-color: #6c7e7f !important;
+          transform: translateY(-6px);
+          box-shadow: 0 20px 48px rgba(108,126,127,0.15);
+        }
+        .service-card:hover .service-top-line { opacity: 1 !important; }
+        .service-card:hover h3 { color: #6c7e7f !important; }
+        .services-cta:hover { background: #5a6b6c !important; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(108,126,127,0.3); }
+        @media (max-width: 900px) { .services-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+        @media (max-width: 560px) { .services-grid { grid-template-columns: 1fr !important; } }
+      `}</style>
+    </section>
   );
 }

@@ -81,11 +81,9 @@ export default function Navbar() {
           right: 0,
           zIndex: 1000,
           transition: "all 0.4s ease",
-          background: solidNav ? "#F7F7F7" : "#F7F7F7",
-          backdropFilter: solidNav ? "blur(20px)" : "none",
-          borderBottom: solidNav
-            ? "1px solid rgba(255,255,255,0.06)"
-            : "1px solid transparent",
+          background: "rgba(255,255,255,0.92)",
+          backdropFilter: "blur(18px)",
+          borderBottom: "1px solid rgba(108,126,127,0.08)",
         }}
       >
         <div className="container">
@@ -102,7 +100,7 @@ export default function Navbar() {
             <Link href="/">
               <div style={{ width: 120, height: 40, position: "relative" }}>
                 <Image
-                  src="/logo.jpeg"
+                  src="/logo-removebg-preview.png"
                   alt="Logo"
                   fill
                   style={{ objectFit: "contain" }}
@@ -130,7 +128,7 @@ export default function Navbar() {
                         fontSize: "13px",
                         fontWeight: 500,
                         letterSpacing: "0.04em",
-                        color: pathname === item.href ? "#82c3d8" : "#000",
+                        color: pathname === item.href ? "#6c7e7f" : "#1f2937",
                         textDecoration: "none",
                         transition: "color 0.2s",
                       }}
@@ -149,6 +147,7 @@ export default function Navbar() {
                         left: "50%",
                         background: "#648181",
                         border: "1px solid rgba(255,255,255,0.08)",
+                        color: "#648181",
                         borderRadius: "6px",
                         padding: "8px",
                         minWidth: "200px",
@@ -174,7 +173,7 @@ export default function Navbar() {
                             padding: "9px 16px",
                             fontSize: "13px",
                             fontWeight: 400,
-                            color: "#000",
+                            color: "#1f2937",
                             textDecoration: "none",
                             borderRadius: "4px",
                             transition: "all 0.15s",
@@ -189,30 +188,16 @@ export default function Navbar() {
                 </div>
               ))}
 
-              {/* Cart */}
-              {/* <button
-                onClick={() => dispatch(toggleDrawer())}
-                className="relative flex items-center gap-2 cursor-pointer text-sm text-white hover:text-[#82c3d8] transition-colors"
-                aria-label="Open cart"
-              >
-                <div className="relative">
-                  <ShoppingCart className="w-6 h-6" />
-                  {mounted && totalItems > 0 && (
-                    <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                      {totalItems > 99 ? "99+" : totalItems}
-                    </span>
-                  )}
-                </div>
-                <span>Cart</span>
-              </button> */}
-
               <Link
                 href="/contact"
-                className="btn-primary"
+                className="hover:bg-[#95a49a]"
                 style={{
                   marginLeft: "16px",
                   fontSize: "12px",
                   padding: "10px 24px",
+                  background: "#6c7e7f",
+                  color: "#fff",
+                  border: "1px solid #6c7e7f",
                 }}
               >
                 Work With Me
@@ -225,14 +210,14 @@ export default function Navbar() {
               style={{
                 background: "none",
                 border: "1px solid rgba(255,255,255,0.12)",
-                color: "#ffff",
+                color: "#1f2937",
                 padding: "8px",
                 cursor: "pointer",
                 zIndex: 1100,
                 borderRadius: "4px",
                 display: "none",
               }}
-              className="mobile-toggle"
+              className="mobile-toggle hover:bg-[#f3f4f6] hover:text-[#6c7e7f]"
             >
               {mobileOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
@@ -244,7 +229,7 @@ export default function Navbar() {
           style={{
             height: "1px",
             background:
-              "linear-gradient(90deg, transparent, var(--gold), transparent)",
+              "linear-gradient(90deg,transparent,rgba(108,126,127,0.3),transparent)",
             opacity: solidNav ? 0 : 0.2,
           }}
         />
@@ -258,7 +243,7 @@ export default function Navbar() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "#648181",
+          background: "#ffffff",
           zIndex: 999,
           transform: mobileOpen ? "translateX(0)" : "translateX(100%)",
           transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
@@ -313,13 +298,13 @@ export default function Navbar() {
                     href={item.href}
                     style={{
                       display: "block",
-                      padding: "14px 0",
-                      fontSize: "32px",
-                      fontFamily: "var(--font-display)",
+                      padding: "10px 0",
+                      fontSize: "22px",
+
                       fontWeight: 400,
-                      color: pathname === item.href ? "#F59E0B" : "#ffffff",
+                      color: pathname === item.href ? "#6c7e7f" : "#1f2937",
                       textDecoration: "none",
-                      borderBottom: "1px solid rgba(255,255,255,0.04)",
+                      borderBottom: "1px solid rgba(255,255,255,0.08)",
                       animation: mobileOpen
                         ? `slideIn 0.4s ${i * 0.05}s both`
                         : "none",
@@ -336,7 +321,12 @@ export default function Navbar() {
             <Link
               href="/contact"
               className="btn-primary"
-              style={{ display: "inline-flex" }}
+              style={{
+                display: "inline-flex",
+                background: "#6c7e7f",
+                color: "#fff",
+                border: "1px solid #6c7e7f",
+              }}
             >
               Work With Me
             </Link>

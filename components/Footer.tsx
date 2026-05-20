@@ -4,12 +4,31 @@ import {
   faFacebookF,
   faInstagram,
   faLinkedinIn,
+  faTwitter,
   faYoutube,
 } from "@fortawesome/free-brands-svg-icons";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { motion } from "framer-motion";
 
+import { Mail, MapPin, Phone } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+
+interface Setting {
+  site_name?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  facebook?: string;
+  instagram?: string;
+  twitter?: string;
+  youtube?: string;
+  linkedin?: string;
+  footer_description?: string;
+}
 
 const footerLinks = {
   "Quick Links": [
@@ -34,44 +53,71 @@ const footerLinks = {
   ],
 };
 
-const socials = [
-  {
-    icon: faFacebookF,
-    href: "https://www.facebook.com/shopnillchowdhuryshohag/",
-    label: "Facebook",
-  },
-  {
-    icon: faInstagram,
-    href: "https://instagram.com/",
-    label: "Instagram",
-  },
-  {
-    icon: faLinkedinIn,
-    href: "https://linkedin.com/",
-    label: "LinkedIn",
-  },
-  {
-    icon: faYoutube,
-    href: "https://youtube.com/",
-    label: "YouTube",
-  },
+const policyLinks = [
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms & Conditions", href: "/terms" },
+  { label: "Refund Policy", href: "/refund-policy" },
+  { label: "Shipping Policy", href: "/shipping-policy" },
 ];
 
 export default function Footer() {
+  const [setting, setSetting] = useState<Setting>({});
+
+  useEffect(() => {
+    fetch(`${API_BASE}/settings`)
+      .then((res) => res.json())
+      .then((json) => {
+        const data = json?.data ?? json;
+
+        if (data && typeof data === "object") {
+          setSetting(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const socials = [
+    {
+      icon: faFacebookF,
+      href: setting.facebook,
+      label: "Facebook",
+    },
+    {
+      icon: faInstagram,
+      href: setting.instagram,
+      label: "Instagram",
+    },
+    {
+      icon: faLinkedinIn,
+      href: setting.linkedin,
+      label: "LinkedIn",
+    },
+    {
+      icon: faYoutube,
+      href: setting.youtube,
+      label: "YouTube",
+    },
+    {
+      icon: faTwitter,
+      href: setting.twitter,
+      label: "Twitter",
+    },
+  ].filter((s) => !!s.href);
+
   return (
     <footer
       style={{
         background: "#648181",
         borderTop: "1px solid rgba(255,255,255,0.06)",
-        marginTop: "0",
+        marginTop: 0,
       }}
     >
-      {/* Newsletter strip */}
-      <div
+      {/* Newsletter Section */}
+      {/* <div
         style={{
-          background: "linear-gradient(135deg, #5FA8BF, #648181)",
-          borderBottom: "1px solid rgba(201,168,76,0.12)",
-          padding: "48px 0",
+          background: "linear-gradient(135deg, #6c7e7f 0%, #95a49a 100%)",
+          borderBottom: "1px solid rgba(255,255,255,0.08)",
+          padding: "60px 0",
         }}
       >
         <div
@@ -80,165 +126,322 @@ export default function Footer() {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            gap: 30,
             flexWrap: "wrap",
-            gap: "24px",
           }}
         >
-          <div>
-            <div className="section-label">Newsletter</div>
-            <h3
+          <div style={{ flex: 1, minWidth: 280 }}>
+            <div
               style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "32px",
+                fontSize: 12,
+                textTransform: "uppercase",
+                letterSpacing: "0.18em",
+                color: "#ffffffcc",
+                marginBottom: 10,
+                fontWeight: 700,
+              }}
+            >
+              Newsletter
+            </div>
+
+            <h2
+              style={{
+                fontSize: "36px",
                 color: "#fff",
-                marginTop: "4px",
+                marginBottom: 14,
+                fontFamily: "var(--font-display)",
+                lineHeight: 1.2,
               }}
             >
               Wisdom in Your Inbox
-            </h3>
+            </h2>
+
             <p
               style={{
-                fontSize: "14px",
-                color: "#ffff",
-                marginTop: "8px",
+                fontSize: 15,
+                color: "#ffffffd9",
+                lineHeight: 1.8,
+                maxWidth: 520,
               }}
             >
-              Weekly insights on leadership, growth, and building a life of
-              significance.
+              Weekly insights on leadership, entrepreneurship, self-development,
+              and building a meaningful life.
             </p>
           </div>
+
           <form
+            onSubmit={(e) => e.preventDefault()}
             style={{
               display: "flex",
-              gap: "0",
-              maxWidth: "400px",
               width: "100%",
+              maxWidth: 460,
+              overflow: "hidden",
+              borderRadius: 10,
+              background: "#fff",
             }}
-            onSubmit={(e) => e.preventDefault()}
           >
             <input
               type="email"
-              placeholder="your@email.com"
-              className="input"
-              style={{ borderRadius: "4px 0 0 4px", borderRight: "none" }}
+              placeholder="Enter your email"
+              style={{
+                flex: 1,
+                padding: "16px 18px",
+                border: "none",
+                outline: "none",
+                fontSize: 14,
+                background: "#fff",
+                color: "#1f2937",
+              }}
             />
+
             <button
               type="submit"
-              className="btn-primary"
               style={{
-                background: "#648181",
+                background: "#1f2937",
                 color: "#fff",
-                borderRadius: "0 4px 4px 0",
+                border: "none",
+                padding: "0 26px",
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: "pointer",
+                transition: "0.3s",
               }}
             >
               Subscribe
             </button>
           </form>
         </div>
-      </div>
+      </div> */}
 
-      {/* Main footer */}
+      {/* Main Footer */}
       <div
         className="container"
-        style={{ padding: "10px 40px", paddingTop: "40px" }}
+        style={{
+          padding: "70px 40px 30px",
+        }}
       >
         <div
+          className="footer-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "2fr 1fr 1fr 1fr",
-            gap: "60px",
-            flexWrap: "wrap",
+            gap: 60,
           }}
         >
-          {/* Brand */}
+          {/* Brand Section */}
           <div>
-            <p
+            <div
               style={{
-                fontSize: "14px",
-                color: "#fff",
-                lineHeight: 1.8,
-                maxWidth: "280px",
+                display: "flex",
+                alignItems: "center",
+                gap: 14,
+                marginBottom: 24,
               }}
             >
-              Bestselling author, executive coach, and keynote speaker
-              transforming how leaders think, lead, and live.
-            </p>
-            <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
-              {socials.map(({ icon: Icon, href, label }) => (
-                <a
-                  key={label}
-                  href={href}
-                  aria-label={label}
+              <div
+                style={{
+                  width: 78,
+                  height: 48,
+
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <Image
+                  src="/logo.jpeg"
+                  alt="Logo"
+                  width={68}
+                  height={68}
+                  style={
+                    {
+                      // objectFit: "cover",
+                    }
+                  }
+                />
+              </div>
+
+              <div>
+                <h3
                   style={{
-                    width: "36px",
-                    height: "36px",
-                    border: "1px solid rgba(255,255,255,0.12)",
-                    color: "#F59E0B",
-                    background: "rgba(130,195,216,0.05)",
+                    fontSize: 18,
+                    color: "#fff",
+                    margin: 0,
+                    fontWeight: 800,
+                    lineHeight: 1.1,
+                    fontFamily: "var(--font-display)",
+                  }}
+                >
+                  {setting.site_name ?? "KSM Shopnil Chowdhury Shohag"}
+                </h3>
+
+                <p
+                  style={{
+                    fontSize: 11,
+                    color: "#dbe4e4",
+                    letterSpacing: "0.15em",
+                    textTransform: "uppercase",
+                    marginTop: 4,
+                  }}
+                >
+                  Author • Mentor • Entrepreneur
+                </p>
+              </div>
+            </div>
+
+            <p
+              style={{
+                fontSize: 14,
+                color: "#eef3f3",
+                lineHeight: 1.9,
+                maxWidth: 320,
+              }}
+            >
+              {setting.footer_description ??
+                "Bestselling author, speaker, entrepreneur, and mentor helping people transform their mindset, leadership, and life journey."}
+            </p>
+
+            {/* Contact Info */}
+            <div
+              style={{
+                marginTop: 28,
+                display: "flex",
+                flexDirection: "column",
+                gap: 14,
+              }}
+            >
+              {setting.phone && (
+                <a
+                  href={`tel:${setting.phone}`}
+                  className="footer-contact"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    color: "#fff",
+                    textDecoration: "none",
+                    fontSize: 14,
+                    transition: "0.3s",
+                  }}
+                >
+                  <Phone size={15} color="#dce7df" />
+                  {setting.phone}
+                </a>
+              )}
+
+              {setting.email && (
+                <a
+                  href={`mailto:${setting.email}`}
+                  className="footer-contact"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    color: "#fff",
+                    textDecoration: "none",
+                    fontSize: 14,
+                    transition: "0.3s",
+                  }}
+                >
+                  <Mail size={15} color="#dce7df" />
+                  {setting.email}
+                </a>
+              )}
+
+              {setting.address && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: 10,
+                    color: "#fff",
+                    fontSize: 14,
+                    lineHeight: 1.7,
+                  }}
+                >
+                  <MapPin
+                    size={15}
+                    color="#dce7df"
+                    style={{ marginTop: 4, flexShrink: 0 }}
+                  />
+                  {setting.address}
+                </div>
+              )}
+            </div>
+
+            {/* Social Icons */}
+            <div
+              style={{
+                display: "flex",
+                gap: 12,
+                marginTop: 30,
+                flexWrap: "wrap",
+              }}
+            >
+              {socials.map((s) => (
+                <motion.a
+                  whileHover={{ y: -3 }}
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.label}
+                  className="footer-social"
+                  style={{
+                    width: 40,
+                    height: 40,
                     borderRadius: "50%",
+                    border: "1px solid rgba(255,255,255,0.14)",
+                    background: "rgba(255,255,255,0.06)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-
+                    color: "#fff",
                     textDecoration: "none",
-                    transition: "all 0.2s",
-                  }}
-                  onMouseEnter={(e) => {
-                    const el = e.currentTarget as HTMLElement;
-                    el.style.borderColor = "#F59E0B";
-                    el.style.color = "#fff";
-                    el.style.background = "#F59E0B";
-                  }}
-                  onMouseLeave={(e) => {
-                    const el = e.currentTarget as HTMLElement;
-                    el.style.borderColor = "rgba(255,255,255,0.12)";
-                    el.style.color = "#F59E0B";
-                    el.style.background = "rgba(130,195,216,0.05)";
+                    transition: "0.3s",
                   }}
                 >
-                  <FontAwesomeIcon icon={Icon} style={{ fontSize: "14px" }} />
-                </a>
+                  <FontAwesomeIcon icon={s.icon} style={{ fontSize: 15 }} />
+                </motion.a>
               ))}
             </div>
           </div>
 
-          {/* Links */}
+          {/* Footer Links */}
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
               <h4
                 style={{
-                  fontSize: "11px",
+                  fontSize: 12,
                   fontWeight: 700,
                   letterSpacing: "0.15em",
                   textTransform: "uppercase",
-                  color: "#fff",
-                  marginBottom: "20px",
-                  fontFamily: "var(--font-body)",
+                  color: "#ffffff",
+                  marginBottom: 24,
                 }}
               >
                 {title}
               </h4>
-              <ul style={{ listStyle: "none" }}>
+
+              <ul
+                style={{
+                  listStyle: "none",
+                  padding: 0,
+                  margin: 0,
+                }}
+              >
                 {links.map((link) => (
-                  <li key={link.label} style={{ marginBottom: "10px" }}>
+                  <li key={link.label} style={{ marginBottom: 14 }}>
                     <Link
                       href={link.href}
+                      className="footer-link"
                       style={{
-                        fontSize: "13px",
-                        color: "#fff",
+                        fontSize: 14,
+                        color: "#eef3f3",
                         textDecoration: "none",
-                        transition: "color 0.2s",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
+                        transition: "0.3s",
                       }}
-                      onMouseEnter={(e) =>
-                        ((e.currentTarget as HTMLElement).style.color =
-                          "#F59E0B")
-                      }
-                      onMouseLeave={(e) =>
-                        ((e.currentTarget as HTMLElement).style.color = "#fff")
-                      }
                     >
                       {link.label}
                     </Link>
@@ -249,89 +452,202 @@ export default function Footer() {
           ))}
         </div>
 
+        {/* CTA Box */}
+        {/* <div
+          style={{
+            marginTop: 70,
+            background:
+              "linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03))",
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderRadius: 24,
+            padding: "40px 30px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 24,
+            flexWrap: "wrap",
+          }}
+        >
+          <div>
+            <h3
+              style={{
+                color: "#fff",
+                fontSize: 28,
+                marginBottom: 10,
+                fontFamily: "var(--font-display)",
+              }}
+            >
+              Ready to Transform Your Mindset?
+            </h3>
+
+            <p
+              style={{
+                color: "#eef3f3",
+                fontSize: 14,
+                lineHeight: 1.8,
+                maxWidth: 620,
+              }}
+            >
+              Connect for mentorship, consultation, speaking, collaboration, or
+              to explore powerful books that inspire growth and success.
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              gap: 14,
+              flexWrap: "wrap",
+            }}
+          >
+            <a
+              href={`https://wa.me/${(setting.phone ?? "").replace(/\D/g, "")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-btn-green"
+              style={{
+                background: "#25D366",
+                color: "#fff",
+                padding: "14px 24px",
+                borderRadius: 10,
+                textDecoration: "none",
+                fontWeight: 700,
+                fontSize: 14,
+                transition: "0.3s",
+              }}
+            >
+              💬 WhatsApp
+            </a>
+
+            <Link
+              href="/contact"
+              className="footer-btn-main"
+              style={{
+                background: "#ffffff",
+                color: "#648181",
+                padding: "14px 24px",
+                borderRadius: 10,
+                textDecoration: "none",
+                fontWeight: 700,
+                fontSize: 14,
+                transition: "0.3s",
+              }}
+            >
+              Contact Now →
+            </Link>
+          </div>
+        </div> */}
+
+        {/* Bottom Bar */}
         <div
           style={{
-            marginTop: "60px",
-            paddingTop: "14px",
-            borderTop: "1px solid rgba(255,255,255,0.05)",
+            marginTop: 50,
+            paddingTop: 24,
+            borderTop: "1px solid rgba(255,255,255,0.08)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             flexWrap: "wrap",
-            gap: "16px",
+            gap: 18,
           }}
         >
           <p
             style={{
-              fontSize: "0.82rem",
-              color: "#ffffffcc",
+              fontSize: "13px",
+              color: "#eef3f3",
               margin: 0,
-              textAlign: "center",
               lineHeight: 1.7,
             }}
           >
             © 2010 - {new Date().getFullYear()}{" "}
             <strong style={{ color: "#fff" }}>
-              KSM Shopnil Chowdhury Shohag
+              {setting.site_name ?? "KSM Shopnil Chowdhury Shohag"}
             </strong>
-            . All Rights Reserved. <br className="sm:hidden" />
-            Powered by{" "}
+            . All Rights Reserved. Powered by{" "}
             <a
               href="https://nelsistech.com/"
               target="_blank"
               rel="noopener noreferrer"
               style={{
                 color: "#fff",
-                fontWeight: 600,
+                fontWeight: 700,
                 textDecoration: "none",
                 borderBottom: "1px solid rgba(255,255,255,0.4)",
-                paddingBottom: "1px",
-                transition: "0.3s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = "0.8";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = "1";
               }}
             >
               Nelsis Tech
             </a>
           </p>
-          <div style={{ display: "flex", gap: "24px" }}>
-            {["Privacy Policy", "Terms of Service", "Cookie Policy"].map(
-              (item) => (
-                <Link
-                  key={item}
-                  href="#"
-                  style={{
-                    fontSize: "12px",
-                    color: "#fff",
-                    textDecoration: "none",
-                    transition: "color 0.2s",
-                  }}
-                  onMouseEnter={(e) =>
-                    ((e.currentTarget as HTMLElement).style.color = "#F59E0B")
-                  }
-                  onMouseLeave={(e) =>
-                    ((e.currentTarget as HTMLElement).style.color = "#fff")
-                  }
-                >
-                  {item}
-                </Link>
-              ),
-            )}
+
+          <div
+            style={{
+              display: "flex",
+              gap: 22,
+              flexWrap: "wrap",
+            }}
+          >
+            {policyLinks.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="footer-link"
+                style={{
+                  fontSize: 12,
+                  color: "#eef3f3",
+                  textDecoration: "none",
+                  transition: "0.3s",
+                }}
+              >
+                {item.label}
+              </Link>
+            ))}
           </div>
         </div>
       </div>
 
       <style>{`
-      
-        @media (max-width: 768px) {
-          footer .container > div:first-of-type { grid-template-columns: 1fr 1fr !important; }
+        .footer-link:hover {
+          color: #ffffff !important;
+          padding-left: 4px;
         }
-        @media (max-width: 480px) {
-          footer .container > div:first-of-type { grid-template-columns: 1fr !important; }
+
+        .footer-contact:hover {
+          opacity: 0.8;
+        }
+
+        .footer-social:hover {
+          background: #ffffff !important;
+          color: #648181 !important;
+          border-color: #ffffff !important;
+        }
+
+        .footer-btn-main:hover {
+          background: #eef3f3 !important;
+          transform: translateY(-2px);
+        }
+
+        .footer-btn-green:hover {
+          background: #1faa56 !important;
+          transform: translateY(-2px);
+        }
+
+        @media (max-width: 992px) {
+          .footer-grid {
+            grid-template-columns: 1fr 1fr !important;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .container {
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+          }
+        }
+
+        @media (max-width: 600px) {
+          .footer-grid {
+            grid-template-columns: 1fr !important;
+          }
         }
       `}</style>
     </footer>

@@ -347,7 +347,7 @@ const styles: Record<string, React.CSSProperties> = {
     position: "relative",
     width: "100%",
     height: "100vh",
-    minHeight: "600px",
+    minHeight: "400px",
     overflow: "hidden",
     background: "#F4F7F6",
     fontFamily: "var(--font-sans, sans-serif)",
@@ -360,7 +360,7 @@ const styles: Record<string, React.CSSProperties> = {
   media: {
     width: "100%",
     height: "100%",
-    objectFit: "contain",
+    objectFit: "cover",
     marginTop: "20px",
     objectPosition: "center",
   },

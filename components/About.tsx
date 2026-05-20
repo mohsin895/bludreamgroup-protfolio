@@ -1,336 +1,387 @@
 "use client";
 
-import AnimatedSection from "@/components/AnimatedSection";
-import { fetchAbout, type MappedAbout } from "@/lib/api/about";
-import { ArrowRight, Quote } from "lucide-react";
+import { motion } from "framer-motion";
+import { Award, BookOpen, Heart, Lightbulb, Target, Users } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+const IMG_BASE = process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? "";
 
-function SkeletonQuote() {
-  return (
-    <div
-      style={{
-        background: "#ffffff",
-        border: "1px solid rgba(32,54,71,0.1)",
-        borderRadius: "6px",
-        padding: "48px",
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        gap: "14px",
-      }}
-    >
-      <div
-        style={{
-          width: "40px",
-          height: "40px",
-          borderRadius: "4px",
-          background: "rgba(130,195,216,0.1)",
-          marginBottom: "6px",
-          animation: "shimmer 1.5s ease-in-out infinite",
-        }}
-      />
-      {[95, 85, 90, 70].map((w, i) => (
-        <div
-          key={i}
-          style={{
-            height: "20px",
-            width: `${w}%`,
-            borderRadius: "3px",
-            background: "rgba(255,255,255,0.05)",
-            animation: `shimmer 1.5s ease-in-out ${i * 0.08}s infinite`,
-          }}
-        />
-      ))}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          marginTop: "8px",
-        }}
-      >
-        <div
-          style={{
-            width: "32px",
-            height: "1px",
-            background: "rgba(201,168,76,0.2)",
-          }}
-        />
-        <div
-          style={{
-            width: "100px",
-            height: "12px",
-            borderRadius: "3px",
-            background: "rgba(201,168,76,0.12)",
-            animation: "shimmer 1.5s ease-in-out infinite 0.3s",
-          }}
-        />
-      </div>
-    </div>
-  );
+interface AboutData {
+  title?: string;
+  description?: string;
+  logo?: string | null;
+  short_bio?: string;
 }
 
-function SkeletonBio() {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-      <div
-        style={{
-          width: "80px",
-          height: "10px",
-          borderRadius: "2px",
-          background: "rgba(255,255,255,0.06)",
-          animation: "shimmer 1.5s ease-in-out infinite",
-        }}
-      />
-      <div
-        style={{
-          width: "85%",
-          height: "38px",
-          borderRadius: "4px",
-          background: "rgba(255,255,255,0.07)",
-          animation: "shimmer 1.5s ease-in-out infinite 0.05s",
-        }}
-      />
-      <div
-        style={{
-          width: "70%",
-          height: "38px",
-          borderRadius: "4px",
-          background: "rgba(255,255,255,0.06)",
-          animation: "shimmer 1.5s ease-in-out infinite 0.1s",
-        }}
-      />
-      {[100, 90, 95, 80].map((w, i) => (
-        <div
-          key={i}
-          style={{
-            height: "14px",
-            width: `${w}%`,
-            borderRadius: "3px",
-            background: "rgba(255,255,255,0.04)",
-            animation: `shimmer 1.5s ease-in-out ${i * 0.07 + 0.15}s infinite`,
-          }}
-        />
-      ))}
-      <div
-        style={{
-          width: "140px",
-          height: "44px",
-          borderRadius: "4px",
-          background: "rgba(255,255,255,0.06)",
-          marginTop: "8px",
-          animation: "shimmer 1.5s ease-in-out infinite 0.4s",
-        }}
-      />
-    </div>
-  );
-}
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.65,
+      ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+    },
+  },
+};
 
-// ─── Component ────────────────────────────────────────────────────────────────
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12 } },
+};
 
-export default function About() {
-  const [about, setAbout] = useState<MappedAbout | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const values = [
+  { icon: BookOpen, label: "30+ Books", sub: "Published & Counting" },
+  { icon: Users, label: "50,000+", sub: "Lives Impacted" },
+  { icon: Award, label: "200+", sub: "Events Conducted" },
+  { icon: Heart, label: "100%", sub: "Passion Driven" },
+];
+
+const qualities = [
+  {
+    icon: Target,
+    title: "Mission-Driven",
+    desc: "Every book, every session, every word — crafted to help you rise.",
+  },
+  {
+    icon: Lightbulb,
+    title: "Practical Wisdom",
+    desc: "Real-world insights from genuine experience, not theory alone.",
+  },
+  {
+    icon: Heart,
+    title: "People First",
+    desc: "Believes every person carries extraordinary untapped potential.",
+  },
+];
+
+export default function AboutSection() {
+  const [about, setAbout] = useState<AboutData | null>(null);
 
   useEffect(() => {
-    fetchAbout()
-      .then(setAbout)
-      .catch((err) =>
-        setError(err instanceof Error ? err.message : "Failed to load."),
-      )
-      .finally(() => setLoading(false));
+    fetch(`${API_BASE}/about`)
+      .then((r) => r.json())
+      .then((json) => setAbout(json?.data ?? json))
+      .catch(() => {});
   }, []);
 
-  // Fallback copy shown if API fields are empty
-  const FALLBACK_QUOTE =
-    "Great leadership isn't about power — it's about the courage to remain fully yourself while serving others fully.";
-  const FALLBACK_DESC =
-    "With over 18 years transforming executives and organizations across 47 countries, she brings a rare combination of intellectual rigor and practical wisdom to every engagement.";
-
-  const displayQuote = about?.quote || FALLBACK_QUOTE;
-  const displayName = about?.name || "Alexandra Voss";
-  const displayTitle = about?.aboutTitle || "A Life Devoted to Human Potential";
-
-  // Strip HTML tags from description for a plain-text homepage teaser
-  const plainDesc = about?.description
-    ? about.description
-        .replace(/<[^>]+>/g, " ")
-        .replace(/\s+/g, " ")
-        .trim()
-    : FALLBACK_DESC;
-
-  // Cap at ~220 chars
-  const excerpt =
-    plainDesc.length > 220
-      ? plainDesc.slice(0, 220).trimEnd() + "…"
-      : plainDesc;
-
   return (
-    <>
-      {/* ── ABOUT STRIP ── */}
-      <section className="section" style={{ background: "var(--bg)" }}>
-        <div
-          className="container"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "80px",
-            alignItems: "center",
-          }}
+    <section
+      style={{
+        background: "#f8f9fa",
+        paddingTop: "100px",
+        paddingBottom: "40px",
+      }}
+    >
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
+        {/* Section label */}
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          variants={fadeUp}
+          style={{ textAlign: "center", marginBottom: 34 }}
         >
-          {/* ── Left: quote card ── */}
-          <AnimatedSection direction="left">
-            {loading ? (
-              <SkeletonQuote />
-            ) : (
-              <div
-                style={{
-                  background: "#648181",
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  borderRadius: "6px",
-                  padding: "48px",
-                  position: "relative",
-                }}
-              >
-                <Quote
-                  size={40}
+          <span
+            style={{
+              display: "inline-block",
+              background: "#6c7e7f1a",
+              color: "#6c7e7f",
+              borderRadius: 40,
+              padding: "6px 20px",
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              marginBottom: 16,
+            }}
+          >
+            About The Author
+          </span>
+          <h2
+            style={{
+              fontSize: "clamp(36px, 4vw, 56px)",
+              color: "#1f2937",
+              margin: 0,
+              lineHeight: 1.1,
+            }}
+          >
+            The Man Behind The{" "}
+            <span style={{ color: "#6c7e7f", fontStyle: "italic" }}>
+              Vision
+            </span>
+          </h2>
+        </motion.div>
+
+        {/* Two-col layout */}
+        <div
+          className="about-grid"
+          style={{ display: "flex", gap: 64, alignItems: "center" }}
+        >
+          {/* Left: Image */}
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{
+              duration: 0.8,
+              ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+            }}
+            className="about-image-col"
+            style={{ flex: "0 0 400px", position: "relative" }}
+          >
+            <div
+              style={{
+                width: "100%",
+                aspectRatio: "4/5",
+                borderRadius: "40% 60% 60% 40% / 40% 40% 60% 60%",
+                overflow: "hidden",
+                background: "linear-gradient(135deg, #6c7e7f22, #95a49a22)",
+                border: "2px solid #6c7e7f1a",
+                position: "relative",
+              }}
+            >
+              {about?.logo ? (
+                <img
+                  src={`${IMG_BASE}${about.logo}`}
+                  alt="About"
                   style={{
-                    color: "#f4f7f6",
-                    marginBottom: "20px",
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    position: "absolute",
+                    inset: 0,
                   }}
                 />
-
-                <p
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: "24px",
-                    lineHeight: 1.5,
-                    color: "#f4f7f6",
-                    fontStyle: "italic",
-                    margin: 0,
-                  }}
-                >
-                  &ldquo;{displayQuote}&rdquo;
-                </p>
-
+              ) : (
+                // <img
+                //   // src={`${IMG_BASE}${about.image}`}
+                //   src="/chairman2.jpeg"
+                //   alt="About"
+                //   style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                // />
                 <div
                   style={{
-                    marginTop: "24px",
+                    width: "100%",
+                    height: "100%",
                     display: "flex",
+                    flexDirection: "column",
                     alignItems: "center",
-                    gap: "12px",
+                    justifyContent: "center",
+                    background: "linear-gradient(160deg, #6c7e7f33, #9aa6aa33)",
                   }}
+                >
+                  <BookOpen
+                    size={56}
+                    color="#6c7e7f"
+                    style={{ opacity: 0.4 }}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Floating stat card */}
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+              style={{
+                position: "absolute",
+                bottom: 30,
+                right: -20,
+                background: "#ffffff",
+                borderRadius: 14,
+                padding: "16px 22px",
+                boxShadow: "0 16px 48px rgba(108,126,127,0.18)",
+                border: "1px solid #6c7e7f1a",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 28,
+                  fontWeight: 800,
+                  color: "#6c7e7f",
+                  lineHeight: 1,
+                }}
+              >
+                16+
+              </div>
+              <div
+                style={{
+                  fontSize: 12,
+                  color: "#6b7280",
+                  marginTop: 4,
+                  fontWeight: 500,
+                }}
+              >
+                Years of Experience
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Right: Text */}
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            variants={stagger}
+            style={{ flex: 1 }}
+          >
+            <motion.div
+              variants={fadeUp}
+              style={{
+                fontSize: "clamp(15px, 1.6vw, 18px)",
+                color: "#374151",
+                lineHeight: 1.9,
+                marginBottom: 24,
+              }}
+              className="about-description"
+              dangerouslySetInnerHTML={{
+                __html:
+                  about?.description ||
+                  `
+      <p>
+        KSM Shopnill Chowdhury Shohag is a celebrated Bangladeshi author,
+        entrepreneur, and life mentor whose writing has inspired thousands.
+      </p>
+    `,
+              }}
+            />
+
+            {/* Qualities */}
+            <motion.div
+              variants={stagger}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 16,
+                marginBottom: 40,
+              }}
+            >
+              {qualities.map((q) => (
+                <motion.div
+                  key={q.title}
+                  variants={fadeUp}
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: 16,
+                    padding: "16px 20px",
+                    background: "#ffffff",
+                    borderRadius: 12,
+                    border: "1px solid #e5e7eb",
+                    transition: "border-color 0.2s, transform 0.2s",
+                  }}
+                  className="about-quality-card"
                 >
                   <div
                     style={{
-                      width: "32px",
-                      height: "1px",
-                      background: "#82c3d8",
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      color: "#82c3d8",
-                      letterSpacing: "0.08em",
+                      width: 40,
+                      height: 40,
+                      flexShrink: 0,
+                      background: "#6c7e7f15",
+                      borderRadius: 10,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
-                    {displayName}
-                  </span>
-                </div>
+                    <q.icon size={18} color="#95a49a" />
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 700,
+                        color: "#1f2937",
+                        marginBottom: 2,
+                      }}
+                    >
+                      {q.title}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 13,
+                        color: "#6b7280",
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      {q.desc}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
 
-                {/* Bottom accent */}
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: "-1px",
-                    left: "48px",
-                    right: "48px",
-                    height: "2px",
-                    background: "linear-gradient(90deg, #82c3d8, transparent)",
-                  }}
-                />
-              </div>
-            )}
-          </AnimatedSection>
-
-          {/* ── Right: bio teaser ── */}
-          <AnimatedSection direction="right" delay={0.15}>
-            {loading ? (
-              <SkeletonBio />
-            ) : (
-              <>
-                <div className="section-label">
-                  About {displayName.split(" ")[0]}
-                </div>
-
-                <h2
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: "clamp(38px, 4vw, 52px)",
-                    color: "var(--text)",
-                    marginTop: "4px",
-                    lineHeight: 1.1,
-                  }}
-                >
-                  {displayTitle}
-                </h2>
-
-                <p
-                  style={{
-                    fontSize: "15px",
-                    color: "var(--text-muted)",
-                    lineHeight: 1.8,
-                    marginTop: "20px",
-                  }}
-                >
-                  {excerpt}
-                </p>
-
-                {/* Silent error note — doesn't break layout */}
-                {error && !about && (
-                  <p
-                    style={{
-                      fontSize: "11px",
-                      color: "rgba(32,54,71,0.4)",
-                      marginTop: "6px",
-                    }}
-                  >
-                    Could not reach server — showing cached content.
-                  </p>
-                )}
-
-                <Link
-                  href="/about"
-                  className="btn-outline"
-                  style={{
-                    marginTop: "32px",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "8px",
-                  }}
-                >
-                  Full Biography <ArrowRight size={14} />
-                </Link>
-              </>
-            )}
-          </AnimatedSection>
+            <motion.div variants={fadeUp}>
+              <Link
+                href="/about"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  background: "#6c7e7f",
+                  color: "#ffffff",
+                  padding: "14px 28px",
+                  borderRadius: 6,
+                  fontSize: 13,
+                  fontWeight: 700,
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                  textDecoration: "none",
+                  transition: "all 0.25s",
+                }}
+                className="about-cta"
+              >
+                Read Full Story →
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
+      </div>
 
-        <style>{`
-          @media (max-width: 768px) {
-            section > .container { grid-template-columns: 1fr !important; }
-          }
-          @keyframes shimmer {
-            0%, 100% { opacity: 0.5; }
-            50%       { opacity: 1;   }
-          }
-        `}</style>
-      </section>
-    </>
+      <style>{`
+        .about-cta:hover { background: #5a6b6c !important; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(108,126,127,0.3); }
+        .about-quality-card:hover { border-color: #95a49a !important; transform: translateX(4px); }
+        .about-stat-card:hover { border-color: #6c7e7f !important; transform: translateY(-4px); box-shadow: 0 12px 32px rgba(108,126,127,0.12); }
+        @media (max-width: 900px) {
+          .about-grid { flex-direction: column !important; gap: 40px !important; }
+          .about-image-col { flex: none !important; width: 100% !important; max-width: 340px; margin: 0 auto; }
+          .about-stats { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 480px) {
+          .about-stats { grid-template-columns: 1fr 1fr !important; }
+        }
+          .about-description p{
+    margin-bottom:16px;
+    color:#4b5563;
+    font-size:16px;
+    line-height:1.9;
+  }
+
+  .about-description strong{
+    color:#1f2937;
+    font-weight:700;
+  }
+
+  .about-description h1,
+  .about-description h2,
+  .about-description h3{
+    color:#1f2937;
+    margin-bottom:14px;
+    margin-top:18px;
+  }
+
+  .about-description ul{
+    padding-left:20px;
+    margin-bottom:16px;
+  }
+
+  .about-description li{
+    margin-bottom:8px;
+  }
+      `}</style>
+    </section>
   );
 }

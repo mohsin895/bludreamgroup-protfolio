@@ -105,9 +105,9 @@ function normalizeApiCourse(
     level: levels[index % levels.length],
     lessons: deterministicLessons(apiCourse.id),
     students: deterministicStudents(apiCourse.id),
-    price: isFree ? "FREE" : `$${sellingPrice.toFixed(2)}`,
+    price: isFree ? "FREE" : `৳${sellingPrice.toFixed(2)} `,
     isFree,
-    originalPrice: hasDiscount ? `$${rawPrice.toFixed(2)}` : null,
+    originalPrice: hasDiscount ? `৳${rawPrice.toFixed(2)} ` : null,
     thumbnail: apiCourse.thumbnail
       ? `${IMAGE_BASE_URL}${apiCourse.thumbnail}`
       : null,

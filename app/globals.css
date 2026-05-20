@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap");
 @import "tailwindcss";
 
 html {
@@ -25,8 +26,8 @@ html {
 
   --radius: 4px;
 
-  --font-display: "Cormorant Garamond", Georgia, serif;
-  --font-body: "DM Sans", sans-serif;
+  --font-display: "Merriweather", serif;
+  --font-body: "Merriweather", serif;
 }
 
 * {

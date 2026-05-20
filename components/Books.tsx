@@ -1,97 +1,173 @@
 "use client";
-import AnimatedSection from "@/components/AnimatedSection";
-import {
-  formatPrice,
-  getFeaturedProducts,
-  imageUrl,
-  lowestPrice,
-  type Product,
-} from "@/lib/api/product";
+
+import { motion } from "framer-motion";
 import { ArrowRight, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-// ─── Single book card ────────────────────────────────────────────────────────
-function BookCard({ book, delay }: { book: Product; delay: number }) {
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+const IMG_BASE = process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? "";
+
+interface Product {
+  id: number;
+  title: string;
+  slug: string;
+  subtitle?: string;
+  author?: string;
+  short_description?: string;
+  main_image?: { small?: string; original?: string } | string | null;
+  formats?: Array<{ price: number; format?: string }>;
+  cover_color?: string;
+  cover_accent?: string;
+}
+
+function imageUrl(path?: string): string | null {
+  if (!path) return null;
+  return `${IMG_BASE}${path}`;
+}
+
+function lowestPrice(
+  formats?: Array<{ price: number }>,
+): { price: number } | null {
+  if (!formats?.length) return null;
+  return formats.reduce((a, b) => (a.price < b.price ? a : b));
+}
+
+function formatPrice(price: number): string {
+  return `৳${price.toLocaleString()}`;
+}
+
+function parseMainImage(
+  raw: unknown,
+): { small?: string; original?: string } | null {
+  if (!raw) return null;
+  if (typeof raw === "object")
+    return raw as { small?: string; original?: string };
+  if (typeof raw === "string") {
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+async function getFeaturedProducts(count = 3): Promise<Product[]> {
+  try {
+    const r = await fetch(`${API_BASE}/products?featured=1&limit=${count}`);
+    const json = await r.json();
+    const data = json?.data ?? json;
+    return Array.isArray(data) ? data.slice(0, count) : [];
+  } catch {
+    return [];
+  }
+}
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 36 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.65,
+      ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+    },
+  },
+};
+const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.13 } } };
+
+function BookCard({ book }: { book: Product }) {
+  const img = parseMainImage(book.main_image);
+  const imgSrc = imageUrl(img?.small ?? img?.original);
   const cheapest = lowestPrice(book.formats);
-  const imgSrc = imageUrl(book.main_image?.small ?? book.main_image?.original);
-  const accent = book.cover_accent ?? "var(--gold)";
 
   return (
-    <AnimatedSection delay={delay}>
+    <motion.div variants={fadeUp}>
       <Link
         href={`/books/${book.slug}`}
         style={{ textDecoration: "none", display: "block", height: "100%" }}
       >
         <div
-          className="home-book-card card"
+          className="book-card"
           style={{
-            background: "#284B63",
-            border: "1px solid rgba(130,195,216,0.15)",
+            background: "#ffffff",
+            border: "1px solid #e5e7eb",
+            borderRadius: 16,
+            overflow: "hidden",
+            transition: "all 0.3s ease",
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
           }}
         >
           {/* Cover */}
           <div
-            className="home-book-card card"
             style={{
-              backgroundImage: " url('/book-card-bg.jpg')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-
+              aspectRatio: "3/4",
               overflow: "hidden",
+              background: book.cover_color
+                ? `linear-gradient(160deg, ${book.cover_color}22, ${book.cover_color}08)`
+                : "linear-gradient(160deg, #6c7e7f15, #95a49a10)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "relative",
             }}
           >
-            {/* Ambient glow */}
-            {book.cover_color && (
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: `radial-gradient(circle at 50% 30%, ${book.cover_color}44, transparent 65%)`,
-                  pointerEvents: "none",
-                }}
-              />
-            )}
-
-            {/* Cover image or placeholder */}
             {imgSrc ? (
-              <div
+              <img
+                src={imgSrc}
+                alt={book.title}
                 style={{
-                  position: "relative",
-                  zIndex: 1,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  transition: "transform 0.5s ease",
                 }}
-              >
-                <img
-                  src={imgSrc}
-                  alt={book.title}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    borderRadius: "4px",
-
-                    display: "block",
-                  }}
-                />
-              </div>
+                className="book-img"
+              />
             ) : (
               <div
                 style={{
-                  width: "100%",
-                  height: "200px",
-                  maxWidth: "130px",
-                  background: `linear-gradient(135deg, ${book.cover_color ?? "#667eea"}22, ${accent !== "var(--gold)" ? accent : "#f59e0b"}11)`,
-                  border: `1px solid ${accent !== "var(--gold)" ? accent : "rgba(201,168,76,0.2)"}44`,
-                  borderRadius: "4px",
                   display: "flex",
+                  flexDirection: "column",
                   alignItems: "center",
-                  justifyContent: "center",
-                  position: "relative",
-                  zIndex: 1,
+                  gap: 12,
+                  opacity: 0.3,
                 }}
               >
-                <BookOpen size={36} style={{ color: accent, opacity: 0.3 }} />
+                <BookOpen size={48} color="#6c7e7f" />
+                <span
+                  style={{
+                    fontSize: 11,
+                    color: "#6c7e7f",
+                    letterSpacing: "0.1em",
+                    fontWeight: 600,
+                  }}
+                >
+                  NO COVER
+                </span>
+              </div>
+            )}
+
+            {/* Price overlay */}
+            {cheapest && (
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: 12,
+                  right: 12,
+                  background: "#6c7e7f",
+                  color: "#fff",
+                  fontSize: 14,
+                  fontWeight: 800,
+                  padding: "6px 14px",
+                  borderRadius: 20,
+                  boxShadow: "0 4px 12px rgba(108,126,127,0.4)",
+                }}
+              >
+                {formatPrice(cheapest.price)}
               </div>
             )}
           </div>
@@ -99,168 +175,167 @@ function BookCard({ book, delay }: { book: Product; delay: number }) {
           {/* Info */}
           <div
             style={{
-              padding: "24px",
+              padding: "20px",
               flex: 1,
               display: "flex",
               flexDirection: "column",
             }}
           >
-            {/* Author */}
-            <p
-              style={{
-                fontSize: "10px",
-                color: "rgba(255,255,255,0.6)",
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                fontWeight: 600,
-                marginBottom: "6px",
-              }}
-            >
-              {book.author ?? ""}
-            </p>
+            {book.author && (
+              <p
+                style={{
+                  fontSize: 10,
+                  color: "#9aa6aa",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  fontWeight: 700,
+                  marginBottom: 6,
+                }}
+              >
+                {book.author}
+              </p>
+            )}
 
-            {/* Title */}
             <h3
               style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "22px",
-                color: "#ffffff",
-                lineHeight: 1.15,
+                fontFamily: "'Playfair Display', serif",
+                fontSize: 18,
+                color: "#1f2937",
+                lineHeight: 1.2,
+                marginBottom: 6,
+                fontWeight: 700,
               }}
             >
               {book.title}
             </h3>
 
-            {/* Subtitle */}
             {book.subtitle && (
               <p
                 style={{
-                  fontSize: "12px",
-                  color: "#6FB3C8",
-                  marginTop: "4px",
+                  fontSize: 12,
+                  color: "#95a49a",
                   fontStyle: "italic",
-                  opacity: 0.8,
+                  marginBottom: 8,
+                  opacity: 0.9,
                 }}
               >
                 {book.subtitle}
               </p>
             )}
 
-            {/* Short description */}
             {book.short_description && (
               <p
-                style={{
-                  fontSize: "12px",
-                  color: "rgba(255,255,255,0.7)",
-                  marginTop: "10px",
-                  lineHeight: 1.65,
-                  display: "-webkit-box",
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                }}
+                style={
+                  {
+                    fontSize: 12,
+                    color: "#6b7280",
+                    lineHeight: 1.7,
+                    flex: 1,
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                    marginBottom: 16,
+                  } as React.CSSProperties
+                }
               >
                 {book.short_description}
               </p>
             )}
 
-            {/* Price + CTA */}
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
                 marginTop: "auto",
-                paddingTop: "18px",
+                paddingTop: 14,
+                borderTop: "1px solid #f3f4f6",
               }}
             >
-              {cheapest ? (
-                <span
-                  style={{
-                    fontSize: "15px",
-                    fontWeight: 700,
-                    color: "#6FB3C8",
-                  }}
-                >
-                  {formatPrice(cheapest.price)}
-                </span>
-              ) : (
-                <span />
-              )}
               <span
                 style={{
-                  display: "inline-flex",
+                  fontSize: 11,
+                  color: "#95a49a",
+                  fontWeight: 700,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  display: "flex",
                   alignItems: "center",
-                  gap: "4px",
-                  fontSize: "11px",
-                  color: "#6FB3C8",
+                  gap: 4,
+                }}
+              >
+                View Details <ArrowRight size={10} />
+              </span>
+              <button
+                className="book-buy-btn"
+                style={{
+                  background: "#95a49a",
+                  color: "#fff",
+                  border: "none",
+                  padding: "8px 16px",
+                  borderRadius: 6,
+                  fontSize: 11,
                   fontWeight: 700,
                   letterSpacing: "0.06em",
                   textTransform: "uppercase",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
                 }}
               >
-                Details <ArrowRight size={11} />
-              </span>
+                Buy Now
+              </button>
             </div>
           </div>
         </div>
       </Link>
-    </AnimatedSection>
+    </motion.div>
   );
 }
 
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
 function SkeletonCard() {
   return (
     <div
       style={{
-        background: "#1a2e3b",
-        border: "1px solid rgba(255,255,255,0.05)",
-        borderRadius: "12px",
+        background: "#f8f9fa",
+        border: "1px solid #e5e7eb",
+        borderRadius: 16,
         overflow: "hidden",
-        opacity: 0.4,
+        opacity: 0.6,
       }}
     >
-      <div style={{ background: "#111", aspectRatio: "3/4" }} />
+      <div style={{ aspectRatio: "3/4", background: "#e5e7eb" }} />
       <div
         style={{
-          padding: "24px",
+          padding: 20,
           display: "flex",
           flexDirection: "column",
-          gap: "10px",
+          gap: 10,
         }}
       >
         <div
           style={{
-            height: "10px",
-            width: "80px",
-            background: "#222",
-            borderRadius: "4px",
+            height: 10,
+            width: "50%",
+            background: "#e5e7eb",
+            borderRadius: 4,
           }}
         />
         <div
           style={{
-            height: "22px",
-            width: "70%",
-            background: "#1a1a1a",
-            borderRadius: "4px",
+            height: 20,
+            width: "80%",
+            background: "#e9e9e9",
+            borderRadius: 4,
           }}
         />
-        <div
-          style={{
-            height: "32px",
-            width: "100%",
-            background: "#161616",
-            borderRadius: "4px",
-          }}
-        />
+        <div style={{ height: 32, background: "#f0f0f0", borderRadius: 4 }} />
       </div>
     </div>
   );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
-export default function Books() {
+export default function BooksSection() {
   const [books, setBooks] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -272,39 +347,72 @@ export default function Books() {
   }, []);
 
   return (
-    <section className="section" style={{ background: "#284B63" }}>
-      <div className="container">
+    <section style={{ background: "#f8f9fa", padding: "50px 0" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
         {/* Header */}
-        <AnimatedSection style={{ textAlign: "center", marginBottom: "56px" }}>
-          <div
-            className="section-label"
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          variants={stagger}
+          style={{ textAlign: "center", marginBottom: 64 }}
+        >
+          <motion.span
+            variants={fadeUp}
             style={{
-              justifyContent: "center",
-              color: "#82c3d8",
+              display: "inline-block",
+              background: "#6c7e7f1a",
+              color: "#6c7e7f",
+              borderRadius: 40,
+              padding: "6px 20px",
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              marginBottom: 16,
             }}
           >
             Published Works
-          </div>
-          <h2
+          </motion.span>
+          <motion.h2
+            variants={fadeUp}
             style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "clamp(40px, 4vw, 56px)",
-              color: "#ffffff",
+              fontFamily: "'Playfair Display', serif",
+              fontSize: "clamp(34px, 4vw, 54px)",
+              color: "#1f2937",
+              margin: 0,
+              lineHeight: 1.1,
             }}
           >
-            Books That Change Minds
-          </h2>
-        </AnimatedSection>
+            Books That{" "}
+            <span style={{ color: "#6c7e7f", fontStyle: "italic" }}>
+              Change Minds
+            </span>
+          </motion.h2>
+          <motion.p
+            variants={fadeUp}
+            style={{
+              fontSize: 16,
+              color: "#6b7280",
+              maxWidth: 480,
+              margin: "20px auto 0",
+              lineHeight: 1.75,
+            }}
+          >
+            Every book is a complete toolkit for transformation — built on real
+            experience, research, and deep human understanding.
+          </motion.p>
+        </motion.div>
 
         {/* Grid */}
         {loading ? (
           <div
+            className="books-grid"
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "24px",
+              gap: 28,
             }}
-            className="books-grid"
           >
             {[1, 2, 3].map((i) => (
               <SkeletonCard key={i} />
@@ -312,60 +420,71 @@ export default function Books() {
           </div>
         ) : books.length === 0 ? (
           <div
-            style={{
-              textAlign: "center",
-              padding: "60px 20px",
-              color: "var(--text-dim)",
-            }}
+            style={{ textAlign: "center", padding: "60px 0", color: "#9ca3af" }}
           >
-            <BookOpen
-              size={40}
-              style={{ opacity: 0.2, marginBottom: "12px" }}
-            />
+            <BookOpen size={40} style={{ opacity: 0.3, marginBottom: 12 }} />
             <p>No books available right now.</p>
           </div>
         ) : (
-          <div
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            variants={stagger}
+            className="books-grid"
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "24px",
+              gap: 28,
             }}
-            className="books-grid"
           >
-            {books.map((book, i) => (
-              <BookCard key={book.id} book={book} delay={i * 0.1} />
+            {books.map((book) => (
+              <BookCard key={book.id} book={book} />
             ))}
-          </div>
+          </motion.div>
         )}
 
-        {/* Footer CTA */}
         {!loading && books.length > 0 && (
-          <div style={{ textAlign: "center", marginTop: "48px" }}>
-            <Link href="/books" className="btn-outline text-[#6FB3C8]">
-              View All Books{" "}
-              <ArrowRight size={13} style={{ marginLeft: "6px" }} />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            style={{ textAlign: "center", marginTop: 56 }}
+          >
+            <Link
+              href="/books"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                background: "#6c7e7f",
+                color: "#fff",
+                padding: "14px 32px",
+                borderRadius: 6,
+                fontSize: 13,
+                fontWeight: 700,
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                textDecoration: "none",
+                transition: "all 0.25s",
+                boxShadow: "0 4px 16px rgba(108,126,127,0.25)",
+              }}
+              className="books-cta"
+            >
+              View All Books <ArrowRight size={14} />
             </Link>
-          </div>
+          </motion.div>
         )}
       </div>
 
       <style>{`
-        .home-book-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-  border-color: #82c3d8;
-}
-        @media(max-width: 900px) {
-          .books-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-          }
-        }
-        @media(max-width: 560px) {
-          .books-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
+        .book-card:hover { transform: translateY(-8px); box-shadow: 0 24px 56px rgba(108,126,127,0.14); border-color: #95a49a !important; }
+        .book-card:hover .book-img { transform: scale(1.05); }
+        .book-buy-btn:hover { background: #6c7e7f !important; transform: translateY(-1px); }
+        .books-cta:hover { background: #5a6b6c !important; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(108,126,127,0.3) !important; }
+        @media (max-width: 900px) { .books-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+        @media (max-width: 560px) { .books-grid { grid-template-columns: 1fr !important; } }
       `}</style>
     </section>
   );

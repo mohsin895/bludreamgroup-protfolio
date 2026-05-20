@@ -1,349 +1,340 @@
 "use client";
 
-import AnimatedSection from "@/components/AnimatedSection";
-import {
-  fetchMappedTestimonials,
-  type MappedTestimonial,
-} from "@/lib/api/testimonial";
-import { AlertCircle, Star } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 
-// ─── Skeleton card ────────────────────────────────────────────────────────────
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+const IMG_BASE = process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? "";
 
-function SkeletonCard() {
+interface Testimonial {
+  id: number;
+  name: string;
+  designation?: string;
+  profession?: string;
+  review?: string;
+  comment?: string;
+  message?: string;
+  rating?: number;
+  image?: string | null;
+  avatar?: string | null;
+}
+
+const fallback: Testimonial[] = [
+  {
+    id: 1,
+    name: "Rakibul Islam",
+    designation: "Entrepreneur, Dhaka",
+    rating: 5,
+    review:
+      "Reading his books completely changed how I think about business. His insights are practical, deep, and immediately applicable. I went from struggling to running a profitable business within months.",
+  },
+  {
+    id: 2,
+    name: "Nusrat Jahan",
+    designation: "Student, BUET",
+    rating: 5,
+    review:
+      "His motivational sessions are unlike anything I've experienced. He doesn't just inspire — he gives you a roadmap. My entire perspective on success shifted after attending his workshop.",
+  },
+  {
+    id: 3,
+    name: "Mahfuz Ahmed",
+    designation: "Corporate Manager",
+    rating: 5,
+    review:
+      "The one-on-one consultation was worth every penny. He identified blind spots in my career strategy and helped me craft a plan that got me promoted within six months.",
+  },
+  {
+    id: 4,
+    name: "Sadia Rahman",
+    designation: "Startup Founder",
+    rating: 5,
+    review:
+      "I've read over 50 self-development books, and his are consistently in my top five. The way he blends psychology with practical business advice is brilliant and rare.",
+  },
+];
+
+function Stars({ count }: { count: number }) {
   return (
-    <div
-      className="card"
-      style={{
-        padding: "36px",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        background: "#284b63", // slightly lighter than #648181
-        border: "1px solid rgba(255,255,255,0.08)",
-      }}
-    >
-      {/* Stars */}
-      <div style={{ display: "flex", gap: "3px", marginBottom: "8px" }}>
-        {[1, 2, 3, 4, 5].map((n) => (
-          <div
-            key={n}
-            style={{
-              width: "14px",
-              height: "14px",
-              borderRadius: "2px",
-              background: "rgba(201,168,76,0.12)",
-              animation: "shimmer 1.5s ease-in-out infinite",
-            }}
-          />
-        ))}
-      </div>
-      {/* Quote lines */}
-      {[95, 80, 88, 65].map((w) => (
-        <div
-          key={w}
-          style={{
-            height: "14px",
-            width: `${w}%`,
-            borderRadius: "3px",
-            background: "rgba(255,255,255,0.05)",
-            animation: "shimmer 1.5s ease-in-out infinite",
-          }}
-        />
+    <div style={{ display: "flex", gap: 3 }}>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <svg
+          key={i}
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill={i < count ? "#6c7e7f" : "#e5e7eb"}
+        >
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+        </svg>
       ))}
-      {/* Divider */}
-      <div
-        style={{
-          height: "1px",
-          background: "rgba(255,255,255,0.05)",
-          margin: "8px 0",
-        }}
-      />
-      {/* Author */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <div
-          style={{
-            width: "36px",
-            height: "36px",
-            borderRadius: "50%",
-            background: "rgba(255,255,255,0.06)",
-            animation: "shimmer 1.5s ease-in-out infinite",
-            flexShrink: 0,
-          }}
-        />
-        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-          <div
-            style={{
-              width: "100px",
-              height: "12px",
-              borderRadius: "3px",
-              background: "rgba(255,255,255,0.06)",
-              animation: "shimmer 1.5s ease-in-out infinite",
-            }}
-          />
-          <div
-            style={{
-              width: "130px",
-              height: "10px",
-              borderRadius: "3px",
-              background: "rgba(255,255,255,0.04)",
-              animation: "shimmer 1.5s ease-in-out infinite 0.1s",
-            }}
-          />
-        </div>
-      </div>
     </div>
   );
 }
 
-// ─── Avatar ───────────────────────────────────────────────────────────────────
-
-function Avatar({ t }: { t: MappedTestimonial }) {
-  const [imgError, setImgError] = useState(false);
-  const showImg = t.avatarUrl && !imgError;
-
-  return (
-    <div
-      style={{
-        width: "36px",
-        height: "36px",
-        borderRadius: "50%",
-        background: showImg ? "transparent" : t.bg,
-        border: `1px solid ${t.color}33`,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        overflow: "hidden",
-        flexShrink: 0,
-        fontSize: "11px",
-        fontWeight: 700,
-        color: t.color,
-        letterSpacing: "0.04em",
-      }}
-    >
-      {showImg ? (
-        <Image
-          src={t.avatarUrl!}
-          alt={t.initials}
-          width={36}
-          height={36}
-          style={{ objectFit: "cover", width: "100%", height: "100%" }}
-          onError={() => setImgError(true)}
-        />
-      ) : (
-        t.initials
-      )}
-    </div>
-  );
-}
-
-// ─── Testimonial card ─────────────────────────────────────────────────────────
-
-function TestimonialCard({ t, i }: { t: MappedTestimonial; i: number }) {
-  return (
-    <AnimatedSection delay={i * 0.1}>
-      <div
-        className="card"
-        style={{
-          padding: "36px",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {/* Stars */}
-        <div style={{ display: "flex", gap: "2px", marginBottom: "20px" }}>
-          {Array.from({ length: t.rating }).map((_, j) => (
-            <Star size={14} style={{ fill: "#F59517", color: "#F59517" }} />
-          ))}
-        </div>
-
-        {/* Quote */}
-        <p
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "18px",
-            lineHeight: 1.6,
-            color: "#000",
-            fontStyle: "italic",
-            flex: 1,
-            margin: 0,
-          }}
-        >
-          "{t.quote}"
-        </p>
-
-        {/* Author */}
-        <div
-          style={{
-            marginTop: "24px",
-            paddingTop: "20px",
-            borderTop: "1px solid #f59517",
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-          }}
-        >
-          <Avatar t={t} />
-          <div>
-            <div
-              style={{
-                fontSize: "14px",
-                fontWeight: 600,
-                color: "#000",
-              }}
-            >
-              {t.name}
-            </div>
-            <div
-              style={{
-                fontSize: "12px",
-                color: "#000",
-                marginTop: "3px",
-              }}
-            >
-              {t.role} · {t.company}
-            </div>
-          </div>
-        </div>
-      </div>
-    </AnimatedSection>
-  );
-}
-
-// ─── Component ────────────────────────────────────────────────────────────────
-
-export default function Testimonial() {
-  const [testimonials, setTestimonials] = useState<MappedTestimonial[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default function TestimonialsSection() {
+  const [items, setItems] = useState<Testimonial[]>(fallback);
+  const [idx, setIdx] = useState(0);
+  const [dir, setDir] = useState(1);
 
   useEffect(() => {
-    fetchMappedTestimonials()
-      .then(({ testimonials: all }) => {
-        // Show max 3 on homepage — featured first, then rest
-        setTestimonials(all.slice(0, 3));
+    fetch(`${API_BASE}/testimonials`)
+      .then((r) => r.json())
+      .then((json) => {
+        const data = json?.data ?? json;
+        if (Array.isArray(data) && data.length > 0) setItems(data);
       })
-      .catch((err) =>
-        setError(
-          err instanceof Error ? err.message : "Failed to load testimonials.",
-        ),
-      )
-      .finally(() => setLoading(false));
+      .catch(() => {});
   }, []);
 
+  const go = useCallback(
+    (d: 1 | -1) => {
+      setDir(d);
+      setIdx((prev) => (prev + d + items.length) % items.length);
+    },
+    [items.length],
+  );
+
+  useEffect(() => {
+    const t = setInterval(() => go(1), 6000);
+    return () => clearInterval(t);
+  }, [go]);
+
+  const current = items[idx];
+  const imgSrc =
+    current.image || current.avatar
+      ? `${IMG_BASE}${current.image ?? current.avatar}`
+      : null;
+
   return (
-    <>
-      {/* ── TESTIMONIALS ── */}
-      <section className="section" style={{ background: "#648181" }}>
-        <div className="container">
-          {/* Header */}
-          <AnimatedSection
-            style={{ textAlign: "center", color: "#fff", marginBottom: "56px" }}
+    <section style={{ background: "#f8f9fa", padding: "100px 0" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          style={{ textAlign: "center", marginBottom: 64 }}
+        >
+          <span
+            style={{
+              display: "inline-block",
+              background: "#6c7e7f1a",
+              color: "#6c7e7f",
+              borderRadius: 40,
+              padding: "6px 20px",
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              marginBottom: 16,
+            }}
           >
-            <div className="section-label" style={{ justifyContent: "center" }}>
-              Social Proof
-            </div>
-            <h2
+            Testimonials
+          </span>
+          <h2
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontSize: "clamp(34px, 4vw, 54px)",
+              color: "#1f2937",
+              margin: 0,
+              lineHeight: 1.1,
+            }}
+          >
+            What Readers & Clients{" "}
+            <span style={{ color: "#6c7e7f", fontStyle: "italic" }}>
+              Are Saying
+            </span>
+          </h2>
+        </motion.div>
+
+        {/* Slider */}
+        <div style={{ position: "relative", maxWidth: 860, margin: "0 auto" }}>
+          <AnimatePresence mode="wait" custom={dir}>
+            <motion.div
+              key={idx}
+              custom={dir}
+              initial={{ opacity: 0, x: dir * 60 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: dir * -60 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(40px, 4vw, 56px)",
+                background: "#ffffff",
+                border: "1px solid #e5e7eb",
+                borderRadius: 24,
+                padding: "48px 56px",
+                position: "relative",
+                boxShadow: "0 8px 40px rgba(108,126,127,0.08)",
               }}
             >
-              Words From Leaders
-            </h2>
-          </AnimatedSection>
+              {/* Big quote */}
+              <Quote
+                size={56}
+                color="#6c7e7f"
+                style={{
+                  opacity: 0.12,
+                  position: "absolute",
+                  top: 24,
+                  left: 36,
+                }}
+              />
 
-          {/* ── Loading skeletons ── */}
-          {loading && (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: "24px",
-              }}
-            >
-              {[1, 2, 3].map((n) => (
-                <SkeletonCard key={n} />
-              ))}
-            </div>
-          )}
+              <p
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: "clamp(17px, 2vw, 22px)",
+                  color: "#1f2937",
+                  lineHeight: 1.75,
+                  margin: "44px 0 32px",
+                  fontStyle: "italic",
+                }}
+              >
+                "
+                {current.review ??
+                  current.comment ??
+                  current.message ??
+                  "An incredible experience that truly changed my perspective."}
+                "
+              </p>
 
-          {/* ── Error ── */}
-          {!loading && error && (
-            <div
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <div
+                  style={{
+                    width: 52,
+                    height: 52,
+                    borderRadius: "50%",
+                    overflow: "hidden",
+                    background: "linear-gradient(135deg, #6c7e7f, #95a49a)",
+                    flexShrink: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {imgSrc ? (
+                    <img
+                      src={imgSrc}
+                      alt={current.name}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    <span
+                      style={{ fontSize: 20, fontWeight: 700, color: "#fff" }}
+                    >
+                      {current.name.charAt(0).toUpperCase()}
+                    </span>
+                  )}
+                </div>
+                <div>
+                  <div
+                    style={{ fontSize: 15, fontWeight: 700, color: "#1f2937" }}
+                  >
+                    {current.name}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 12,
+                      color: "#9aa6aa",
+                      marginTop: 2,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {current.designation ?? current.profession ?? "Reader"}
+                  </div>
+                  <div>{/* <Stars count={current.rating ?? 5} /> */}</div>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Controls */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 16,
+              marginTop: 40,
+            }}
+          >
+            <button
+              onClick={() => go(-1)}
               style={{
+                width: 44,
+                height: 44,
+                borderRadius: "50%",
+                background: "#ffffff",
+                border: "1px solid #e5e7eb",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: "10px",
-                padding: "48px 0",
-                color: "rgba(255,255,255,0.3)",
-                fontSize: "14px",
+                cursor: "pointer",
+                transition: "all 0.2s",
+                color: "#6c7e7f",
               }}
+              className="testi-ctrl"
             >
-              <AlertCircle
-                size={16}
-                style={{ color: "#C47C5A", flexShrink: 0 }}
-              />
-              {error}
-            </div>
-          )}
+              <ChevronLeft size={18} />
+            </button>
 
-          {/* ── Empty ── */}
-          {!loading && !error && testimonials.length === 0 && (
-            <div
-              style={{
-                textAlign: "center",
-                padding: "48px 0",
-                color: "rgba(255,255,255,0.2)",
-                fontSize: "14px",
-              }}
-            >
-              No testimonials available at this time.
-            </div>
-          )}
-
-          {/* ── Cards ── */}
-          {!loading && !error && testimonials.length > 0 && (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: "24px",
-              }}
-            >
-              {testimonials.map((t, i) => (
-                <TestimonialCard key={t.id} t={t} i={i} />
+            {/* Dots */}
+            <div style={{ display: "flex", gap: 8 }}>
+              {items.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => {
+                    setDir(i > idx ? 1 : -1);
+                    setIdx(i);
+                  }}
+                  style={{
+                    width: i === idx ? 28 : 8,
+                    height: 8,
+                    borderRadius: 4,
+                    border: "none",
+                    padding: 0,
+                    cursor: "pointer",
+                    background: i === idx ? "#6c7e7f" : "#d1d5db",
+                    transition: "all 0.35s ease",
+                  }}
+                />
               ))}
             </div>
-          )}
 
-          {/* CTA */}
-          {!loading && !error && (
-            <div style={{ textAlign: "center", marginTop: "40px" }}>
-              <Link href="/testimonials" className="btn-outline">
-                Read All Testimonials
-              </Link>
-            </div>
-          )}
+            <button
+              onClick={() => go(1)}
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: "50%",
+                background: "#ffffff",
+                border: "1px solid #e5e7eb",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                transition: "all 0.2s",
+                color: "#6c7e7f",
+              }}
+              className="testi-ctrl"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
         </div>
+      </div>
 
-        <style>{`
-        .section-label {
-  color: #82c3d8;
-}
-          @media (max-width: 768px) {
-            .testimonial-grid { grid-template-columns: 1fr !important; }
-          }
-          @keyframes shimmer {
-            0%, 100% { opacity: 0.5; }
-            50%       { opacity: 1;   }
-          }
-        `}</style>
-      </section>
-    </>
+      <style>{`
+        .testi-ctrl:hover { background: #6c7e7f !important; border-color: #6c7e7f !important; color: #fff !important; }
+        @media (max-width: 640px) {
+          section > div > div:last-child > div { padding: 32px 24px !important; }
+        }
+      `}</style>
+    </section>
   );
 }

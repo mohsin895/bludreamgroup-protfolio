@@ -844,7 +844,7 @@ export default function EnrollmentPage(): ReactNode {
                       >
                         Please complete your payment of{" "}
                         <strong style={{ color: "#0009" }}>
-                          ${actualPrice.toFixed(2)}
+                          ৳{actualPrice.toFixed(2)}
                         </strong>{" "}
                         to our account, then enter the transaction details
                         below.
@@ -1050,7 +1050,7 @@ export default function EnrollmentPage(): ReactNode {
                           textDecoration: "line-through",
                         }}
                       >
-                        ${courseInfo.price.toFixed(2)}
+                        ৳ {courseInfo.price.toFixed(2)}
                       </span>
                     ) : (
                       <span
@@ -1061,7 +1061,7 @@ export default function EnrollmentPage(): ReactNode {
                           fontWeight: 700,
                         }}
                       >
-                        ${actualPrice.toFixed(2)}
+                        ৳ {actualPrice.toFixed(2)}
                       </span>
                     )}
                   </div>
@@ -1120,13 +1120,12 @@ export default function EnrollmentPage(): ReactNode {
                     </span>
                     <span
                       style={{
-                        fontFamily: "var(--font-display)",
-                        fontSize: "22px",
+                        fontSize: "16px",
                         color: "#fff",
                         fontWeight: 700,
                       }}
                     >
-                      ${actualPrice.toFixed(2)}
+                      ৳ {actualPrice.toFixed(2)}
                     </span>
                   </div>
 

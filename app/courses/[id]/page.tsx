@@ -1059,18 +1059,17 @@ export default function EnrollmentPage(): ReactNode {
                           textDecoration: "line-through",
                         }}
                       >
-                        ${courseInfo.price.toFixed(2)}
+                        ৳{courseInfo.price.toFixed(2)}
                       </span>
                     ) : (
                       <span
                         style={{
-                          fontFamily: "var(--font-display)",
                           fontSize: "20px",
                           color: "var(--gold)",
                           fontWeight: 700,
                         }}
                       >
-                        ${actualPrice.toFixed(2)}
+                        ৳{actualPrice.toFixed(2)}
                       </span>
                     )}
                   </div>
@@ -1100,7 +1099,7 @@ export default function EnrollmentPage(): ReactNode {
                           fontWeight: 700,
                         }}
                       >
-                        ${actualPrice.toFixed(2)}
+                        ৳{actualPrice.toFixed(2)}
                       </span>
                     </div>
                   )}
@@ -1135,7 +1134,7 @@ export default function EnrollmentPage(): ReactNode {
                         fontWeight: 700,
                       }}
                     >
-                      ${actualPrice.toFixed(2)}
+                      ৳{actualPrice.toFixed(2)}
                     </span>
                   </div>
 
