@@ -18,6 +18,7 @@ import { useCallback, useEffect, useState } from "react";
 
 /* ─── ENV ─── */
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+const IMAGE_BASE = process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? "";
 
 /* ─── Types ─── */
 interface EventItem {
@@ -130,6 +131,8 @@ function EventCard({ event, index }: { event: EventItem; index: number }) {
   const cat = CATEGORY_MAP[event.event_category_id] ?? CATEGORY_MAP.default;
   const grad = GRADIENTS[event.id % GRADIENTS.length];
   const desc = stripHtml(event.description);
+  const imageUrl = getEventImage(event.image);
+
   const { day, month, year } = formatShortDate(event.event_date);
   const startT = formatTime(event.start_time);
   const endT = formatTime(event.end_time);
@@ -160,9 +163,9 @@ function EventCard({ event, index }: { event: EventItem; index: number }) {
           flexShrink: 0,
         }}
       >
-        {event.image ? (
+        {imageUrl ? (
           <img
-            src={event.image}
+            src={imageUrl}
             alt={event.title}
             style={{
               width: "100%",
@@ -579,7 +582,19 @@ function SkeletonCard() {
     </div>
   );
 }
+function getEventImage(image?: string | null) {
+  if (!image) return null;
 
+  try {
+    const parsed = JSON.parse(image);
+
+    return `${IMAGE_BASE}${
+      parsed.large || parsed.medium || parsed.small || parsed.original
+    }`;
+  } catch {
+    return `${IMAGE_BASE}${image}`;
+  }
+}
 /* ═══════════════════════════════════════════
    MAIN PAGE
 ═══════════════════════════════════════════ */
@@ -591,6 +606,7 @@ export default function EventsPage() {
   const [categories, setCategories] = useState<{ id: string; label: string }[]>(
     [],
   );
+
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [activeCat, setActiveCat] = useState("all");
