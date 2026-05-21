@@ -28,7 +28,6 @@ const primaryNav: NavItem[] = [
   { label: "Books", href: "/books" },
   { label: "Blog", href: "/blog" },
   { label: "Courses", href: "/courses" },
-  { label: "Shop", href: "/shop" },
   { label: "Achievement", href: "/achievements" },
   { label: "Contact", href: "/contact" },
 ];

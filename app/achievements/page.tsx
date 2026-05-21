@@ -3,136 +3,575 @@
 import Footer from "@/components/Footer";
 import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
-import { AnimatePresence, motion, useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import {
+  Award,
+  BookOpen,
+  Calendar,
+  Globe,
+  Mic,
+  Star,
+  TrendingUp,
+  Trophy,
+  Users,
+  Zap,
+} from "lucide-react";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   TYPES
-═══════════════════════════════════════════════════════════════════════════ */
+/* ─── ENV ─── */
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+const IMG_BASE = process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? "";
+
+/* ─── Types ─── */
+interface Achievement {
+  id: number;
+  title: string;
+  description?: string;
+  year?: string | number;
+  category?: string;
+  value?: string | number;
+  icon?: string;
+  image?: string | null;
+  badge?: string;
+}
 interface Award {
   id: number;
   title: string;
-  image: string;
   organization: string;
+  year: string;
   color: string;
-  year: string;
-  status: string;
+  image: string;
 }
 
-interface CareerJourney {
-  id: number;
-  title: string;
+interface Stat {
+  label: string;
+  value: number;
+  suffix: string;
+  icon: React.ComponentType<{ size?: number; color?: string }>;
   description: string;
-  year: string;
-  status: string;
 }
 
-interface ImageUrls {
-  original: string;
-  small: string;
-  medium: string;
-  large: string;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   STATIC DATA
-═══════════════════════════════════════════════════════════════════════════ */
-const stats = [
-  { value: 3200000, suffix: "+", label: "Books Sold", prefix: "" },
-  { value: 200, suffix: "+", label: "Keynotes Delivered", prefix: "" },
-  { value: 47, suffix: "", label: "Countries Reached", prefix: "" },
-  { value: 18, suffix: "", label: "Years of Excellence", prefix: "" },
+/* ─── Fallback data ─── */
+const FALLBACK_STATS: Stat[] = [
+  {
+    label: "Books Published",
+    value: 30,
+    suffix: "+",
+    icon: BookOpen,
+    description: "Across multiple categories",
+  },
+  {
+    label: "Readers Worldwide",
+    value: 50000,
+    suffix: "+",
+    icon: Users,
+    description: "In 50+ countries",
+  },
+  {
+    label: "Events Conducted",
+    value: 200,
+    suffix: "+",
+    icon: Mic,
+    description: "Seminars & workshops",
+  },
+  {
+    label: "Years of Impact",
+    value: 15,
+    suffix: "+",
+    icon: Calendar,
+    description: "Of consistent leadership",
+  },
+  {
+    label: "Clients Served",
+    value: 500,
+    suffix: "+",
+    icon: TrendingUp,
+    description: "Businesses & individuals",
+  },
+  {
+    label: "Countries Reached",
+    value: 50,
+    suffix: "+",
+    icon: Globe,
+    description: "Global audience",
+  },
 ];
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   ENV / UTILS
-═══════════════════════════════════════════════════════════════════════════ */
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? "";
+const FALLBACK_ACHIEVEMENTS: Achievement[] = [
+  {
+    id: 1,
+    year: 2009,
+    category: "Author",
+    title: "First Book Published",
+    description:
+      "Debut book launched, marking the beginning of an author's journey that would touch millions.",
+  },
+  {
+    id: 2,
+    year: 2011,
+    category: "Speaking",
+    title: "First Keynote Speech",
+    description:
+      "Delivered a keynote to 500+ audience, establishing credibility as a public speaker.",
+  },
+  {
+    id: 3,
+    year: 2013,
+    category: "Author",
+    title: "10th Book Milestone",
+    description:
+      "Published the 10th title — spanning self-development, entrepreneurship, and psychology.",
+  },
+  {
+    id: 4,
+    year: 2015,
+    category: "Impact",
+    title: "10,000 Readers Milestone",
+    description:
+      "Reached 10,000 active readers across Bangladesh, marking a significant growth in influence.",
+  },
+  {
+    id: 5,
+    year: 2016,
+    category: "Business",
+    title: "Consultation Practice Launched",
+    description:
+      "Officially launched a personal consultation service to directly impact entrepreneurs and leaders.",
+  },
+  {
+    id: 6,
+    year: 2018,
+    category: "Media",
+    title: "National TV Feature",
+    description:
+      "Featured on national television as a leading voice in entrepreneurship and personal development.",
+  },
+  {
+    id: 7,
+    year: 2019,
+    category: "Author",
+    title: "20th Book Published",
+    description:
+      "A landmark achievement — 20 books spanning multiple genres and topics of transformation.",
+  },
+  {
+    id: 8,
+    year: 2020,
+    category: "Impact",
+    title: "Online Presence Expanded",
+    description:
+      "Built a community of 100,000+ followers across social media platforms during the pandemic era.",
+  },
+  {
+    id: 9,
+    year: 2021,
+    category: "Speaking",
+    title: "International Speaking Debut",
+    description:
+      "First international speaking engagement, connecting with audiences beyond the borders of Bangladesh.",
+  },
+  {
+    id: 10,
+    year: 2022,
+    category: "Author",
+    title: "Bestseller Achievement",
+    description:
+      "Multiple titles became bestsellers in Bangladeshi bookstores during Ekushey Book Fair.",
+  },
+  {
+    id: 11,
+    year: 2023,
+    category: "Impact",
+    title: "50,000 Readers Worldwide",
+    description:
+      "The global readership crossed 50,000 — a testament to the universal appeal of the message.",
+  },
+  {
+    id: 12,
+    year: 2024,
+    category: "Business",
+    title: "30th Book Published",
+    description:
+      "Celebrated the 30-book milestone with a major launch event attended by readers and media.",
+  },
+];
 
-function parseImageJson(imageJson: string): ImageUrls | null {
-  try {
-    return JSON.parse(imageJson);
-  } catch {
-    return null;
+const CAT_CONFIG: Record<
+  string,
+  {
+    icon: React.ComponentType<{ size?: number; color?: string }>;
+    color: string;
+    bg: string;
   }
-}
+> = {
+  Author: { icon: BookOpen, color: "#6c7e7f", bg: "#6c7e7f18" },
+  Speaking: { icon: Mic, color: "#95a49a", bg: "#95a49a18" },
+  Impact: { icon: TrendingUp, color: "#7a9190", bg: "#7a919018" },
+  Business: { icon: Zap, color: "#9aa6aa", bg: "#9aa6aa18" },
+  Media: { icon: Star, color: "#5a6e6f", bg: "#5a6e6f18" },
+  Award: { icon: Trophy, color: "#6c7e7f", bg: "#6c7e7f18" },
+  default: { icon: Award, color: "#6c7e7f", bg: "#6c7e7f18" },
+};
 
-function getImageUrl(
-  imageJson: string,
-  size: "original" | "small" | "medium" | "large" = "medium",
-): string {
-  const parsed = parseImageJson(imageJson);
-  if (!parsed) return "";
-  return IMAGE_BASE_URL + (parsed[size] || parsed.original || "");
-}
+/* ─── Animation variants ─── */
+const fadeUp = {
+  hidden: { opacity: 0, y: 36 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.65, ease: [0.16, 1, 0.3, 1] as const },
+  },
+};
+const fadeIn = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { duration: 0.55 } },
+};
+const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.09 } } };
+const slideL = {
+  hidden: { opacity: 0, x: -40 },
+  show: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
+  },
+};
+const slideR = {
+  hidden: { opacity: 0, x: 40 },
+  show: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
+  },
+};
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   HOOKS
-═══════════════════════════════════════════════════════════════════════════ */
-function useCounter(target: number, active: boolean, duration = 2000) {
-  const [value, setValue] = useState(0);
+/* ─── CountUp ─── */
+function CountUp({ target, suffix = "" }: { target: number; suffix?: string }) {
+  const [val, setVal] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
+
   useEffect(() => {
-    if (!active) return;
-    let start: number | null = null;
-    const step = (ts: number) => {
-      if (!start) start = ts;
-      const progress = Math.min((ts - start) / duration, 1);
-      const ease = 1 - Math.pow(1 - progress, 3);
-      setValue(Math.floor(ease * target));
-      if (progress < 1) requestAnimationFrame(step);
-      else setValue(target);
-    };
-    requestAnimationFrame(step);
-  }, [active, target, duration]);
-  return value;
-}
+    if (!inView) return;
+    const dur = 2000,
+      steps = 60;
+    const step = target / steps;
+    let cur = 0;
+    const t = setInterval(() => {
+      cur += step;
+      if (cur >= target) {
+        setVal(target);
+        clearInterval(t);
+      } else setVal(Math.floor(cur));
+    }, dur / steps);
+    return () => clearInterval(t);
+  }, [inView, target]);
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   LOADING SPINNER
-═══════════════════════════════════════════════════════════════════════════ */
-function LoadingSpinner() {
   return (
-    <motion.div
-      animate={{ rotate: 360 }}
-      transition={{ repeat: Infinity, duration: 0.9, ease: "linear" }}
-      style={{
-        width: 32,
-        height: 32,
-        border: "3px solid #e0e0e0",
-        borderTopColor: "#82c3d8",
-        borderRadius: "50%",
-        margin: "0 auto",
-      }}
-    />
+    <span ref={ref}>
+      {val >= 1000
+        ? `${(val / 1000).toFixed(val % 1000 === 0 ? 0 : 1)}K`
+        : val.toLocaleString()}
+      {suffix}
+    </span>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════
    STAT CARD
-═══════════════════════════════════════════════════════════════════════════ */
-function StatCard({ stat, delay }: { stat: (typeof stats)[0]; delay: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
-  const count = useCounter(stat.value, inView, 2200);
+═══════════════════════════════════ */
+function StatCard({ stat }: { stat: Stat }) {
+  return (
+    <motion.div
+      variants={fadeUp}
+      className="stat-card"
+      style={{
+        background: "#ffffff",
+        border: "1px solid #e8ecea",
+        borderRadius: 20,
+        padding: "32px 28px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        gap: 16,
+        transition: "all 0.3s ease",
+        boxShadow: "0 2px 16px rgba(108,126,127,0.05)",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* Decorative corner */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+          width: 80,
+          height: 80,
+          background: "linear-gradient(135deg, transparent 50%, #6c7e7f08 50%)",
+        }}
+      />
 
-  const display =
-    stat.value >= 1_000_000
-      ? (count / 1_000_000).toFixed(1) + "M"
-      : count.toLocaleString();
+      <div
+        style={{
+          width: 52,
+          height: 52,
+          borderRadius: 14,
+          background: "#6c7e7f12",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <stat.icon size={24} color="#6c7e7f" />
+      </div>
+
+      <div>
+        <div
+          style={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: "clamp(32px, 3.5vw, 48px)",
+            fontWeight: 800,
+            color: "#6c7e7f",
+            lineHeight: 1,
+          }}
+        >
+          <CountUp target={stat.value} suffix={stat.suffix} />
+        </div>
+        <div
+          style={{
+            fontSize: 15,
+            fontWeight: 700,
+            color: "#1a2427",
+            marginTop: 6,
+          }}
+        >
+          {stat.label}
+        </div>
+        <div style={{ fontSize: 12, color: "#9aa6aa", marginTop: 4 }}>
+          {stat.description}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════
+   TIMELINE ITEM
+═══════════════════════════════════ */
+function TimelineItem({
+  item,
+  isLeft,
+  isLast,
+}: {
+  item: Achievement;
+  isLeft: boolean;
+  isLast: boolean;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const cat = CAT_CONFIG[item.category ?? ""] ?? CAT_CONFIG.default;
+
+  return (
+    <div
+      ref={ref}
+      className="timeline-item"
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 60px 1fr",
+        gap: 0,
+        alignItems: "flex-start",
+        marginBottom: isLast ? 0 : 0,
+      }}
+    >
+      {/* Left content */}
+      <motion.div
+        initial="hidden"
+        animate={inView ? "show" : "hidden"}
+        variants={isLeft ? slideL : fadeIn}
+        style={{
+          padding: "0 36px 48px 0",
+          textAlign: isLeft ? "right" : "left",
+          visibility: isLeft ? "visible" : "hidden",
+        }}
+      >
+        {isLeft && <TimelineCard item={item} cat={cat} align="right" />}
+      </motion.div>
+
+      {/* Center spine */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        {/* Year badge */}
+        <div
+          style={{
+            width: 60,
+            height: 60,
+            borderRadius: "50%",
+            flexShrink: 0,
+            background: `linear-gradient(135deg, ${cat.color}, ${cat.color}bb)`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: `0 8px 24px ${cat.color}44`,
+            border: "3px solid #ffffff",
+            zIndex: 1,
+            position: "relative",
+          }}
+        >
+          <cat.icon size={22} color="#fff" />
+        </div>
+        <div
+          style={{
+            background: cat.color,
+            color: "#fff",
+            borderRadius: 20,
+            padding: "3px 10px",
+            fontSize: 10,
+            fontWeight: 800,
+            letterSpacing: "0.08em",
+            marginTop: 6,
+            whiteSpace: "nowrap",
+          }}
+        >
+          {item.year}
+        </div>
+        {/* Spine line */}
+        {!isLast && (
+          <div
+            style={{
+              width: 2,
+              flex: 1,
+              minHeight: 40,
+              marginTop: 8,
+              background: "linear-gradient(to bottom, #e8ecea, transparent)",
+            }}
+          />
+        )}
+      </div>
+
+      {/* Right content */}
+      <motion.div
+        initial="hidden"
+        animate={inView ? "show" : "hidden"}
+        variants={!isLeft ? slideR : fadeIn}
+        style={{
+          padding: "0 0 48px 36px",
+          textAlign: !isLeft ? "left" : "right",
+          visibility: !isLeft ? "visible" : "hidden",
+        }}
+      >
+        {!isLeft && <TimelineCard item={item} cat={cat} align="left" />}
+      </motion.div>
+    </div>
+  );
+}
+
+function TimelineCard({
+  item,
+  cat,
+  align,
+}: {
+  item: Achievement;
+  cat: { color: string; bg: string };
+  align: "left" | "right";
+}) {
+  return (
+    <div
+      className="timeline-card"
+      style={{
+        background: "#ffffff",
+        border: "1px solid #e8ecea",
+        borderRadius: 16,
+        padding: "22px 24px",
+        textAlign: "left",
+        transition: "all 0.3s ease",
+        boxShadow: "0 2px 12px rgba(108,126,127,0.06)",
+        position: "relative",
+      }}
+    >
+      {/* Left accent */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          bottom: 0,
+          [align === "left" ? "left" : "right"]: 0,
+          width: 4,
+          background: `linear-gradient(to bottom, ${cat.color}, ${cat.color}66)`,
+          borderRadius: align === "left" ? "4px 0 0 4px" : "0 4px 4px 0",
+        }}
+      />
+
+      {item.category && (
+        <span
+          style={{
+            display: "inline-block",
+            background: cat.bg,
+            color: cat.color,
+            borderRadius: 20,
+            padding: "3px 12px",
+            fontSize: 10,
+            fontWeight: 800,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            marginBottom: 10,
+          }}
+        >
+          {item.category}
+        </span>
+      )}
+
+      <h3
+        style={{
+          fontFamily: "'Playfair Display', serif",
+          fontSize: "clamp(15px, 1.5vw, 18px)",
+          fontWeight: 700,
+          color: "#1a2427",
+          lineHeight: 1.25,
+          marginBottom: 8,
+        }}
+      >
+        {item.title}
+      </h3>
+
+      {item.description && (
+        <p
+          style={{
+            fontSize: 13,
+            color: "#6b7280",
+            lineHeight: 1.75,
+            margin: 0,
+          }}
+        >
+          {item.description}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════
+   AWARD CARD (grid view)
+═══════════════════════════════════ */
+function AwardCard({ item, index }: { item: Achievement; index: number }) {
+  const cat = CAT_CONFIG[item.category ?? ""] ?? CAT_CONFIG.default;
 
   return (
     <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 40, scale: 0.95 }}
-      animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
-      transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] as const }}
+      variants={fadeUp}
+      className="award-card"
       style={{
-        background: "rgba(130,195,216,0.04)",
-        border: "1px solid rgba(130,195,216,0.12)",
-        borderRadius: "8px",
-        padding: "40px 32px",
-        textAlign: "center",
+        background: "#fff",
+        border: "1px solid #e8ecea",
+        borderRadius: 20,
+        padding: "28px 24px",
+        transition: "all 0.3s ease",
+        boxShadow: "0 2px 16px rgba(108,126,127,0.05)",
         position: "relative",
         overflow: "hidden",
       }}
@@ -141,726 +580,653 @@ function StatCard({ stat, delay }: { stat: (typeof stats)[0]; delay: number }) {
         style={{
           position: "absolute",
           top: 0,
+          left: 0,
           right: 0,
-          width: "60px",
-          height: "60px",
-          background:
-            "linear-gradient(225deg, rgba(130,195,216,0.15) 0%, transparent 60%)",
-          borderRadius: "0 8px 0 0",
+          height: 3,
+          background: `linear-gradient(90deg, ${cat.color}, ${cat.color}55)`,
         }}
       />
-      <div
-        style={{
-          fontFamily: "var(--font-display)",
-          fontSize: "clamp(48px,5vw,72px)",
-          lineHeight: 1,
-          color: "#82c3d8",
-          letterSpacing: "-0.03em",
-          fontWeight: 300,
-        }}
-      >
-        {stat.prefix}
-        {display}
-        {stat.suffix}
-      </div>
-      <div
-        style={{
-          marginTop: "10px",
-          fontSize: "11px",
-          letterSpacing: "0.18em",
-          textTransform: "uppercase",
-          color: "rgba(255,255,255,0.45)",
-        }}
-      >
-        {stat.label}
-      </div>
-    </motion.div>
-  );
-}
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   TIMELINE
-═══════════════════════════════════════════════════════════════════════════ */
-function TimelineCard({
-  item,
-  align,
-}: {
-  item: CareerJourney;
-  align: "left" | "right";
-}) {
-  const tag = item.title.split(" ")[0];
-  return (
-    <div style={{ textAlign: align }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          justifyContent: align === "right" ? "flex-end" : "flex-start",
-          marginBottom: "8px",
-        }}
-      >
-        <span
+      <div style={{ display: "flex", gap: 16, marginBottom: 16 }}>
+        <div
           style={{
-            fontSize: "10px",
-            fontWeight: 700,
-            letterSpacing: "0.15em",
-            textTransform: "uppercase",
-            color: "#82c3d8",
-            background: "rgba(130,195,216,0.1)",
-            border: "1px solid rgba(130,195,216,0.25)",
-            padding: "3px 10px",
-            borderRadius: "20px",
+            width: 50,
+            height: 50,
+            borderRadius: 14,
+            flexShrink: 0,
+            background: cat.bg,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          {tag}
-        </span>
-        <span
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "28px",
-            color: "#000",
-            letterSpacing: "-0.02em",
-          }}
-        >
-          {item.year}
-        </span>
+          <cat.icon size={22} color={cat.color} />
+        </div>
+        <div>
+          {item.year && (
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 800,
+                color: cat.color,
+                letterSpacing: "0.1em",
+                marginBottom: 4,
+              }}
+            >
+              {item.year}
+            </div>
+          )}
+          {item.category && (
+            <span
+              style={{
+                display: "inline-block",
+                fontSize: 10,
+                fontWeight: 700,
+                color: cat.color,
+                background: cat.bg,
+                borderRadius: 20,
+                padding: "2px 10px",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+              }}
+            >
+              {item.category}
+            </span>
+          )}
+        </div>
       </div>
+
       <h3
         style={{
-          fontFamily: "var(--font-display)",
-          fontSize: "clamp(20px,2vw,26px)",
-          color: "#000",
-          margin: "0 0 10px",
-          fontWeight: 400,
-          letterSpacing: "-0.01em",
+          fontFamily: "'Playfair Display', serif",
+          fontSize: "clamp(15px, 1.5vw, 18px)",
+          fontWeight: 700,
+          color: "#1a2427",
+          lineHeight: 1.25,
+          marginBottom: 10,
         }}
       >
         {item.title}
       </h3>
-      <p
-        style={{
-          fontSize: "14px",
-          color: "#0009",
-          lineHeight: 1.7,
-          margin: 0,
-          maxWidth: "340px",
-          marginLeft: align === "right" ? "auto" : 0,
-        }}
-      >
-        {item.description}
-      </p>
-    </div>
-  );
-}
 
-function TimelineItem({ item, idx }: { item: CareerJourney; idx: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
-  const isEven = idx % 2 === 0;
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{
-        duration: 0.7,
-        delay: idx * 0.1,
-        ease: [0.16, 1, 0.3, 1] as const,
-      }}
-      style={{ display: "grid", gridTemplateColumns: "1fr 60px 1fr" }}
-    >
-      {/* Left */}
-      <div
-        style={{
-          paddingRight: "32px",
-          paddingBottom: "60px",
-          textAlign: "right",
-          visibility: isEven ? "visible" : "hidden",
-        }}
-      >
-        {isEven && <TimelineCard item={item} align="right" />}
-      </div>
-
-      {/* Spine */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <motion.div
-          initial={{ background: "transparent", boxShadow: "none" }}
-          animate={
-            inView
-              ? {
-                  background: "#82c3d8",
-                  boxShadow: "0 0 20px rgba(130,195,216,0.5)",
-                }
-              : {}
-          }
-          transition={{ duration: 0.4, delay: idx * 0.1 + 0.3 }}
-          style={{
-            width: "14px",
-            height: "14px",
-            borderRadius: "50%",
-            border: "2px solid #82c3d8",
-            zIndex: 1,
-            flexShrink: 0,
-            marginTop: "8px",
-          }}
-        />
-        <div
-          style={{
-            flex: 1,
-            width: "1px",
-            background: "rgba(130,195,216,0.18)",
-            minHeight: "60px",
-          }}
-        />
-      </div>
-
-      {/* Right */}
-      <div
-        style={{
-          paddingLeft: "32px",
-          paddingBottom: "60px",
-          visibility: !isEven ? "visible" : "hidden",
-        }}
-      >
-        {!isEven && <TimelineCard item={item} align="left" />}
-      </div>
-    </motion.div>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   AWARD CARD  — gallery style (matches Award-Winners screenshot)
-   [large thumbnail]
-   Title                         ♥
-   BY: ORGANISATION             year
-═══════════════════════════════════════════════════════════════════════════ */
-function HeartIcon({ filled }: { filled: boolean }) {
-  return (
-    <svg
-      width="15"
-      height="15"
-      viewBox="0 0 24 24"
-      fill={filled ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-    </svg>
-  );
-}
-
-function AwardCard({ award, idx }: { award: Award; idx: number }) {
-  const [liked, setLiked] = useState(false);
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 48, scale: 0.94 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.55,
-        delay: idx * 0.07,
-        ease: [0.16, 1, 0.3, 1] as const,
-      },
-    },
-  };
-
-  return (
-    <motion.div
-      variants={cardVariants}
-      whileHover="hovered"
-      style={{
-        background: "#ffffff",
-        borderRadius: "6px",
-        overflow: "hidden",
-        boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-        border: "1px solid rgba(0,0,0,0.07)",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      {/* Thumbnail */}
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          paddingTop: "66%" /* 3:2 */,
-          overflow: "hidden",
-          background: "#f0f0f0",
-          flexShrink: 0,
-        }}
-      >
-        <motion.img
-          src={getImageUrl(award.image, "medium")}
-          alt={award.title}
-          variants={{
-            hovered: {
-              scale: 1.06,
-              transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] as const },
-            },
-          }}
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
-          loading="lazy"
-        />
-        {/* colour accent bar on hover */}
-        <motion.div
-          variants={{ hovered: { opacity: 1 } }}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "3px",
-            background: award.color || "#82c3d8",
-            opacity: 0,
-            transition: "opacity 0.3s ease",
-          }}
-        />
-      </div>
-
-      {/* Card body */}
-      <div
-        style={{
-          padding: "13px 16px 11px",
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          gap: "8px",
-          flex: 1,
-        }}
-      >
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div
-            style={{
-              fontFamily: "'DM Sans','Helvetica Neue',Arial,sans-serif",
-              fontSize: "15px",
-              fontWeight: 600,
-              color: "#111",
-              marginBottom: "3px",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {award.title}
-          </div>
-          <div
-            style={{
-              fontFamily: "'DM Sans','Helvetica Neue',Arial,sans-serif",
-              fontSize: "11px",
-              fontWeight: 500,
-              letterSpacing: "0.06em",
-              textTransform: "uppercase",
-              color: "#999",
-            }}
-          >
-            BY: {award.organization}
-          </div>
-        </div>
-
-        {/* Heart + year */}
-        <motion.button
-          onClick={() => setLiked((p) => !p)}
-          whileTap={{ scale: 0.75 }}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "2px",
-            padding: "2px 0",
-            flexShrink: 0,
-          }}
+      {item.description && (
+        <p
+          style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.7, margin: 0 }}
         >
-          <motion.span
-            animate={{ color: liked ? "#e74c3c" : "#ccc" }}
-            transition={{ duration: 0.2 }}
-            style={{ display: "flex", lineHeight: 1 }}
-          >
-            <HeartIcon filled={liked} />
-          </motion.span>
-          <span
-            style={{
-              fontFamily: "'DM Sans','Helvetica Neue',Arial,sans-serif",
-              fontSize: "11px",
-              color: "#bbb",
-              fontWeight: 500,
-              lineHeight: 1,
-            }}
-          >
-            {award.year}
-          </span>
-        </motion.button>
-      </div>
+          {item.description}
+        </p>
+      )}
     </motion.div>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   PAGE
-═══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════
+   MAIN PAGE
+═══════════════════════════════════ */
 export default function AchievementsPage() {
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [stats, setStats] = useState<Stat[]>(FALLBACK_STATS);
   const [awards, setAwards] = useState<Award[]>([]);
-  const [careerJourney, setCareerJourney] = useState<CareerJourney[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const quoteRef = useRef<HTMLDivElement>(null);
-  const timelineHeadRef = useRef<HTMLDivElement>(null);
-  const awardsHeadRef = useRef<HTMLDivElement>(null);
-
-  const quoteInView = useInView(quoteRef, { once: true, margin: "-80px" });
-  const timelineHeadInView = useInView(timelineHeadRef, {
-    once: true,
-    margin: "-80px",
-  });
-  const awardsHeadInView = useInView(awardsHeadRef, {
-    once: true,
-    margin: "-80px",
-  });
-
-  const gridVariants = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.07 } },
-  };
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        setLoading(true);
-        const [awardsRes, journeyRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/award`),
-          fetch(`${API_BASE_URL}/career-journey`),
-        ]);
-        if (!awardsRes.ok || !journeyRes.ok) throw new Error("Failed to fetch");
-
-        const awardsData = await awardsRes.json();
-        const journeyData = await journeyRes.json();
-
-        if (awardsData.status && awardsData.data)
-          setAwards(
-            awardsData.data.filter((a: Award) => a.status === "active"),
-          );
-
-        if (journeyData.status && journeyData.data)
-          setCareerJourney(
-            journeyData.data
-              .filter((j: CareerJourney) => j.status === "active")
-              .sort(
-                (a: CareerJourney, b: CareerJourney) =>
-                  parseInt(b.year) - parseInt(a.year),
-              ),
-          );
-
-        setError(null);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load achievements data. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
+  const [view, setView] = useState<"timeline" | "grid">("timeline");
+  const getAwardImage = (image: string) => {
+    try {
+      const parsed = JSON.parse(image);
+      return `${IMG_BASE}${parsed.original}`;
+    } catch {
+      return "";
     }
-    fetchData();
+  };
+  useEffect(() => {
+    Promise.allSettled([
+      fetch(`${API_BASE}/career-journey`).then((r) => r.json()),
+      fetch(`${API_BASE}/award`).then((r) => r.json()),
+    ])
+      .then(([achRes, awardRes]) => {
+        // Career Journey
+        if (achRes.status === "fulfilled") {
+          const data = achRes.value?.data ?? achRes.value;
+
+          if (Array.isArray(data) && data.length > 0) {
+            setAchievements(data);
+          } else {
+            setAchievements(FALLBACK_ACHIEVEMENTS);
+          }
+        }
+
+        // Awards
+        if (awardRes.status === "fulfilled") {
+          const data = awardRes.value?.data ?? awardRes.value;
+
+          if (Array.isArray(data)) {
+            setAwards(data);
+          }
+        }
+      })
+      .finally(() => setLoading(false));
   }, []);
+
+  const sortedAch = [...achievements].sort(
+    (a, b) => Number(b.year ?? 0) - Number(a.year ?? 0),
+  );
 
   return (
     <>
-      <Navbar />
+      <style>{`
+        
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {  background: #f4f7f6; }
 
-      <main
+        .stat-card:hover  { transform: translateY(-6px); box-shadow: 0 20px 48px rgba(108,126,127,0.12) !important; border-color: #95a49a !important; }
+        .award-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(108,126,127,0.12) !important; border-color: #95a49a !important; }
+        .timeline-card:hover { box-shadow: 0 12px 36px rgba(108,126,127,0.12) !important; border-color: #95a49a !important; transform: translateY(-2px); }
+        .view-btn { transition: all 0.2s; }
+        .view-btn:hover { background: #6c7e7f !important; color: #fff !important; }
+
+        @keyframes pulse { 0%,100%{opacity:0.6} 50%{opacity:1} }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+          .stats-grid { grid-template-columns: repeat(2,1fr) !important; }
+          .hero-inner  { padding: 64px 20px 56px !important; }
+
+          /* Mobile timeline becomes single column */
+          .timeline-item {
+            grid-template-columns: 28px 1fr !important;
+          }
+          .timeline-left-col  { display: none !important; }
+          .timeline-right-col { padding-left: 20px !important; padding-right: 0 !important; visibility: visible !important; }
+          .timeline-center-col { display: flex !important; }
+
+          .awards-grid { grid-template-columns: repeat(2,1fr) !important; }
+        }
+        @media (max-width: 600px) {
+          .stats-grid  { grid-template-columns: repeat(2,1fr) !important; }
+          .awards-grid { grid-template-columns: 1fr !important; }
+          .hero-stats  { flex-direction: column !important; gap: 24px !important; }
+        }
+      `}</style>
+
+      {/* ════════════════════════
+          HERO
+      ════════════════════════ */}
+      <Navbar />
+      <PageHero
+        title="Achievements &
+Milestones"
+        currentPage="Achievements"
+      />
+
+      {/* ════════════════════════
+          TIMELINE / GRID TOGGLE
+      ════════════════════════ */}
+      <section style={{ background: "#ffffff", padding: "72px 0 80px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
+          {/* Section header + view toggle */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-end",
+              justifyContent: "space-between",
+              marginBottom: 56,
+              flexWrap: "wrap",
+              gap: 20,
+            }}
+          >
+            <div>
+              <motion.span
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                style={{
+                  display: "inline-block",
+                  background: "#6c7e7f18",
+                  color: "#6c7e7f",
+                  borderRadius: 40,
+                  padding: "6px 20px",
+                  fontSize: 11,
+                  fontWeight: 800,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  marginBottom: 16,
+                }}
+              >
+                Journey
+              </motion.span>
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: "clamp(30px, 4vw, 50px)",
+                  color: "#1a2427",
+                  margin: 0,
+                  lineHeight: 1.1,
+                }}
+              >
+                The Road to{" "}
+                <span style={{ color: "#6c7e7f", fontStyle: "italic" }}>
+                  Excellence
+                </span>
+              </motion.h2>
+            </div>
+
+            {/* View toggle */}
+            <div
+              style={{
+                display: "flex",
+                gap: 4,
+                background: "#f4f7f6",
+                padding: 4,
+                borderRadius: 12,
+              }}
+            >
+              {(["timeline", "grid"] as const).map((v) => (
+                <button
+                  key={v}
+                  onClick={() => setView(v)}
+                  className="view-btn"
+                  style={{
+                    padding: "8px 18px",
+                    borderRadius: 9,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                    border: "none",
+                    cursor: "pointer",
+                    background: view === v ? "#6c7e7f" : "transparent",
+                    color: view === v ? "#fff" : "#6b7280",
+                    fontFamily: "'DM Sans', sans-serif",
+                    transition: "all 0.22s",
+                  }}
+                >
+                  {v === "timeline" ? "⟩ Timeline" : "⊞ Grid"}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* ── TIMELINE VIEW ── */}
+          {view === "timeline" && !loading && (
+            <div style={{ position: "relative" }}>
+              {/* Center line (desktop) */}
+              <div
+                className="timeline-spine"
+                style={{
+                  position: "absolute",
+                  left: "50%",
+                  top: 0,
+                  bottom: 0,
+                  width: 2,
+                  background: "linear-gradient(to bottom, #6c7e7f44, #e8ecea)",
+                  transform: "translateX(-50%)",
+                }}
+              />
+
+              {sortedAch.map((item, i) => (
+                <TimelineItem
+                  key={item.id}
+                  item={item}
+                  isLeft={i % 2 === 0}
+                  isLast={i === sortedAch.length - 1}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* ── GRID VIEW ── */}
+          {view === "grid" && !loading && (
+            <motion.div
+              key="grid"
+              initial="hidden"
+              animate="show"
+              variants={stagger}
+              className="awards-grid"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3,1fr)",
+                gap: 24,
+              }}
+            >
+              {sortedAch.map((item, i) => (
+                <AwardCard key={item.id} item={item} index={i} />
+              ))}
+            </motion.div>
+          )}
+
+          {/* Skeleton */}
+          {loading && (
+            <div
+              className="awards-grid"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3,1fr)",
+                gap: 24,
+              }}
+            >
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    background: "#f8f9fa",
+                    borderRadius: 20,
+                    border: "1px solid #e8ecea",
+                    overflow: "hidden",
+                    animation: "pulse 1.8s ease-in-out infinite",
+                  }}
+                >
+                  <div style={{ height: 3, background: "#e8ecea" }} />
+                  <div
+                    style={{
+                      padding: 28,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 12,
+                    }}
+                  >
+                    <div
+                      style={{
+                        height: 44,
+                        width: 44,
+                        background: "#e8ecea",
+                        borderRadius: 12,
+                      }}
+                    />
+                    <div
+                      style={{
+                        height: 20,
+                        width: "70%",
+                        background: "#e8ecea",
+                        borderRadius: 6,
+                      }}
+                    />
+                    <div
+                      style={{
+                        height: 14,
+                        width: "95%",
+                        background: "#f0f2f1",
+                        borderRadius: 4,
+                      }}
+                    />
+                    <div
+                      style={{
+                        height: 14,
+                        width: "75%",
+                        background: "#f0f2f1",
+                        borderRadius: 4,
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ════════════════════════
+          RECOGNITION STRIP
+      ════════════════════════ */}
+      <section
         style={{
-          background: "#F4F4F4",
-          minHeight: "100vh",
-          color: "#000",
-          fontFamily: "var(--font-body, sans-serif)",
+          background: "linear-gradient(135deg, #1a2730 0%, #243540 100%)",
+          padding: "72px 0",
+          position: "relative",
           overflow: "hidden",
         }}
       >
-        {/* ══ HERO ══════════════════════════════════════════════════════ */}
-        <PageHero title="Our Achievements" currentPage="Achievements" />
-
-        {/* ══ QUOTE ═════════════════════════════════════════════════════ */}
-        <section style={{ padding: "50px 0" }}>
-          <div className="container">
-            <motion.div
-              ref={quoteRef}
-              initial={{ opacity: 0, x: -40 }}
-              animate={quoteInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] as const }}
-              style={{
-                borderLeft: "3px solid #82c3d8",
-
-                paddingLeft: "48px",
-                maxWidth: "780px",
-                margin: "0 auto",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "80px",
-                  lineHeight: 0.6,
-                  color: "#0009",
-                  fontFamily: "var(--font-display)",
-                  marginBottom: "16px",
-                }}
-              >
-                "
-              </div>
-              <blockquote
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "clamp(22px,3vw,36px)",
-                  color: "#000",
-                  lineHeight: 1.4,
-                  fontWeight: 300,
-                  margin: "0 0 24px",
-                  letterSpacing: "-0.01em",
-                }}
-              >
-                Leadership is not a position you hold — it is a standard you
-                set, every single day.
-              </blockquote>
-              <cite
-                style={{
-                  fontSize: "13px",
-                  color: "#0005",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  fontStyle: "normal",
-                }}
-              >
-                — Alexandra Voss, The Sovereign Leader
-              </cite>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* ══ TIMELINE ══════════════════════════════════════════════════ */}
-        <section
+        <div
           style={{
-            padding: "100px 0",
-            borderTop: "1px solid rgba(255,255,255,0.05)",
-            background: "#fff",
+            position: "absolute",
+            inset: 0,
+            opacity: 0.04,
+            backgroundImage: "radial-gradient(circle,#fff 1px,transparent 1px)",
+            backgroundSize: "28px 28px",
+          }}
+        />
+
+        <div
+          style={{
+            maxWidth: 1100,
+            margin: "0 auto",
+            padding: "0 24px",
+            position: "relative",
+            zIndex: 1,
           }}
         >
-          <div className="container">
-            <motion.div
-              ref={timelineHeadRef}
-              initial={{ opacity: 0, y: 30 }}
-              animate={timelineHeadInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] as const }}
-              style={{ textAlign: "center", marginBottom: "80px" }}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            style={{ textAlign: "center", marginBottom: 52 }}
+          >
+            <span
+              style={{
+                display: "inline-block",
+                background: "rgba(108,126,127,0.2)",
+                color: "#fff",
+                borderRadius: 40,
+                padding: "6px 20px",
+                fontSize: 11,
+                fontWeight: 800,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                marginBottom: 16,
+                border: "1px solid rgba(108,126,127,0.3)",
+              }}
             >
-              <div
-                style={{
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  letterSpacing: "0.2em",
-                  textTransform: "uppercase",
-                  color: "#000",
-                  marginBottom: "16px",
-                }}
-              >
-                The Journey
-              </div>
-              <h2
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "clamp(36px,4vw,56px)",
-                  color: "#000",
-                  margin: 0,
-                  fontWeight: 300,
-                  letterSpacing: "-0.02em",
-                }}
-              >
-                Career Milestones
-              </h2>
-            </motion.div>
-
-            {loading ? (
-              <div style={{ textAlign: "center", padding: "60px 0" }}>
-                <LoadingSpinner />
-              </div>
-            ) : error ? (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "60px 0",
-                  color: "rgba(235,64,52,0.8)",
-                }}
-              >
-                {error}
-              </div>
-            ) : careerJourney.length > 0 ? (
-              <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-                {careerJourney.map((item, i) => (
-                  <TimelineItem key={item.id} item={item} idx={i} />
-                ))}
-              </div>
-            ) : (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "60px 0",
-                  color: "rgba(255,255,255,0.5)",
-                }}
-              >
-                No journey data available
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* ══ AWARDS ════════════════════════════════════════════════════
-            Light bg so white cards pop — matches Award-Winners screenshot
-        ══════════════════════════════════════════════════════════════════ */}
-        <section style={{ padding: "100px 0 120px", background: "#f4f4f4" }}>
-          <div className="container">
-            {/* Heading */}
-            <motion.div
-              ref={awardsHeadRef}
-              initial={{ opacity: 0, y: 30 }}
-              animate={awardsHeadInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] as const }}
-              style={{ textAlign: "center", marginBottom: "56px" }}
+              Awards
+            </span>
+            <h2
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                fontSize: "clamp(30px, 4vw, 50px)",
+                color: "#fff",
+                margin: 0,
+                lineHeight: 1.1,
+              }}
             >
-              <div
-                style={{
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
-                  color: "#82c3d8",
-                  marginBottom: "14px",
-                }}
-              >
-                Awards & Honours
-              </div>
-              <h2
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "clamp(36px,4vw,56px)",
-                  color: "#111",
-                  margin: "0 0 12px",
-                  fontWeight: 300,
-                  letterSpacing: "-0.02em",
-                }}
-              >
-                Recognised Worldwide
-              </h2>
-              <p style={{ fontSize: "14px", color: "#888", margin: 0 }}>
-                Most celebrated achievements across the globe. Evaluation is
-                closed.
-              </p>
-            </motion.div>
+              Awards &
+              <span style={{ color: "#95a49a", fontStyle: "italic" }}>
+                Recognition
+              </span>
+            </h2>
+          </motion.div>
 
-            {/* Grid */}
-            <AnimatePresence mode="wait">
-              {loading ? (
-                <motion.div
-                  key="loading"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  style={{ textAlign: "center", padding: "60px 0" }}
-                >
-                  <LoadingSpinner />
-                  <p
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            variants={stagger}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(4,1fr)",
+              gap: 20,
+            }}
+            className="strengths-grid"
+          >
+            {awards.map((award) => (
+              <motion.div
+                key={award.id}
+                variants={fadeUp}
+                className="strength-card"
+                style={{
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 16,
+                  overflow: "hidden",
+                }}
+              >
+                <img
+                  src={getAwardImage(award.image)}
+                  alt={award.title}
+                  style={{
+                    width: "100%",
+                    height: 220,
+                    objectFit: "cover",
+                  }}
+                />
+
+                <div style={{ padding: 20 }}>
+                  <div
                     style={{
-                      marginTop: "16px",
-                      fontSize: "14px",
-                      color: "#999",
+                      color: award.color || "#95a49a",
+                      fontSize: 12,
+                      fontWeight: 700,
+                      marginBottom: 8,
                     }}
                   >
-                    Loading awards…
+                    {award.year}
+                  </div>
+
+                  <h3
+                    style={{
+                      color: "#fff",
+                      fontSize: 18,
+                      fontWeight: 700,
+                      marginBottom: 8,
+                    }}
+                  >
+                    {award.title}
+                  </h3>
+
+                  <p
+                    style={{
+                      color: "rgba(255,255,255,.7)",
+                      fontSize: 14,
+                    }}
+                  >
+                    {award.organization}
                   </p>
-                </motion.div>
-              ) : error ? (
-                <motion.div
-                  key="error"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  style={{
-                    textAlign: "center",
-                    padding: "60px 0",
-                    color: "#e74c3c",
-                    fontSize: "14px",
-                  }}
-                >
-                  {error}
-                </motion.div>
-              ) : awards.length > 0 ? (
-                <motion.div
-                  key="grid"
-                  variants={gridVariants}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: "-60px" }}
-                  className="awards-gallery-grid"
-                >
-                  {awards.map((a, i) => (
-                    <AwardCard key={a.id} award={a} idx={i} />
-                  ))}
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="empty"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  style={{
-                    textAlign: "center",
-                    padding: "60px 0",
-                    color: "#999",
-                    fontSize: "14px",
-                  }}
-                >
-                  No awards available
-                </motion.div>
-              )}
-            </AnimatePresence>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+
+        <style>{`
+          .strength-card:hover { background: rgba(108,126,127,0.15) !important; border-color: rgba(108,126,127,0.35) !important; transform: translateY(-4px); }
+          @media (max-width: 900px) { .strengths-grid { grid-template-columns: repeat(2,1fr) !important; } }
+          @media (max-width: 500px)  { .strengths-grid { grid-template-columns: repeat(2,1fr) !important; } }
+
+          /* Timeline mobile fix */
+          @media (max-width: 768px) {
+            .timeline-spine { display: none !important; }
+            .timeline-item {
+              grid-template-columns: 28px 1fr !important;
+              gap: 0 !important;
+            }
+          }
+        `}</style>
+      </section>
+
+      {/* ════════════════════════
+          BOTTOM CTA
+      ════════════════════════ */}
+      <section
+        style={{
+          background: "#f4f7f6",
+          padding: "72px 24px",
+          textAlign: "center",
+        }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          style={{ maxWidth: 700, margin: "0 auto" }}
+        >
+          <h2
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontSize: "clamp(28px, 4vw, 48px)",
+              color: "#1a2427",
+              marginBottom: 16,
+              lineHeight: 1.1,
+            }}
+          >
+            Be Part of the Next{" "}
+            <span style={{ color: "#6c7e7f", fontStyle: "italic" }}>
+              Chapter
+            </span>
+          </h2>
+          <p
+            style={{
+              fontSize: "clamp(14px, 1.6vw, 17px)",
+              color: "#6b7280",
+              lineHeight: 1.8,
+              marginBottom: 36,
+            }}
+          >
+            Explore books, attend events, or book a personal consultation —
+            every achievement started with one decision.
+          </p>
+          <div
+            style={{
+              display: "flex",
+              gap: 14,
+              justifyContent: "center",
+              flexWrap: "wrap",
+            }}
+          >
+            <Link
+              href="/books"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                background: "#6c7e7f",
+                color: "#fff",
+                padding: "14px 30px",
+                borderRadius: 10,
+                fontSize: 13,
+                fontWeight: 800,
+                textDecoration: "none",
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                transition: "all 0.25s",
+                boxShadow: "0 8px 24px rgba(108,126,127,0.3)",
+              }}
+              className="bottom-cta-1"
+            >
+              <BookOpen size={15} /> Explore Books
+            </Link>
+            <Link
+              href="/contact"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                background: "transparent",
+                color: "#6c7e7f",
+                padding: "14px 30px",
+                borderRadius: 10,
+                fontSize: 13,
+                fontWeight: 700,
+                textDecoration: "none",
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                border: "2px solid #6c7e7f",
+                transition: "all 0.25s",
+              }}
+              className="bottom-cta-2"
+            >
+              Book Consultation
+            </Link>
           </div>
-        </section>
+        </motion.div>
 
-        {/* ══ CLOSING CTA ═══════════════════════════════════════════════ */}
-        {/* <ClosingCTA /> */}
-      </main>
-
+        <style>{`
+          .bottom-cta-1:hover { background: #5a6b6c !important; transform: translateY(-3px); box-shadow: 0 14px 36px rgba(108,126,127,0.35) !important; }
+          .bottom-cta-2:hover { background: #6c7e7f !important; color: #fff !important; transform: translateY(-3px); }
+        `}</style>
+      </section>
       <Footer />
-
-      {/* ── Responsive styles ── */}
-      <style>{`
-        /* Awards: 3-col → 2-col → 1-col */
-        .awards-gallery-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 20px;
-        }
-        @media (max-width: 900px) {
-          .awards-gallery-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 520px) {
-          .awards-gallery-grid { grid-template-columns: 1fr; }
-        }
-      `}</style>
     </>
   );
 }

@@ -50,7 +50,7 @@ function BookCardSkeleton() {
 // ─────────────────────────────────────────────────────────────
 // Book Card
 // ─────────────────────────────────────────────────────────────
-function BookCard({ book, index }: { book: Product; index: number }) {
+export function BookCard({ book, index }: { book: Product; index: number }) {
   const cheapest = lowestPrice(book.formats);
 
   const imgSrc = imageUrl(book.main_image?.medium ?? book.main_image?.original);

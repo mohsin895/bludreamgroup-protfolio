@@ -156,6 +156,7 @@ export default function ContactPage() {
       >
         <div className="container">
           <div
+            className="contact-grid"
             style={{
               display: "grid",
               gridTemplateColumns: "1fr 1fr",
@@ -280,6 +281,7 @@ export default function ContactPage() {
                 >
                   <AnimatedSection delay={0.05}>
                     <div
+                      className="name-email-grid"
                       style={{
                         display: "grid",
                         gridTemplateColumns: "1fr 1fr",
@@ -577,6 +579,23 @@ export default function ContactPage() {
       </section>
 
       <Footer />
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .contact-grid {
+            grid-template-columns: 1fr !important;
+            gap: 40px !important;
+          }
+
+          .contact-grid form > div:first-child {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 768px) {
+          .name-email-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </>
   );
 }
