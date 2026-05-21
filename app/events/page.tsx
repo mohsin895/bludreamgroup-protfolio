@@ -463,7 +463,7 @@ function EventCard({ event, index }: { event: EventItem; index: number }) {
               boxShadow: "0 4px 14px rgba(108,126,127,0.28)",
             }}
           >
-            View Details
+            Register
             <svg
               width="12"
               height="12"

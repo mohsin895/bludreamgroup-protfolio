@@ -9,9 +9,8 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 const IMG_BASE = process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? "";
 
 interface Event {
-  id: number;
+  id: number | string;
   title: string;
-  slug?: string;
   description?: string;
   short_description?: string;
   date?: string;
@@ -394,7 +393,7 @@ export default function EventsSection() {
                   className="event-cta-col"
                 >
                   <Link
-                    href={`/events${ev.slug ? `/${ev.slug}` : ""}`}
+                    href={`/events${ev.id ? `/${ev.id}` : ""}`}
                     style={{
                       display: "inline-flex",
                       alignItems: "center",

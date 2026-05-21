@@ -10,50 +10,12 @@ const IMG_BASE = process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? "";
 interface Testimonial {
   id: number;
   name: string;
-  designation?: string;
-  profession?: string;
-  review?: string;
-  comment?: string;
-  message?: string;
+  role?: string;
+  company?: string;
+  quote?: string;
   rating?: number;
-  image?: string | null;
   avatar?: string | null;
 }
-
-const fallback: Testimonial[] = [
-  {
-    id: 1,
-    name: "Rakibul Islam",
-    designation: "Entrepreneur, Dhaka",
-    rating: 5,
-    review:
-      "Reading his books completely changed how I think about business. His insights are practical, deep, and immediately applicable. I went from struggling to running a profitable business within months.",
-  },
-  {
-    id: 2,
-    name: "Nusrat Jahan",
-    designation: "Student, BUET",
-    rating: 5,
-    review:
-      "His motivational sessions are unlike anything I've experienced. He doesn't just inspire — he gives you a roadmap. My entire perspective on success shifted after attending his workshop.",
-  },
-  {
-    id: 3,
-    name: "Mahfuz Ahmed",
-    designation: "Corporate Manager",
-    rating: 5,
-    review:
-      "The one-on-one consultation was worth every penny. He identified blind spots in my career strategy and helped me craft a plan that got me promoted within six months.",
-  },
-  {
-    id: 4,
-    name: "Sadia Rahman",
-    designation: "Startup Founder",
-    rating: 5,
-    review:
-      "I've read over 50 self-development books, and his are consistently in my top five. The way he blends psychology with practical business advice is brilliant and rare.",
-  },
-];
 
 function Stars({ count }: { count: number }) {
   return (
@@ -74,22 +36,29 @@ function Stars({ count }: { count: number }) {
 }
 
 export default function TestimonialsSection() {
-  const [items, setItems] = useState<Testimonial[]>(fallback);
+  const [items, setItems] = useState<Testimonial[]>([]);
   const [idx, setIdx] = useState(0);
   const [dir, setDir] = useState(1);
 
   useEffect(() => {
-    fetch(`${API_BASE}/testimonials`)
+    fetch(`${API_BASE}/testimonial`)
       .then((r) => r.json())
       .then((json) => {
-        const data = json?.data ?? json;
-        if (Array.isArray(data) && data.length > 0) setItems(data);
+        const data = json?.data ?? [];
+
+        if (Array.isArray(data) && data.length > 0) {
+          setItems(data);
+        }
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   const go = useCallback(
     (d: 1 | -1) => {
+      if (items.length === 0) return;
+
       setDir(d);
       setIdx((prev) => (prev + d + items.length) % items.length);
     },
@@ -102,10 +71,9 @@ export default function TestimonialsSection() {
   }, [go]);
 
   const current = items[idx];
-  const imgSrc =
-    current.image || current.avatar
-      ? `${IMG_BASE}${current.image ?? current.avatar}`
-      : null;
+
+  if (!current) return null;
+  const imgSrc = current.avatar ? `${IMG_BASE}${current.avatar}` : null;
 
   return (
     <section style={{ background: "#f8f9fa", padding: "100px 0" }}>
@@ -192,9 +160,7 @@ export default function TestimonialsSection() {
                 }}
               >
                 "
-                {current.review ??
-                  current.comment ??
-                  current.message ??
+                {current.quote ??
                   "An incredible experience that truly changed my perspective."}
                 "
               </p>
@@ -245,9 +211,12 @@ export default function TestimonialsSection() {
                       fontWeight: 500,
                     }}
                   >
-                    {current.designation ?? current.profession ?? "Reader"}
+                    {current.role}{" "}
+                    {current.company ? `• ${current.company}` : ""}
                   </div>
-                  <div>{/* <Stars count={current.rating ?? 5} /> */}</div>
+                  <div>
+                    <Stars count={current.rating ?? 5} />
+                  </div>
                 </div>
               </div>
             </motion.div>
