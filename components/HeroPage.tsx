@@ -97,15 +97,16 @@ export default function PageHero({
         .page-hero {
           position: relative;
           background: linear-gradient(
-            135deg,
-            #6c7e7f 0%,
-            #6c7e7f 50%,
-            #6c7e7f 100%
+            180deg,
+            #46595a 0%,
+            #6c7e7f 45%,
+            #8d9b9c 75%,
+            #c7d1d2 100%
           );
           overflow: hidden;
           padding: 4rem 1.5rem 5rem;
           text-align: center;
-          min-height: 350px;
+          min-height: 360px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -167,13 +168,14 @@ export default function PageHero({
           width: 100%;
           max-width: 720px;
           margin: 0 auto;
+          padding-top: 40px;
         }
 
         .hero-title {
           font-size: clamp(2rem, 6vw, 3.2rem);
           font-weight: 800;
           color: #ffffff;
-          margin: 0;
+          margin: 20px 0 0; /* top margin */
           line-height: 1.15;
           letter-spacing: -0.5px;
         }
@@ -249,20 +251,20 @@ export default function PageHero({
         }
 
         /* ── Wave ── */
-        .wave-wrapper {
-          position: absolute;
-          bottom: -1px;
-          left: 0;
-          right: 0;
-          z-index: 1;
-          line-height: 0;
-        }
+        // .wave-wrapper {
+        //   position: absolute;
+        //   bottom: -1px;
+        //   left: 0;
+        //   right: 0;
+        //   z-index: 1;
+        //   line-height: 0;
+        // }
 
-        .wave-wrapper svg {
-          display: block;
-          width: 100%;
-          height: 80px;
-        }
+        // .wave-wrapper svg {
+        //   display: block;
+        //   width: 100%;
+        //   height: 80px;
+        // }
 
         /* ── Responsive ── */
         @media (max-width: 768px) {
