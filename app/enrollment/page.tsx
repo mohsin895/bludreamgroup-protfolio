@@ -156,7 +156,7 @@ function FormInput({
           borderRadius: "8px",
           color: disabled ? "rgba(255,255,255,0.3)" : "#fff",
           fontSize: "14px",
-          fontFamily: "inherit",
+          fontFamily: "Xolonium",
           transition: "all 0.2s ease",
           outline: "none",
           boxSizing: "border-box",
@@ -251,7 +251,7 @@ function FormSelect({
           borderRadius: "8px",
           color: value ? "#000" : "#000",
           fontSize: "14px",
-          fontFamily: "inherit",
+          fontFamily: "Xolonium",
           transition: "all 0.2s ease",
           outline: "none",
           cursor: "pointer",
@@ -302,6 +302,7 @@ function SectionHeading({ children }: { children: string }): ReactNode {
   return (
     <div style={{ marginBottom: "28px" }}>
       <h3
+        className="font-rising"
         style={{
           fontSize: "16px",
           fontWeight: 700,
@@ -587,7 +588,7 @@ export default function EnrollmentPage(): ReactNode {
               </div>
               <h1
                 style={{
-                  fontFamily: "var(--font-display)",
+                  fontFamily: "Venus Rising",
                   fontSize: "24px",
                   color: "#fff",
                   marginBottom: "12px",
@@ -690,7 +691,7 @@ export default function EnrollmentPage(): ReactNode {
                   </div>
                   <h2
                     style={{
-                      fontFamily: "var(--font-display)",
+                      fontFamily: "Venus Rising",
                       fontSize: "24px",
                       color: "#0009",
                       marginBottom: "12px",
@@ -703,6 +704,7 @@ export default function EnrollmentPage(): ReactNode {
                     style={{
                       color: "#fff",
                       fontSize: "14px",
+                      fontFamily: "Xolonium",
                       marginBottom: "8px",
                     }}
                   >
@@ -710,7 +712,7 @@ export default function EnrollmentPage(): ReactNode {
                     <strong
                       style={{
                         color: "#000",
-                        fontFamily: "monospace",
+                        fontFamily: "Xolonium",
                         fontSize: "13px",
                       }}
                     >
@@ -770,7 +772,7 @@ export default function EnrollmentPage(): ReactNode {
                     <SectionHeading>Personal Information</SectionHeading>
 
                     <div
-                      className="personal-grid"
+                      className="personal-grid font-xolonium"
                       style={{
                         display: "grid",
                         gridTemplateColumns: "1fr 1fr",
@@ -833,6 +835,7 @@ export default function EnrollmentPage(): ReactNode {
                         borderRadius: "8px",
                         marginBottom: "24px",
                       }}
+                      className="font-xolonium"
                     >
                       <p
                         style={{
@@ -895,6 +898,7 @@ export default function EnrollmentPage(): ReactNode {
 
                   {/* ── Submit Button ── */}
                   <button
+                    className="font-xolonium"
                     type="submit"
                     disabled={submitting}
                     style={{
@@ -919,6 +923,7 @@ export default function EnrollmentPage(): ReactNode {
                     {submitting ? (
                       <>
                         <span
+                          className="font-xolonium"
                           style={{
                             width: "16px",
                             height: "16px",
@@ -937,6 +942,7 @@ export default function EnrollmentPage(): ReactNode {
                   </button>
 
                   <p
+                    className="font-xolonium"
                     style={{
                       fontSize: "12px",
                       color: "#000",
@@ -979,6 +985,7 @@ export default function EnrollmentPage(): ReactNode {
                     padding: "24px",
                     background: "#648181",
                     border: "1px solid rgba(201,168,76,0.2)",
+                    fontFamily: "Xolonium",
                     borderRadius: courseInfo.thumbnail
                       ? "0 0 12px 12px"
                       : "12px",
@@ -991,6 +998,7 @@ export default function EnrollmentPage(): ReactNode {
                       color: "#fff",
                       letterSpacing: "0.1em",
                       textTransform: "uppercase",
+                      fontFamily: "Xolonium",
                       margin: "0 0 14px",
                     }}
                   >
@@ -1055,10 +1063,10 @@ export default function EnrollmentPage(): ReactNode {
                     ) : (
                       <span
                         style={{
-                          fontFamily: "var(--font-display)",
+                          fontFamily: "Xolonium",
                           fontSize: "20px",
                           color: "#fff",
-                          fontWeight: 700,
+                          fontWeight: 500,
                         }}
                       >
                         ৳ {actualPrice.toFixed(2)}
@@ -1085,9 +1093,9 @@ export default function EnrollmentPage(): ReactNode {
                       </span>
                       <span
                         style={{
-                          fontSize: "20px",
+                          fontSize: "16px",
                           color: "#fff",
-                          fontWeight: 700,
+                          fontWeight: 500,
                         }}
                       >
                         ${actualPrice.toFixed(2)}
@@ -1121,7 +1129,7 @@ export default function EnrollmentPage(): ReactNode {
                       style={{
                         fontSize: "16px",
                         color: "#fff",
-                        fontWeight: 700,
+                        fontWeight: 600,
                       }}
                     >
                       ৳ {actualPrice.toFixed(2)}

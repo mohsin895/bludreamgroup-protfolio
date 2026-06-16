@@ -135,6 +135,7 @@ export default function EventsSection() {
           >
             <div>
               <span
+                className="font-xolonium"
                 style={{
                   display: "inline-block",
                   background: "#6c7e7f1a",
@@ -152,8 +153,8 @@ export default function EventsSection() {
               </span>
               <h2
                 style={{
-                  fontFamily: "'Playfair Display', serif",
-                  fontSize: "clamp(34px, 4vw, 54px)",
+                  fontFamily: "Venus Rising",
+                  fontSize: "clamp(24px, 4vw, 34px)",
                   color: "#1f2937",
                   margin: 0,
                   lineHeight: 1.1,
@@ -180,7 +181,7 @@ export default function EventsSection() {
                 whiteSpace: "nowrap",
                 transition: "gap 0.2s",
               }}
-              className="events-viewall"
+              className="events-viewall font-xolonium"
             >
               View All <ArrowRight size={13} />
             </Link>
@@ -228,6 +229,7 @@ export default function EventsSection() {
               >
                 {/* Date block */}
                 <div
+                  className="font-xolonium"
                   style={{
                     width: 90,
                     flexShrink: 0,
@@ -292,6 +294,7 @@ export default function EventsSection() {
 
                 {/* Content */}
                 <div
+                  className="font-xolonium"
                   style={{
                     padding: "24px 28px",
                     flex: 1,
@@ -317,8 +320,8 @@ export default function EventsSection() {
                   )}
                   <h3
                     style={{
-                      fontFamily: "'Playfair Display', serif",
-                      fontSize: "clamp(17px, 2vw, 22px)",
+                      fontFamily: "Venus Rising",
+                      fontSize: "clamp(10px, 2vw, 15px)",
                       color: "#1f2937",
                       margin: "0 0 10px",
                       lineHeight: 1.2,
@@ -336,7 +339,10 @@ export default function EventsSection() {
                   >
                     {stripHtml(ev.short_description ?? ev.description ?? "")}
                   </p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
+                  <div
+                    className="font-xolonium"
+                    style={{ display: "flex", flexWrap: "wrap", gap: 16 }}
+                  >
                     {formattedDate && (
                       <span
                         style={{
@@ -390,7 +396,7 @@ export default function EventsSection() {
                     padding: "24px",
                     flexShrink: 0,
                   }}
-                  className="event-cta-col"
+                  className="event-cta-col font-xolonium"
                 >
                   <Link
                     href={`/events${ev.id ? `/${ev.id}` : ""}`}
@@ -410,7 +416,7 @@ export default function EventsSection() {
                       whiteSpace: "nowrap",
                       transition: "all 0.2s",
                     }}
-                    className="event-register-btn"
+                    className="event-register-btn font-xolonium"
                   >
                     Register <ArrowRight size={12} />
                   </Link>

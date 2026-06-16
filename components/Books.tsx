@@ -154,6 +154,7 @@ function BookCard({ book }: { book: Product }) {
             {/* Price overlay */}
             {cheapest && (
               <div
+                className="font-xolonium"
                 style={{
                   position: "absolute",
                   bottom: 12,
@@ -174,6 +175,7 @@ function BookCard({ book }: { book: Product }) {
 
           {/* Info */}
           <div
+            className="font-xolonium"
             style={{
               padding: "20px",
               flex: 1,
@@ -197,8 +199,8 @@ function BookCard({ book }: { book: Product }) {
             )}
 
             <h3
+              className="font-rising"
               style={{
-                fontFamily: "'Playfair Display', serif",
                 fontSize: 18,
                 color: "#1f2937",
                 lineHeight: 1.2,
@@ -211,6 +213,7 @@ function BookCard({ book }: { book: Product }) {
 
             {book.subtitle && (
               <p
+                className="font-xolonium"
                 style={{
                   fontSize: 12,
                   color: "#95a49a",
@@ -225,6 +228,7 @@ function BookCard({ book }: { book: Product }) {
 
             {book.short_description && (
               <p
+                className="font-xolonium"
                 style={
                   {
                     fontSize: 12,
@@ -254,6 +258,7 @@ function BookCard({ book }: { book: Product }) {
               }}
             >
               <span
+                className="font-xolonium"
                 style={{
                   fontSize: 11,
                   color: "#95a49a",
@@ -268,7 +273,7 @@ function BookCard({ book }: { book: Product }) {
                 View Details <ArrowRight size={10} />
               </span>
               <button
-                className="book-buy-btn"
+                className="book-buy-btn font-xolonium"
                 style={{
                   background: "#95a49a",
                   color: "#fff",
@@ -359,6 +364,7 @@ export default function BooksSection() {
         >
           <motion.span
             variants={fadeUp}
+            className="font-xolonium"
             style={{
               display: "inline-block",
               background: "#6c7e7f1a",
@@ -375,10 +381,10 @@ export default function BooksSection() {
             Published Works
           </motion.span>
           <motion.h2
+            className="font-rising"
             variants={fadeUp}
             style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: "clamp(34px, 4vw, 54px)",
+              fontSize: "clamp(24px, 4vw, 34px)",
               color: "#1f2937",
               margin: 0,
               lineHeight: 1.1,
@@ -390,6 +396,7 @@ export default function BooksSection() {
             </span>
           </motion.h2>
           <motion.p
+            className="font-xolonium"
             variants={fadeUp}
             style={{
               fontSize: 16,
@@ -470,7 +477,7 @@ export default function BooksSection() {
                 transition: "all 0.25s",
                 boxShadow: "0 4px 16px rgba(108,126,127,0.25)",
               }}
-              className="books-cta"
+              className="books-cta font-xolonium"
             >
               View All Books <ArrowRight size={14} />
             </Link>

@@ -122,9 +122,9 @@ function RelatedCard({ post, i }: { post: MappedBlog; i: number }) {
         className="related-card"
         style={{ display: "flex" }}
       >
-        <span className="related-card-tag">{post.tag}</span>
-        <span className="related-card-title">{post.title}</span>
-        <div className="related-card-meta">
+        <span className="related-card-tag font-xolonium">{post.tag}</span>
+        <span className="related-card-title font-rising">{post.title}</span>
+        <div className="related-card-meta font-xolonium">
           <span>{post.date}</span>
           <span>{post.readTime}</span>
         </div>
@@ -186,13 +186,13 @@ export default function BlogDetailPage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap');
+       
         :root {
           --ink:#E3EFF1; --parchment:#F4F7F6; --gold:#b8933a;
           --gold-light:rgba(184,147,58,0.13); --muted:#7a7369;
           --border:rgba(14,13,11,0.1); --reading-col:980px;
         }
-        body { font-family:'DM Sans',sans-serif; background:var(--parchment); color:var(--ink); margin:0; }
+        background:var(--parchment); color:var(--ink); margin:0; }
 
         #reading-bar-track { position:fixed; top:0; left:0; right:0; height:2px; z-index:200; }
         #reading-bar { height:100%; width:0%; background:var(--gold); transition:width 0.1s linear; }
@@ -208,8 +208,8 @@ export default function BlogDetailPage() {
         .detail-breadcrumb a { color:rgba(255,255,255,0.3); text-decoration:none; transition:color 0.2s; }
         .detail-breadcrumb a:hover { color:var(--gold); }
         .detail-tag { display:inline-block; font-size:10px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); border:1px solid rgba(184,147,58,0.3); padding:4px 10px; border-radius:2px; margin-bottom:24px; }
-        .detail-title { font-family:'Playfair Display',serif; font-size:clamp(36px,5.5vw,64px); color:#fff; line-height:1.1; font-weight:600; margin:0 0 18px; }
-        .detail-subtitle { font-family:'Playfair Display',serif; font-style:italic; font-size:clamp(17px,2vw,22px); color:rgba(255,255,255,0.45); font-weight:400; margin:0 0 48px; line-height:1.5; }
+        .detail-title {  font-size:clamp(36px,5.5vw,64px); color:#fff; line-height:1.1; font-weight:600; margin:0 0 18px; }
+        .detail-subtitle {  font-style:italic; font-size:clamp(17px,2vw,22px); color:rgba(255,255,255,0.45); font-weight:400; margin:0 0 48px; line-height:1.5; }
         .detail-meta-row { display:flex; align-items:center; gap:24px; padding:24px 0; border-top:1px solid rgba(255,255,255,0.08); flex-wrap:wrap; }
         .author-chip { display:flex; align-items:center; gap:12px; }
         .author-name { font-size:13px; font-weight:500; color:rgba(255,255,255,0.85); }
@@ -220,21 +220,21 @@ export default function BlogDetailPage() {
 
         .article-wrap { background:#F4F7F6; padding:42px 24px 80px; }
         .article-inner { max-width:var(--reading-col); margin:0 auto; }
-        .article-p { font-family:'DM Sans',sans-serif; font-size:18px; font-weight:300; line-height:1.85; color:#fff; margin:0 0 28px; }
-        .article-h2 { font-family:'Playfair Display',serif; font-size:26px; font-weight:600; color:#000; margin:52px 0 20px; line-height:1.25; }
+        .article-p {  font-size:18px; font-family: "Xolonium"; font-weight:300; line-height:1.85; color:#fff; margin:0 0 28px; }
+        .article-h2 {  font-size:26px; font-weight:600; color:#000; margin:52px 0 20px; line-height:1.25; }
         .article-h2::before { content:''; display:block; width:32px; height:2px; background:var(--gold); margin-bottom:14px; }
         .article-pullquote { border-left:3px solid var(--gold); padding:4px 0 4px 28px; margin:48px 0; }
-        .article-pullquote p { font-family:'Playfair Display',serif; font-style:italic; font-size:clamp(20px,2.8vw,26px); color:var(--ink); line-height:1.5; font-weight:400; margin:0; }
+        .article-pullquote p {  font-style:italic; font-size:clamp(20px,2.8vw,26px); color:var(--ink); line-height:1.5; font-weight:400; margin:0; }
 
         .share-strip { max-width:var(--reading-col); margin:0 auto; padding:32px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
         .share-label { font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:#000; font-weight:500; }
         .share-btns { display:flex; gap:8px; flex-wrap:wrap; }
-        .share-btn { display:inline-flex; align-items:center; gap:7px; padding:8px 16px; background:transparent; border:1px solid #6FB3C8; border-radius:2px; font-size:12px; font-weight:500; color:var(--muted); font-family:'DM Sans',sans-serif; cursor:pointer; letter-spacing:0.05em; transition:all 0.18s; text-decoration:none; }
+        .share-btn { display:inline-flex; align-items:center; gap:7px; padding:8px 16px; background:transparent; border:1px solid #6FB3C8; border-radius:2px; font-size:12px; font-weight:500; color:var(--muted);  cursor:pointer; letter-spacing:0.05em; transition:all 0.18s; text-decoration:none; }
         .share-btn:hover { border-color:#6FB3C8; color:#000; }
 
         .author-card { max-width:var(--reading-col); margin:64px auto 0; background:#6FB3C8; border-radius:4px; padding:40px 44px; display:flex; gap:28px; align-items:flex-start; }
         @media(max-width:600px){ .author-card{flex-direction:column;padding:28px 24px;} }
-        .author-card-name { font-family:'Playfair Display',serif; font-size:20px; color:#fff; font-weight:600; margin:0 0 4px; }
+        .author-card-name {  font-size:20px; color:#fff; font-weight:600; margin:0 0 4px; }
         .author-card-role { font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:#fff9; margin-bottom:14px; }
         .author-card-bio { font-size:14px; color:#dfdd; line-height:1.75; font-weight:300; margin:0; }
         .author-card-social { display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; }
@@ -246,10 +246,10 @@ export default function BlogDetailPage() {
         .related-eyebrow { font-size:10px; font-weight:500; letter-spacing:0.2em; text-transform:uppercase; color:#000; margin-bottom:32px; display:flex; align-items:center; gap:10px; }
         .related-eyebrow::before { content:''; display:inline-block; width:28px; height:1px; background:var(--gold); }
         .related-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:8px; background:#fff; }
-        .related-card { background:var(--ink); padding:32px 28px; display:flex; flex-direction:column; gap:10px; text-decoration:none; color:inherit; transition:background 0.2s; }
+        .related-card { background:var(--ink); padding:32px 28px; display:flex; flex-direction:column; gap:10px; text-decoration:none;  transition:background 0.2s; }
         .related-card:hover { background:#fff; }
         .related-card-tag { font-size:10px; font-weight:500; letter-spacing:0.15em; text-transform:uppercase; color:#000; background:#6FB3C8; padding:3px 8px; border-radius:2px; width:fit-content; }
-        .related-card-title { font-family:'Playfair Display',serif; font-size:18px; font-weight:600; color:#000; line-height:1.3; flex:1; }
+        .related-card-title {  font-size:18px; font-weight:600; color:#000; line-height:1.3; flex:1; }
         .related-card-meta { font-size:12px; color:#0008; display:flex; gap:12px; }
         .related-card-arrow { width:26px; height:26px; border-radius:50%; border:1px solid #000; display:flex; align-items:center; justify-content:center; font-size:13px; color:#000; transition:all 0.2s; align-self:flex-end; }
         .related-card:hover .related-card-arrow { background:#fff; color:#000; border-color:#fff; }
@@ -335,9 +335,13 @@ export default function BlogDetailPage() {
               <div className="article-inner">
                 <AnimatedSection>
                   <h2
-                    className="text-4xl  text-black"
+                    className="font-rising text-black"
                     style={{
                       margin: "0px 0px 50px 0px",
+                      fontSize: "clamp(18px, 4vw, 28px)",
+                      fontWeight: 400,
+                      lineHeight: 1.6,
+                      color: "#000",
                     }}
                   >
                     {post.slug}
@@ -348,7 +352,7 @@ export default function BlogDetailPage() {
                   {/* Description (HTML from API) */}
                   {post.description ? (
                     <div
-                      className="article-p"
+                      className="article-p font-xolonium"
                       style={{
                         fontSize: "18px",
                         fontWeight: 300,
@@ -359,7 +363,7 @@ export default function BlogDetailPage() {
                     />
                   ) : (
                     <p
-                      className="article-p"
+                      className="article-p font-xolonium"
                       style={{ color: "#000", fontStyle: "italic" }}
                     >
                       Full content coming soon.
@@ -378,6 +382,7 @@ export default function BlogDetailPage() {
                     >
                       {post.tags.map((tag) => (
                         <span
+                          font-xolonium
                           key={tag}
                           style={{
                             fontSize: "11px",
@@ -406,7 +411,9 @@ export default function BlogDetailPage() {
           {related.length > 0 && (
             <section className="related-section">
               <div className="related-inner">
-                <div className="related-eyebrow">Continue Reading</div>
+                <div className="related-eyebrow font-xolonium">
+                  Continue Reading
+                </div>
                 <div className="related-grid">
                   {related.map((r, i) => (
                     <RelatedCard key={r.id} post={r} i={i} />

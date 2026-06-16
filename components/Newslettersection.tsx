@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BookOpen, CheckCircle, Mail, MessageCircle, Send } from "lucide-react";
+import { BookOpen, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -34,7 +34,7 @@ export default function NewsletterSection() {
   return (
     <>
       {/* Newsletter Section */}
-      <section
+      {/* <section
         style={{
           background:
             "linear-gradient(135deg, #6c7e7f 0%, #7d9192 40%, #95a49a 100%)",
@@ -103,8 +103,8 @@ export default function NewsletterSection() {
             </span>
             <h2
               style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: "clamp(30px, 4vw, 48px)",
+                fontFamily: "Venus Rising",
+                fontSize: "clamp(20px, 4vw, 28px)",
                 color: "#ffffff",
                 margin: "0 0 16px",
                 lineHeight: 1.15,
@@ -218,7 +218,7 @@ export default function NewsletterSection() {
             )}
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
       {/* Final CTA Section */}
       <section
@@ -229,31 +229,6 @@ export default function NewsletterSection() {
           overflow: "hidden",
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            top: "-20%",
-            left: "-5%",
-            width: 500,
-            height: 500,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(108,126,127,0.15), transparent 70%)",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            bottom: "-30%",
-            right: "-5%",
-            width: 400,
-            height: 400,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(149,164,154,0.12), transparent 70%)",
-          }}
-        />
-
         <div
           style={{
             maxWidth: 900,
@@ -271,6 +246,7 @@ export default function NewsletterSection() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
             <span
+              className="font-xolonium"
               style={{
                 display: "inline-block",
                 background: "#6c7e7f22",
@@ -289,8 +265,8 @@ export default function NewsletterSection() {
             </span>
             <h2
               style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: "clamp(36px, 5vw, 68px)",
+                fontFamily: "Venus Rising",
+                fontSize: "clamp(26px, 5vw, 48px)",
                 color: "#ffffff",
                 margin: "0 0 24px",
                 lineHeight: 1.08,
@@ -303,6 +279,7 @@ export default function NewsletterSection() {
               </span>
             </h2>
             <p
+              className="font-xolonium"
               style={{
                 fontSize: "clamp(15px, 1.6vw, 18px)",
                 color: "rgba(255,255,255,0.6)",
@@ -316,6 +293,7 @@ export default function NewsletterSection() {
             </p>
 
             <div
+              className="font-xolonium"
               style={{
                 display: "flex",
                 gap: 16,
@@ -363,7 +341,7 @@ export default function NewsletterSection() {
                   border: "2px solid rgba(255,255,255,0.25)",
                   transition: "all 0.25s",
                 }}
-                className="final-cta-secondary"
+                className="final-cta-secondary font-xolonium"
               >
                 <MessageCircle size={16} /> Book Consultation
               </Link>

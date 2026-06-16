@@ -75,7 +75,7 @@ export default function BlogPage() {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`category-btn ${
+                className={`font-xolonium category-btn ${
                   activeCategory === cat ? "active" : ""
                 }`}
               >
@@ -116,13 +116,17 @@ export default function BlogPage() {
 
                   {/* content */}
                   <div className="blog-content">
-                    <span className="blog-category">{post.category}</span>
+                    <span className="blog-category font-xolonium">
+                      {post.category}
+                    </span>
 
-                    <h2 className="hover:text-white">{post.title}</h2>
+                    <h2 className="hover:text-white font-rising">
+                      {post.title}
+                    </h2>
 
-                    <p>{post.excerpt}</p>
+                    <p className="font-xolonium">{post.excerpt}</p>
 
-                    <div className="blog-footer">
+                    <div className="blog-footer font-xolonium">
                       <div className="meta">
                         <span>{post.date}</span>
                         <span>{post.readTime}</span>
@@ -263,7 +267,7 @@ export default function BlogPage() {
   line-height: 1.3;
   margin-bottom: 18px;
   color: #111;
-  font-family: serif;
+ 
   transition: 0.3s;
 
   overflow: hidden;

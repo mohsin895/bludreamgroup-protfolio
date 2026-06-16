@@ -104,8 +104,8 @@ export default function TestimonialsSection() {
           </span>
           <h2
             style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: "clamp(34px, 4vw, 54px)",
+              fontFamily: "'Venus Rising'",
+              fontSize: "clamp(24px, 4vw, 44px)",
               color: "#1f2937",
               margin: 0,
               lineHeight: 1.1,
@@ -151,8 +151,8 @@ export default function TestimonialsSection() {
 
               <p
                 style={{
-                  fontFamily: "'Playfair Display', serif",
-                  fontSize: "clamp(17px, 2vw, 22px)",
+                  fontFamily: "'Xolonium'",
+                  fontSize: "clamp(14px, 2vw, 18px)",
                   color: "#1f2937",
                   lineHeight: 1.75,
                   margin: "44px 0 32px",
@@ -191,6 +191,7 @@ export default function TestimonialsSection() {
                     />
                   ) : (
                     <span
+                      className="font-rising"
                       style={{ fontSize: 20, fontWeight: 700, color: "#fff" }}
                     >
                       {current.name.charAt(0).toUpperCase()}
@@ -199,11 +200,13 @@ export default function TestimonialsSection() {
                 </div>
                 <div>
                   <div
+                    className="font-rising"
                     style={{ fontSize: 15, fontWeight: 700, color: "#1f2937" }}
                   >
                     {current.name}
                   </div>
                   <div
+                    className="font-xolonium"
                     style={{
                       fontSize: 12,
                       color: "#9aa6aa",

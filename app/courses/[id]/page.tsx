@@ -162,7 +162,7 @@ function FormInput({
           borderRadius: "8px",
           color: disabled ? "rgba(255,255,255,0.3)" : "#fff",
           fontSize: "14px",
-          fontFamily: "inherit",
+
           transition: "all 0.2s ease",
           outline: "none",
           boxSizing: "border-box",
@@ -257,7 +257,7 @@ function FormSelect({
           borderRadius: "8px",
           color: value ? "#fff" : "rgba(255,255,255,0.35)",
           fontSize: "14px",
-          fontFamily: "inherit",
+
           transition: "all 0.2s ease",
           outline: "none",
           cursor: "pointer",
@@ -311,8 +311,10 @@ function SectionHeading({ children }: { children: string }): ReactNode {
   return (
     <div style={{ marginBottom: "28px" }}>
       <h3
+        className="font-rising"
         style={{
           fontSize: "13px",
+          fontFamily: "Venus Rising",
           fontWeight: 700,
           color: "rgba(255,255,255,0.5)",
           letterSpacing: "0.12em",
@@ -598,7 +600,7 @@ export default function EnrollmentPage(): ReactNode {
               </div>
               <h1
                 style={{
-                  fontFamily: "var(--font-display)",
+                  fontFamily: "Xolonium",
                   fontSize: "24px",
                   color: "#fff",
                   marginBottom: "12px",
@@ -699,7 +701,7 @@ export default function EnrollmentPage(): ReactNode {
                   </div>
                   <h2
                     style={{
-                      fontFamily: "var(--font-display)",
+                      fontFamily: "Xolonium",
                       fontSize: "24px",
                       color: "#fff",
                       marginBottom: "12px",
@@ -719,7 +721,7 @@ export default function EnrollmentPage(): ReactNode {
                     <strong
                       style={{
                         color: "var(--gold)",
-                        fontFamily: "monospace",
+                        fontFamily: "Xolonium",
                         fontSize: "13px",
                       }}
                     >
@@ -1093,7 +1095,7 @@ export default function EnrollmentPage(): ReactNode {
                       </span>
                       <span
                         style={{
-                          fontFamily: "var(--font-display)",
+                          fontFamily: "Xolonium",
                           fontSize: "20px",
                           color: "var(--gold)",
                           fontWeight: 700,
@@ -1128,7 +1130,7 @@ export default function EnrollmentPage(): ReactNode {
                     </span>
                     <span
                       style={{
-                        fontFamily: "var(--font-display)",
+                        fontFamily: "Xolonium",
                         fontSize: "22px",
                         color: "#fff",
                         fontWeight: 700,

@@ -148,6 +148,7 @@ function BlogCard({ post, delay }: { post: BlogPost; delay: number }) {
         }}
       >
         <div
+          className="font-xolonium"
           style={{
             display: "flex",
             alignItems: "center",
@@ -179,9 +180,9 @@ function BlogCard({ post, delay }: { post: BlogPost; delay: number }) {
           <h3
             className="blog-title"
             style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: 20,
-              fontWeight: 700,
+              fontFamily: "'Venus Rising'",
+              fontSize: 18,
+              fontWeight: 600,
               color: "#1f2937",
               lineHeight: 1.3,
               marginBottom: 12,
@@ -193,6 +194,7 @@ function BlogCard({ post, delay }: { post: BlogPost; delay: number }) {
         </Link>
 
         <p
+          className="font-xolonium"
           style={
             {
               fontSize: 14,
@@ -224,7 +226,7 @@ function BlogCard({ post, delay }: { post: BlogPost; delay: number }) {
             textTransform: "uppercase",
             transition: "gap 0.2s",
           }}
-          className="blog-readmore"
+          className="blog-readmore font-xolonium"
         >
           Read Article <ArrowRight size={12} />
         </Link>
@@ -294,6 +296,7 @@ export default function BlogPreviewSection() {
         >
           <motion.span
             variants={fadeUp}
+            className="font-xolonium"
             style={{
               display: "inline-block",
               background: "#6c7e7f1a",
@@ -312,8 +315,8 @@ export default function BlogPreviewSection() {
           <motion.h2
             variants={fadeUp}
             style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: "clamp(34px, 4vw, 54px)",
+              fontFamily: "'Venus Rising'",
+              fontSize: "clamp(24px, 4vw, 44px)",
               color: "#1f2937",
               margin: 0,
               lineHeight: 1.1,
@@ -383,7 +386,7 @@ export default function BlogPreviewSection() {
               textDecoration: "none",
               transition: "all 0.25s",
             }}
-            className="blog-cta"
+            className="blog-cta font-xolonium"
           >
             View All Articles <ArrowRight size={14} />
           </Link>

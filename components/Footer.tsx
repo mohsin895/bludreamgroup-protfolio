@@ -258,18 +258,19 @@ export default function Footer() {
               <div>
                 <h3
                   style={{
-                    fontSize: 18,
+                    fontSize: 12,
                     color: "#fff",
                     margin: 0,
-                    fontWeight: 800,
-                    lineHeight: 1.1,
-                    fontFamily: "var(--font-display)",
+                    fontWeight: 500,
+                    lineHeight: 1.6,
+                    fontFamily: "Venus Rising",
                   }}
                 >
                   {setting.site_name ?? "KSM Shopnil Chowdhury Shohag"}
                 </h3>
 
                 <p
+                  className="font-xolonium"
                   style={{
                     fontSize: 11,
                     color: "#dbe4e4",
@@ -284,6 +285,7 @@ export default function Footer() {
             </div>
 
             <p
+              className="font-xolonium"
               style={{
                 fontSize: 14,
                 color: "#eef3f3",
@@ -297,6 +299,7 @@ export default function Footer() {
 
             {/* Contact Info */}
             <div
+              className="font-xolonium"
               style={{
                 marginTop: 28,
                 display: "flex",
@@ -405,9 +408,10 @@ export default function Footer() {
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
               <h4
+                className="font-rising"
                 style={{
                   fontSize: 12,
-                  fontWeight: 700,
+                  fontWeight: 500,
                   letterSpacing: "0.15em",
                   textTransform: "uppercase",
                   color: "#ffffff",
@@ -428,7 +432,7 @@ export default function Footer() {
                   <li key={link.label} style={{ marginBottom: 14 }}>
                     <Link
                       href={link.href}
-                      className="footer-link"
+                      className="footer-link font-xolonium"
                       style={{
                         fontSize: 14,
                         color: "#eef3f3",
@@ -445,92 +449,6 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* CTA Box */}
-        {/* <div
-          style={{
-            marginTop: 70,
-            background:
-              "linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03))",
-            border: "1px solid rgba(255,255,255,0.08)",
-            borderRadius: 24,
-            padding: "40px 30px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 24,
-            flexWrap: "wrap",
-          }}
-        >
-          <div>
-            <h3
-              style={{
-                color: "#fff",
-                fontSize: 28,
-                marginBottom: 10,
-                fontFamily: "var(--font-display)",
-              }}
-            >
-              Ready to Transform Your Mindset?
-            </h3>
-
-            <p
-              style={{
-                color: "#eef3f3",
-                fontSize: 14,
-                lineHeight: 1.8,
-                maxWidth: 620,
-              }}
-            >
-              Connect for mentorship, consultation, speaking, collaboration, or
-              to explore powerful books that inspire growth and success.
-            </p>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              gap: 14,
-              flexWrap: "wrap",
-            }}
-          >
-            <a
-              href={`https://wa.me/${(setting.phone ?? "").replace(/\D/g, "")}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="footer-btn-green"
-              style={{
-                background: "#25D366",
-                color: "#fff",
-                padding: "14px 24px",
-                borderRadius: 10,
-                textDecoration: "none",
-                fontWeight: 700,
-                fontSize: 14,
-                transition: "0.3s",
-              }}
-            >
-              💬 WhatsApp
-            </a>
-
-            <Link
-              href="/contact"
-              className="footer-btn-main"
-              style={{
-                background: "#ffffff",
-                color: "#648181",
-                padding: "14px 24px",
-                borderRadius: 10,
-                textDecoration: "none",
-                fontWeight: 700,
-                fontSize: 14,
-                transition: "0.3s",
-              }}
-            >
-              Contact Now →
-            </Link>
-          </div>
-        </div> */}
-
         {/* Bottom Bar */}
         <div
           style={{
@@ -545,6 +463,7 @@ export default function Footer() {
           }}
         >
           <p
+            className="font-xolonium"
             style={{
               fontSize: "13px",
               color: "#eef3f3",
@@ -583,7 +502,7 @@ export default function Footer() {
               <Link
                 key={item.label}
                 href={item.href}
-                className="footer-link"
+                className="footer-link font-xolonium"
                 style={{
                   fontSize: 12,
                   color: "#eef3f3",

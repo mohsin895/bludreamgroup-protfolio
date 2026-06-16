@@ -146,7 +146,7 @@ export default function PolicyLayout({
         }
         .policy-content h1,
         .policy-content h2 {
-          font-family: 'Playfair Display', serif;
+          
           font-size: clamp(20px, 2.2vw, 26px);
           color: #1a2427;
           font-weight: 700;
@@ -156,7 +156,7 @@ export default function PolicyLayout({
           border-bottom: 2px solid #6c7e7f22;
         }
         .policy-content h3 {
-          font-family: 'Playfair Display', serif;
+          
           font-size: clamp(17px, 1.8vw, 21px);
           color: #1a2427;
           font-weight: 700;

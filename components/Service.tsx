@@ -141,6 +141,7 @@ export default function ServicesSection() {
         >
           <motion.span
             variants={fadeUp}
+            className="font-xolonium"
             style={{
               display: "inline-block",
               background: "#6c7e7f1a",
@@ -159,8 +160,8 @@ export default function ServicesSection() {
           <motion.h2
             variants={fadeUp}
             style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: "clamp(34px, 4vw, 54px)",
+              fontFamily: "Venus Rising",
+              fontSize: "clamp(24px, 4vw, 34px)",
               color: "#1f2937",
               margin: 0,
               lineHeight: 1.1,
@@ -172,6 +173,7 @@ export default function ServicesSection() {
             </span>
           </motion.h2>
           <motion.p
+            className="font-xolonium"
             variants={fadeUp}
             style={{
               fontSize: 16,
@@ -256,9 +258,9 @@ export default function ServicesSection() {
 
                 <h3
                   style={{
-                    fontFamily: "'Playfair Display', serif",
-                    fontSize: 20,
-                    fontWeight: 700,
+                    fontFamily: "Venus Rising",
+                    fontSize: 16,
+                    fontWeight: 500,
                     color: "#1f2937",
                     marginBottom: 10,
                     lineHeight: 1.2,
@@ -268,6 +270,7 @@ export default function ServicesSection() {
                 </h3>
 
                 <p
+                  className="font-xolonium"
                   style={{
                     fontSize: 14,
                     color: "#6b7280",
@@ -290,6 +293,7 @@ export default function ServicesSection() {
                   }}
                 >
                   <span
+                    className="font-xolonium"
                     style={{
                       fontSize: 11,
                       color: "#9aa6aa",
@@ -347,7 +351,7 @@ export default function ServicesSection() {
               textDecoration: "none",
               transition: "all 0.25s",
             }}
-            className="services-cta"
+            className="services-cta font-xolonium"
           >
             Book a Service <ArrowRight size={14} />
           </Link>

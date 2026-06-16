@@ -262,9 +262,9 @@ function FormatSelector({
                 ? `2px solid ${accent ?? "#000"}`
                 : "2px solid rgba(255,255,255,0.08)",
               background: isActive
-                ? `${accent ?? "var(--gold)"}14`
+                ? `${accent ?? "#fff"}`
                 : "rgba(255,255,255,0.02)",
-              color: isActive ? (accent ?? "#000") : "#000",
+              color: isActive ? "#fff" : "#000",
               cursor: "pointer",
               fontWeight: 600,
               fontSize: "13px",
@@ -277,6 +277,7 @@ function FormatSelector({
             }}
           >
             <span
+              className="font-xolonium"
               style={{
                 fontSize: "11px",
                 textTransform: "uppercase",
@@ -286,7 +287,10 @@ function FormatSelector({
             >
               {f.label}
             </span>
-            <span style={{ fontSize: "16px", fontWeight: 700 }}>
+            <span
+              className="font-xolonium"
+              style={{ fontSize: "16px", fontWeight: 700 }}
+            >
               {formatPrice(f.price)}
             </span>
             {f.badge && (
@@ -319,10 +323,12 @@ function MetaRow({
   icon: Icon,
   label,
   value,
+  className,
 }: {
   icon: any;
   label: string;
   value?: string | number | null;
+  className?: string;
 }) {
   if (!value) return null;
   return (
@@ -337,6 +343,7 @@ function MetaRow({
     >
       <Icon size={15} style={{ color: "var(--text-dim)", flexShrink: 0 }} />
       <span
+        className="font-xolonium"
         style={{
           fontSize: "12px",
           color: "#000",
@@ -349,6 +356,7 @@ function MetaRow({
         {label}
       </span>
       <span
+        className="font-xolonium"
         style={{
           fontSize: "14px",
           color: "#000",
@@ -417,6 +425,7 @@ function RelatedCard({ book }: { book: Product }) {
         </div>
         <div style={{ padding: "18px" }}>
           <p
+            className="font-xolonium"
             style={{
               fontSize: "14px",
               color: "#000",
@@ -427,6 +436,7 @@ function RelatedCard({ book }: { book: Product }) {
             {book.author}
           </p>
           <h4
+            className="font-rising"
             style={{
               fontSize: "20px",
               color: "var(--text)",
@@ -437,6 +447,7 @@ function RelatedCard({ book }: { book: Product }) {
           </h4>
           {cheapest && (
             <p
+              className="font-xolonium"
               style={{
                 fontSize: "16px",
                 color: "#000",
@@ -536,9 +547,12 @@ function PaymentRadio({
           />
         )}
       </div>
-      <span style={{ fontSize: "20px" }}>{option.emoji}</span>
+      <span className="font-xolonium" style={{ fontSize: "20px" }}>
+        {option.emoji}
+      </span>
       <div>
         <p
+          className="font-xolonium"
           style={{
             fontSize: "14px",
             fontWeight: 600,
@@ -548,7 +562,10 @@ function PaymentRadio({
         >
           {option.label}
         </p>
-        <p style={{ fontSize: "11px", color: "#888", margin: 0 }}>
+        <p
+          className="font-xolonium"
+          style={{ fontSize: "11px", color: "#888", margin: 0 }}
+        >
           {option.desc}
         </p>
       </div>
@@ -758,7 +775,7 @@ export default function BookDetailPage() {
           }}
         >
           <h2 style={{ fontSize: "32px" }}>Book not found</h2>
-          <Link href="/books" className="btn-outline">
+          <Link href="/books" className="btn-outline font-xolonium">
             ← Back to Books
           </Link>
         </div>
@@ -891,7 +908,12 @@ export default function BookDetailPage() {
                     label="Publisher"
                     value={product.publisher}
                   />
-                  <MetaRow icon={Calendar} label="Year" value={product.year} />
+                  <MetaRow
+                    className="font-xolonium"
+                    icon={Calendar}
+                    label="Year"
+                    value={product.year}
+                  />
                   <MetaRow
                     icon={FileText}
                     label="Pages"
@@ -916,8 +938,9 @@ export default function BookDetailPage() {
 
               {/* Title — unchanged */}
               <h1
+                className="font-rising"
                 style={{
-                  fontSize: "clamp(38px, 4.5vw, 64px)",
+                  fontSize: "clamp(28px, 4.5vw, 54px)",
                   lineHeight: 1.0,
                   color: "#000",
                 }}
@@ -927,6 +950,7 @@ export default function BookDetailPage() {
 
               {product.subtitle && (
                 <p
+                  className="font-xolonium"
                   style={{
                     fontSize: "18px",
                     color: "#000",
@@ -939,6 +963,7 @@ export default function BookDetailPage() {
               )}
               {product.tagline && (
                 <p
+                  className="font-xolonium"
                   style={{
                     fontSize: "15px",
                     color: "#000",
@@ -963,6 +988,7 @@ export default function BookDetailPage() {
               {product.formats?.length > 0 && (
                 <div>
                   <p
+                    className="font-xolonium"
                     style={{
                       fontSize: "11px",
                       color: "#000",
@@ -1005,7 +1031,10 @@ export default function BookDetailPage() {
                     ? `${product.discount_amount}% OFF`
                     : `${formatPrice(product.discount_amount)} OFF`}
                   {product.discount_end_date && (
-                    <span style={{ opacity: 0.7, fontWeight: 400 }}>
+                    <span
+                      className="font-xolonium"
+                      style={{ opacity: 0.7, fontWeight: 400 }}
+                    >
                       · ends{" "}
                       {new Date(product.discount_end_date).toLocaleDateString(
                         "en-GB",
@@ -1052,6 +1081,7 @@ export default function BookDetailPage() {
                   }}
                 >
                   <p
+                    className="font-xolonium"
                     style={{
                       fontSize: "16px",
                       color: "#000",
@@ -1063,6 +1093,7 @@ export default function BookDetailPage() {
                   </p>
                   {product.praise_author && (
                     <cite
+                      className="font-xolonium"
                       style={{
                         display: "block",
                         marginTop: "10px",
@@ -1096,7 +1127,10 @@ export default function BookDetailPage() {
                     size={22}
                     color={accent === "#000" ? "#000" : "#000"}
                   />
-                  <h2 style={{ color: "#000", fontSize: "28px", margin: 0 }}>
+                  <h2
+                    className="font-rising"
+                    style={{ color: "#000", fontSize: "24px", margin: 0 }}
+                  >
                     Place Your Order
                   </h2>
                 </div>
@@ -1104,7 +1138,7 @@ export default function BookDetailPage() {
                 <form onSubmit={handleOrder}>
                   {/* ── STEP 1: Contact — 2 columns ── */}
                   <div
-                    className="order-grid"
+                    className="order-grid font-xolonium"
                     style={{
                       display: "grid",
                       gridTemplateColumns: "1fr 1fr",
@@ -1149,7 +1183,7 @@ export default function BookDetailPage() {
                   </div>
 
                   {/* ── STEP 2: Address ── */}
-                  <div style={{ marginTop: "18px" }}>
+                  <div className="font-xolonium" style={{ marginTop: "18px" }}>
                     <NiceTextarea
                       icon={MapPin}
                       label="Street Address"
@@ -1163,7 +1197,7 @@ export default function BookDetailPage() {
                   </div>
 
                   <div
-                    className="order-grid"
+                    className="order-grid font-xolonium"
                     style={{
                       display: "grid",
                       gridTemplateColumns: "1fr 1fr 1fr",
@@ -1201,7 +1235,7 @@ export default function BookDetailPage() {
                   {/* ── STEP 3: Payment Method ── */}
                   <div style={{ marginTop: "28px" }}>
                     <label
-                      className="form-label"
+                      className="form-label font-xolonium"
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -1238,7 +1272,10 @@ export default function BookDetailPage() {
                     {/* bKash / Nagad number */}
                     {(form.payMethod === "bkash" ||
                       form.payMethod === "nagad") && (
-                      <div style={{ marginTop: "14px" }}>
+                      <div
+                        className="font-xolonium"
+                        style={{ marginTop: "14px" }}
+                      >
                         <NiceField
                           icon={Smartphone}
                           label={`${form.payMethod === "bkash" ? "bKash" : "Nagad"} Number`}
@@ -1254,6 +1291,7 @@ export default function BookDetailPage() {
                     {/* Card fields */}
                     {form.payMethod === "card" && (
                       <div
+                        className="font-xolonium"
                         style={{
                           marginTop: "14px",
                           display: "flex",
@@ -1333,7 +1371,7 @@ export default function BookDetailPage() {
                     {/* Price — read-only display */}
                     <div>
                       <label
-                        className="form-label"
+                        className="form-label font-xolonium"
                         style={{
                           display: "flex",
                           alignItems: "center",
@@ -1347,6 +1385,7 @@ export default function BookDetailPage() {
                         <Package size={14} /> Selected Price
                       </label>
                       <div
+                        className="font-xolonium"
                         style={{
                           height: "52px",
                           borderRadius: "12px",
@@ -1369,7 +1408,7 @@ export default function BookDetailPage() {
                     {/* Note */}
                     <div style={{ display: "flex", flexDirection: "column" }}>
                       <label
-                        className="form-label"
+                        className="form-label font-xolonium"
                         style={{
                           display: "flex",
                           alignItems: "center",
@@ -1382,6 +1421,7 @@ export default function BookDetailPage() {
                       >
                         <FileText size={14} /> Additional Note
                         <span
+                          className="font-xolonium"
                           style={{
                             fontWeight: 400,
                             color: "#888",
@@ -1392,10 +1432,10 @@ export default function BookDetailPage() {
                         </span>
                       </label>
                       <textarea
+                        className="font-xolonium nice-input"
                         name="note"
                         value={form.note}
                         onChange={setField("note")}
-                        className="nice-input"
                         placeholder="Special instructions, personalisation…"
                         rows={3}
                         style={{ flex: 1 }}
@@ -1405,6 +1445,7 @@ export default function BookDetailPage() {
 
                   {/* ── STEP 5: Submit ── */}
                   <button
+                    className="font-xolonium"
                     type="submit"
                     disabled={ordering || !selectedFormat}
                     style={{
@@ -1443,6 +1484,7 @@ export default function BookDetailPage() {
               {product.author && (
                 <div style={{ marginTop: "20px" }}>
                   <p
+                    className="font-xolonium"
                     style={{
                       fontSize: "14px",
                       color: "#000",
@@ -1453,6 +1495,7 @@ export default function BookDetailPage() {
                   </p>
                   {product.author_bio && (
                     <p
+                      className="font-xolonium"
                       style={{
                         fontSize: "14px",
                         color: "#0009",
@@ -1477,6 +1520,7 @@ export default function BookDetailPage() {
               {product.description && (
                 <div>
                   <p
+                    className="font-xolonium"
                     style={{
                       fontSize: "11px",
                       color: "#000",
@@ -1489,6 +1533,7 @@ export default function BookDetailPage() {
                     About This Book
                   </p>
                   <div
+                    className="font-xolonium"
                     style={{
                       fontSize: "15px",
                       color: "#0009",
@@ -1510,12 +1555,16 @@ export default function BookDetailPage() {
         <section style={{ background: "#fff9", padding: "80px 0" }}>
           <div className="container">
             <AnimatedSection>
-              <div className="section-label" style={{ marginBottom: "8px" }}>
+              <div
+                className="section-label font-xolonium"
+                style={{ marginBottom: "8px" }}
+              >
                 You May Also Like
               </div>
               <h2
+                className="font-rising"
                 style={{
-                  fontSize: "clamp(28px, 3vw, 40px)",
+                  fontSize: "clamp(20px, 3vw, 30px)",
                   marginBottom: "40px",
                 }}
               >

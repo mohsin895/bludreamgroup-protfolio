@@ -216,25 +216,12 @@ export default function ConfirmationPage(): ReactNode {
         style={{
           paddingTop: "100px",
           paddingBottom: "60px",
-          background: "#6FB3C8",
+          background:
+            "linear-gradient(180deg, #46595a 0%, #6c7e7f 45%, #8d9b9c 75%, #c7d1d2 100%)",
           position: "relative",
           overflow: "hidden",
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            top: "-100px",
-            right: "-250px",
-            width: "600px",
-            height: "600px",
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(125,212,176,0.08) 0%, transparent 70%)",
-            pointerEvents: "none",
-          }}
-        />
-
         <div className="container">
           <div
             style={{ textAlign: "center", maxWidth: "700px", margin: "0 auto" }}
@@ -243,6 +230,8 @@ export default function ConfirmationPage(): ReactNode {
               style={{
                 fontSize: "64px",
                 marginBottom: "24px",
+
+                color: "#ffa",
                 animation: "bounce 1s ease-in-out",
               }}
             >
@@ -251,8 +240,8 @@ export default function ConfirmationPage(): ReactNode {
 
             <h1
               style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(36px, 5vw, 56px)",
+                fontFamily: "Venus Rising",
+                fontSize: "clamp(20px, 5vw, 28px)",
                 lineHeight: 1.1,
                 letterSpacing: "-0.02em",
                 color: "#000",
@@ -265,7 +254,7 @@ export default function ConfirmationPage(): ReactNode {
             <p
               style={{
                 fontSize: "16px",
-                color: "rgba(255,255,255,0.45)",
+                color: "#ff1",
                 lineHeight: 1.7,
                 marginBottom: "0",
               }}
@@ -279,7 +268,7 @@ export default function ConfirmationPage(): ReactNode {
 
       {/* ── Receipt Section ── */}
       <section style={{ background: "#627F7F", padding: "80px 0" }}>
-        <div className="container">
+        <div className="container font-xolonium">
           <div style={{ maxWidth: "700px", margin: "0 auto" }}>
             {/* Confirmation Box */}
             <div
@@ -311,7 +300,7 @@ export default function ConfirmationPage(): ReactNode {
                 </p>
                 <h2
                   style={{
-                    fontFamily: "var(--font-display)",
+                    fontFamily: "font-rising",
                     fontSize: "28px",
                     color: "#000",
                     margin: "0 0 8px",
@@ -445,7 +434,7 @@ export default function ConfirmationPage(): ReactNode {
                       color: "var(--gold)",
                       fontWeight: 700,
                       margin: 0,
-                      fontFamily: "monospace",
+                      fontFamily: "font-xolonium",
                     }}
                   >
                     {enrollment.transaction_id}

@@ -86,7 +86,7 @@ export function BookCard({ book, index }: { book: Product; index: number }) {
         {book.has_discount === "yes" &&
           book.discount_amount &&
           cheapest?.price && (
-            <div className="discount-badge">
+            <div className="discount-badge font-xolonium">
               -
               {Math.round(
                 (Number(book.discount_amount) / Number(cheapest.price)) * 100,
@@ -117,11 +117,13 @@ export function BookCard({ book, index }: { book: Product; index: number }) {
           {/* {book.category?.name || "Motivation"} */}
         </div>
 
-        <h3>{book.title}</h3>
+        <h3 className="font-rising">{book.title}</h3>
 
-        <p className="author">By {book.author || "Unknown Author"}</p>
+        <p className="author font-xolonium">
+          By {book.author || "Unknown Author"}
+        </p>
 
-        <div className="price-row">
+        <div className="price-row font-xolonium">
           {book.has_discount === "yes" &&
           book.discount_amount &&
           cheapest?.price ? (
@@ -182,12 +184,12 @@ export default function BooksPage() {
       >
         <div className="container">
           <AnimatedSection>
-            <div className="section-label">Published Works</div>
+            <div className="section-label font-xolonium">Published Works</div>
 
             <h1
               style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(52px, 6vw, 84px)",
+                fontFamily: "Venus Rising",
+                fontSize: "clamp(22px, 6vw, 44px)",
                 marginTop: "8px",
                 lineHeight: 1,
               }}
@@ -196,6 +198,7 @@ export default function BooksPage() {
             </h1>
 
             <p
+              className="font-xolonium"
               style={{
                 color: "var(--text-muted)",
                 fontSize: "17px",
@@ -382,7 +385,7 @@ export default function BooksPage() {
             line-height:1.3;
             color:#111827;
             margin-bottom:10px;
-            font-family:var(--font-display);
+            
             transition:.25s ease;
           }
 
@@ -413,7 +416,7 @@ export default function BooksPage() {
             color:#000;
             font-size:22px;
             font-weight:500;
-            font-family:var(--font-display);
+            
             line-height:1;
           }
 

@@ -322,7 +322,7 @@ export default function AboutPage() {
                       color: "#000",
                       fontSize: "12px",
                       cursor: "pointer",
-                      fontFamily: "inherit",
+                      fontFamily: "font-xolonium",
                       letterSpacing: "0.06em",
                     }}
                   >
@@ -336,8 +336,8 @@ export default function AboutPage() {
               <>
                 <h2
                   style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: "38px",
+                    fontFamily: "Venus Rising",
+                    fontSize: "32px",
                     marginBottom: "24px",
                     color: "#000",
                   }}
@@ -347,11 +347,12 @@ export default function AboutPage() {
 
                 {/* Rich text description from API */}
                 <div
+                  className="font-xolonium"
                   style={{
                     color: "#000",
                     lineHeight: 1.8,
                     marginBottom: "32px",
-                    fontSize: "15px",
+                    fontSize: "14px",
                   }}
                   dangerouslySetInnerHTML={{ __html: about.description }}
                 />
@@ -359,7 +360,7 @@ export default function AboutPage() {
                 <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
                   <Link
                     href="/contact"
-                    className="btn-primary"
+                    className="btn-primary font-xolonium"
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
@@ -373,7 +374,7 @@ export default function AboutPage() {
                       href={about.resumeUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn-outline"
+                      className="btn-outline font-xolonium"
                       style={{
                         display: "inline-flex",
                         alignItems: "center",
@@ -385,7 +386,7 @@ export default function AboutPage() {
                   ) : (
                     <a
                       href="#"
-                      className="btn-outline"
+                      className="btn-outline font-xolonium"
                       style={{
                         display: "inline-flex",
                         alignItems: "center",
@@ -409,6 +410,7 @@ export default function AboutPage() {
                 >
                   {STAT_BADGES.map(({ icon: Icon, label }) => (
                     <div
+                      className="font-xolonium"
                       key={label}
                       style={{
                         display: "flex",
@@ -446,12 +448,15 @@ export default function AboutPage() {
           <AnimatedSection
             style={{ textAlign: "center", marginBottom: "60px" }}
           >
-            <div className="section-label" style={{ justifyContent: "center" }}>
+            <div
+              className="section-label font-xolonium"
+              style={{ justifyContent: "center" }}
+            >
               Career Journey
             </div>
             <h2
               style={{
-                fontFamily: "var(--font-display)",
+                fontFamily: "Venus Rising",
                 fontSize: "clamp(38px, 4vw, 52px)",
               }}
             >
@@ -479,6 +484,7 @@ export default function AboutPage() {
           {/* Timeline */}
           {!loading && !error && milestones.length > 0 && (
             <div
+              className="font-xolonium"
               style={{
                 position: "relative",
                 maxWidth: "700px",
@@ -513,7 +519,7 @@ export default function AboutPage() {
                   <div style={{ minWidth: "60px", textAlign: "right" }}>
                     <span
                       style={{
-                        fontFamily: "var(--font-display)",
+                        fontFamily: "Venus Rising",
                         fontSize: "20px",
                         color: "var(--gold)",
                       }}
@@ -540,7 +546,7 @@ export default function AboutPage() {
                   <div style={{ paddingLeft: "24px" }}>
                     <h3
                       style={{
-                        fontFamily: "var(--font-display)",
+                        fontFamily: "Venus Rising",
                         fontSize: "22px",
                         color: "var(--text)",
                       }}

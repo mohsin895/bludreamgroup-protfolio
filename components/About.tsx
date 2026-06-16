@@ -85,6 +85,7 @@ export default function AboutSection() {
           style={{ textAlign: "center", marginBottom: 34 }}
         >
           <span
+            className="font-xolonium"
             style={{
               display: "inline-block",
               background: "#6c7e7f1a",
@@ -101,8 +102,9 @@ export default function AboutSection() {
             About The Author
           </span>
           <h2
+            className="font-rising"
             style={{
-              fontSize: "clamp(36px, 4vw, 56px)",
+              fontSize: "clamp(22px, 4vw, 36px)",
               color: "#1f2937",
               margin: 0,
               lineHeight: 1.1,
@@ -130,7 +132,7 @@ export default function AboutSection() {
               ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
             }}
             className="about-image-col"
-            style={{ flex: "0 0 400px", position: "relative" }}
+            style={{ flex: "0 0 500px", position: "relative" }}
           >
             <div
               style={{
@@ -198,6 +200,7 @@ export default function AboutSection() {
               }}
             >
               <div
+                className="font-rising"
                 style={{
                   fontSize: 28,
                   fontWeight: 800,
@@ -208,6 +211,7 @@ export default function AboutSection() {
                 16+
               </div>
               <div
+                className="font-xolonium"
                 style={{
                   fontSize: 12,
                   color: "#6b7280",
@@ -236,7 +240,7 @@ export default function AboutSection() {
                 lineHeight: 1.9,
                 marginBottom: 24,
               }}
-              className="about-description"
+              className="about-description font-xolonium"
               dangerouslySetInnerHTML={{
                 __html:
                   about?.description ||
@@ -287,13 +291,14 @@ export default function AboutSection() {
                       justifyContent: "center",
                     }}
                   >
-                    <q.icon size={18} color="#95a49a" />
+                    <q.icon size={20} color="#95a49a" />
                   </div>
                   <div>
                     <div
+                      className="font-rising"
                       style={{
-                        fontSize: 14,
-                        fontWeight: 700,
+                        fontSize: 12,
+                        fontWeight: 500,
                         color: "#1f2937",
                         marginBottom: 2,
                       }}
@@ -301,6 +306,7 @@ export default function AboutSection() {
                       {q.title}
                     </div>
                     <div
+                      className="font-xolonium"
                       style={{
                         fontSize: 13,
                         color: "#6b7280",
@@ -332,7 +338,7 @@ export default function AboutSection() {
                   textDecoration: "none",
                   transition: "all 0.25s",
                 }}
-                className="about-cta"
+                className="about-cta font-xolonium"
               >
                 Read Full Story →
               </Link>

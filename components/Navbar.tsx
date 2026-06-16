@@ -189,7 +189,7 @@ export default function Navbar() {
 
               <Link
                 href="/books"
-                className="hover:bg-[#95a49a]"
+                className="hover:bg-[#95a49a] font-xolonium"
                 style={{
                   marginLeft: "16px",
                   fontSize: "16px",
@@ -260,10 +260,11 @@ export default function Navbar() {
                 {item.children ? (
                   <>
                     <div
+                      className="font-xolonium"
                       style={{
                         padding: "14px 0",
                         fontSize: "28px",
-                        fontFamily: "var(--font-display)",
+
                         color: "#ffff",
                         borderBottom: "1px solid rgba(255,255,255,0.04)",
                         animation: mobileOpen
@@ -276,6 +277,7 @@ export default function Navbar() {
                     <div style={{ paddingLeft: "16px" }}>
                       {item.children.map((child) => (
                         <Link
+                          className="font-xolonium"
                           key={child.label}
                           href={child.href}
                           style={{
@@ -294,6 +296,7 @@ export default function Navbar() {
                   </>
                 ) : (
                   <Link
+                    className="font-xolonium"
                     href={item.href}
                     style={{
                       display: "block",
@@ -319,7 +322,7 @@ export default function Navbar() {
           <div style={{ marginTop: "40px" }}>
             <Link
               href="/contact"
-              className="btn-primary"
+              className="btn-primary font-xolonium"
               style={{
                 display: "inline-flex",
                 background: "#6c7e7f",

@@ -350,7 +350,7 @@ const styles: Record<string, React.CSSProperties> = {
     minHeight: "400px",
     overflow: "hidden",
     background: "#F4F7F6",
-    fontFamily: "var(--font-sans, sans-serif)",
+    fontFamily: "Venus Rising",
   },
   slideLayer: {
     position: "absolute",
@@ -427,7 +427,7 @@ const styles: Record<string, React.CSSProperties> = {
     gap: "12px",
   },
   counterCurrent: {
-    fontFamily: "var(--font-display, serif)",
+    fontFamily: "Venus Rising",
     fontSize: "56px",
     lineHeight: 1,
     color: "#82c3d8",
@@ -470,8 +470,8 @@ const styles: Record<string, React.CSSProperties> = {
     boxShadow: "0 0 8px #82c3d8",
   },
   title: {
-    fontFamily: "var(--font-display, serif)",
-    fontSize: "clamp(42px,7vw,96px)",
+    fontFamily: "Venus Rising",
+    fontSize: "clamp(22px,7vw,56px)",
     lineHeight: 1.02,
     color: "#fff",
     margin: 0,

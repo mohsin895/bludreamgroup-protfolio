@@ -185,6 +185,7 @@ export default function ContactPage() {
                       }}
                     />
                     <span
+                      className="font-xolonium"
                       style={{
                         fontSize: "11px",
                         letterSpacing: "0.15em",
@@ -197,8 +198,8 @@ export default function ContactPage() {
                   </div>
                   <h2
                     style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: "clamp(28px, 2.5vw, 38px)",
+                      fontFamily: "Venus Rising",
+                      fontSize: "clamp(28px, 2.5vw, 32px)",
                       color: "#000",
                       letterSpacing: "-0.02em",
                       lineHeight: 1.15,
@@ -226,7 +227,7 @@ export default function ContactPage() {
                     </div>
                     <h3
                       style={{
-                        fontFamily: "var(--font-display)",
+                        fontFamily: "Venus Rising",
                         fontSize: "22px",
                         color: "#fff",
                         margin: "0 0 10px",
@@ -235,6 +236,7 @@ export default function ContactPage() {
                       Message sent.
                     </h3>
                     <p
+                      className="font-xolonium"
                       style={{
                         fontSize: "14px",
                         color: "rgba(255,255,255,0.45)",
@@ -246,6 +248,7 @@ export default function ContactPage() {
                       one business day.
                     </p>
                     <button
+                      className="font-xolonium"
                       onClick={() => {
                         setSubmitted(false);
                         setFormState({
@@ -281,7 +284,7 @@ export default function ContactPage() {
                 >
                   <AnimatedSection delay={0.05}>
                     <div
-                      className="name-email-grid"
+                      className="name-email-grid font-xolonium"
                       style={{
                         display: "grid",
                         gridTemplateColumns: "1fr 1fr",
@@ -324,8 +327,10 @@ export default function ContactPage() {
                     </div>
                   </AnimatedSection>
 
-                  <AnimatedSection delay={0.1}>
-                    <label style={labelStyle}>Subject</label>
+                  <AnimatedSection className="font-xolonium" delay={0.1}>
+                    <label className="font-xolonium" style={labelStyle}>
+                      Subject
+                    </label>
                     <select
                       required
                       value={formState.subject}
@@ -373,7 +378,7 @@ export default function ContactPage() {
                     </select>
                   </AnimatedSection>
 
-                  <AnimatedSection delay={0.15}>
+                  <AnimatedSection className="font-xolonium" delay={0.15}>
                     <label style={labelStyle}>Message</label>
                     <textarea
                       required
@@ -394,7 +399,7 @@ export default function ContactPage() {
                     />
                   </AnimatedSection>
 
-                  <AnimatedSection delay={0.2}>
+                  <AnimatedSection className="font-xolonium" delay={0.2}>
                     <div
                       style={{
                         display: "flex",
@@ -405,6 +410,7 @@ export default function ContactPage() {
                       }}
                     >
                       <p
+                        className="font-xolonium"
                         style={{
                           fontSize: "12px",
                           color: "#000",
@@ -443,7 +449,7 @@ export default function ContactPage() {
             </div>
 
             {/* Right: FAQ */}
-            <div>
+            <div className="font-xolonium">
               <AnimatedSection>
                 <div style={{ marginBottom: "40px" }}>
                   <div
@@ -475,8 +481,8 @@ export default function ContactPage() {
                   </div>
                   <h2
                     style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: "clamp(28px, 2.5vw, 38px)",
+                      fontFamily: "Venus Rising",
+                      fontSize: "clamp(18px, 2.5vw, 28px)",
                       color: "#000",
                       letterSpacing: "-0.02em",
                       lineHeight: 1.15,

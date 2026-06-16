@@ -30,8 +30,8 @@ export default function PageHero({
   return (
     <section className="page-hero">
       {/* Decorative shapes */}
-      <span className="deco deco-triangle" aria-hidden="true" />
-      <span className="deco deco-plus" aria-hidden="true">
+      <span className="deco deco-triangle md:block hidden" aria-hidden="true" />
+      <span className="deco deco-plus md:block hidden" aria-hidden="true">
         +
       </span>
       <div className="deco deco-circle" aria-hidden="true" />
@@ -39,9 +39,9 @@ export default function PageHero({
 
       {/* Main content */}
       <div className="hero-content">
-        <h1 className="hero-title">{title}</h1>
+        <h1 className="hero-title font-rising">{title}</h1>
 
-        <nav className="breadcrumb" aria-label="Breadcrumb">
+        <nav className="breadcrumb font-xolonium" aria-label="Breadcrumb">
           <span>Home</span>
           <span className="sep" aria-hidden="true">
             »
@@ -172,8 +172,8 @@ export default function PageHero({
         }
 
         .hero-title {
-          font-size: clamp(2rem, 6vw, 3.2rem);
-          font-weight: 800;
+          font-size: clamp(1.2rem, 4vw, 2.5rem);
+          font-weight: 500;
           color: #ffffff;
           margin: 20px 0 0; /* top margin */
           line-height: 1.15;
@@ -274,7 +274,7 @@ export default function PageHero({
           }
 
           .hero-title {
-            font-size: clamp(1.6rem, 8vw, 2.4rem);
+            font-size: clamp(1.6rem, 5vw, 2.4rem);
           }
 
           .search-bar {
@@ -310,7 +310,7 @@ export default function PageHero({
           }
 
           .hero-title {
-            font-size: clamp(1.4rem, 9vw, 2rem);
+            font-size: clamp(1.4rem, 5vw, 2rem);
           }
 
           .breadcrumb {
@@ -319,6 +319,20 @@ export default function PageHero({
 
           .search-bar {
             padding: 3px 3px 3px 14px;
+          }
+          .deco-circle {
+            width: 180px;
+            height: 180px;
+            right: -90px;
+            top: -40px;
+          }
+
+          .deco-circle-sm {
+            width: 80px;
+            height: 80px;
+            left: -25px;
+            bottom: 20px;
+            opacity: 0.6;
           }
 
           .deco-triangle {

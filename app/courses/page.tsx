@@ -269,6 +269,7 @@ export function CourseCard({
 
           {/* Level badge — top-left */}
           <div
+            className="font-xolonium"
             style={{
               position: "absolute",
               top: 12,
@@ -288,14 +289,15 @@ export function CourseCard({
 
           {/* Price badge — bottom-right */}
           <motion.div
+            className="font-xolonium"
             animate={{ scale: hovered ? 1.08 : 1 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
             style={{
               position: "absolute",
               bottom: 4,
               right: 6,
-              width: 52,
-              height: 52,
+              width: 62,
+              height: 62,
               padding: "5px",
               borderRadius: "50%",
               background: c.isFree
@@ -326,20 +328,22 @@ export function CourseCard({
           }}
         >
           <h3
+            className="font-rising"
             style={{
-              fontSize: "clamp(15px,1.2vw,17px)",
-              fontWeight: 800,
+              fontSize: "clamp(12px,1.2vw,16px)",
+              fontWeight: 500,
               color: "#1a1f3c",
               lineHeight: 1.35,
               margin: "0 0 10px",
               letterSpacing: "-0.01em",
-              fontFamily: "'Sora', 'DM Sans', system-ui, sans-serif",
+              fontFamily: "Venus Rising",
             }}
           >
             {c.title}
           </h3>
 
           <p
+            className="font-xolonium"
             style={{
               fontSize: 13,
               color: "#7a869a",
@@ -362,6 +366,7 @@ export function CourseCard({
           {/* Meta row */}
           <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
             <span
+              className="font-xolonium"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -387,6 +392,7 @@ export function CourseCard({
               {c.lessons} Lessons
             </span>
             <span
+              className="font-xolonium"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -427,6 +433,7 @@ export function CourseCard({
               style={{ overflow: "hidden" }}
             >
               <Link
+                className="font-xolonium"
                 href={`/enrollment?courseId=${c.id}`}
                 style={{
                   display: "flex",
@@ -471,12 +478,13 @@ function StatBadge({ value, label }: { value: string; label: string }) {
           fontWeight: 800,
           color: "#1a1f3c",
           letterSpacing: "-0.03em",
-          fontFamily: "'Sora',system-ui,sans-serif",
+          fontFamily: "Venus Rising",
         }}
       >
         {value}
       </div>
       <div
+        className="font-xolonium"
         style={{
           fontSize: 12,
           color: "#8492a6",
@@ -503,6 +511,7 @@ function FilterTab({
 }) {
   return (
     <motion.button
+      className="font-xolonium"
       onClick={onClick}
       whileTap={{ scale: 0.95 }}
       style={{
@@ -679,11 +688,15 @@ export default function CoursesPage(): ReactNode {
           ) : !error ? (
             <div style={{ textAlign: "center", padding: "60px 20px" }}>
               <div style={{ fontSize: 48, marginBottom: 16 }}>📚</div>
-              <p style={{ color: "#8492a6", fontSize: 15 }}>
+              <p
+                className="font-xolonium"
+                style={{ color: "#8492a6", fontSize: 15 }}
+              >
                 No courses found for this level.
               </p>
               <button
                 onClick={() => setActiveLevel("All")}
+                className="font-xolonium"
                 style={{
                   marginTop: 16,
                   padding: "10px 24px",
@@ -719,7 +732,7 @@ export default function CoursesPage(): ReactNode {
                       color: "#fff",
                       border: "none",
                       borderRadius: "100px",
-                      fontFamily: "'Sora',system-ui,sans-serif",
+                      fontFamily: "Venus Rising",
                       fontSize: 14,
                       fontWeight: 700,
                       letterSpacing: "0.03em",
@@ -792,7 +805,7 @@ export default function CoursesPage(): ReactNode {
                 </div>
                 <h2
                   style={{
-                    fontFamily: "'Sora',system-ui,sans-serif",
+                    fontFamily: "Venus Rising",
                     fontSize: "clamp(28px,3.5vw,44px)",
                     fontWeight: 900,
                     color: "#1a1f3c",
