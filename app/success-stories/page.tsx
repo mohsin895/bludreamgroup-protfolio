@@ -264,6 +264,7 @@ function FeaturedCard({ story }: { story: Story }) {
             gap: 10,
             marginBottom: 32,
             flexWrap: "wrap",
+            fontFamily: "Xolonium",
           }}
         >
           <span
@@ -313,7 +314,7 @@ function FeaturedCard({ story }: { story: Story }) {
         {/* Giant quote mark */}
         <div
           style={{
-            fontFamily: "Georgia, serif",
+            fontFamily: "Venus Rising",
             fontSize: 110,
             lineHeight: 0.55,
             color: "#6c7e7f",
@@ -327,8 +328,8 @@ function FeaturedCard({ story }: { story: Story }) {
 
         <h2
           style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: "clamp(22px, 2.4vw, 32px)",
+            fontFamily: "Venus Rising",
+            fontSize: "clamp(16px, 2.4vw, 28px)",
             color: "#fff",
             lineHeight: 1.2,
             marginBottom: 20,
@@ -367,13 +368,20 @@ function FeaturedCard({ story }: { story: Story }) {
               fontSize: 16,
               fontWeight: 800,
               color: "#fff",
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "Xolonium",
             }}
           >
             {story.avatar}
           </div>
           <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>
+            <div
+              style={{
+                fontSize: 15,
+                fontWeight: 700,
+                color: "#fff",
+                fontFamily: "Xolonium",
+              }}
+            >
               {story.name}
             </div>
             <div
@@ -381,6 +389,7 @@ function FeaturedCard({ story }: { story: Story }) {
                 fontSize: 12,
                 color: "rgba(255,255,255,0.5)",
                 marginTop: 2,
+                fontFamily: "Xolonium",
               }}
             >
               {story.category} · {story.year}
@@ -421,14 +430,15 @@ function FeaturedCard({ story }: { story: Story }) {
               letterSpacing: "0.14em",
               textTransform: "uppercase",
               marginBottom: 12,
+              fontFamily: "Xolonium",
             }}
           >
             Key Result
           </div>
           <div
             style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: "clamp(26px, 3vw, 36px)",
+              fontFamily: "Venus Rising",
+              fontSize: "clamp(16px, 3vw, 28px)",
               fontWeight: 800,
               color: "#fff",
               lineHeight: 1.1,
@@ -448,6 +458,7 @@ function FeaturedCard({ story }: { story: Story }) {
               padding: "5px 14px",
               fontSize: 11,
               fontWeight: 700,
+              fontFamily: "Xolonium",
             }}
           >
             <Tag size={11} /> {story.tag}
@@ -472,13 +483,14 @@ function FeaturedCard({ story }: { story: Story }) {
               letterSpacing: "0.12em",
               textTransform: "uppercase",
               marginBottom: 8,
+              fontFamily: "Xolonium",
             }}
           >
             Year
           </div>
           <div
             style={{
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "Xolonium",
               fontSize: 32,
               fontWeight: 800,
               color: "#fff",
@@ -540,6 +552,7 @@ function StoryCard({ story }: { story: Story }) {
             marginBottom: 18,
             flexWrap: "wrap",
             gap: 8,
+            fontFamily: "Xolonium",
           }}
         >
           <span
@@ -564,9 +577,9 @@ function StoryCard({ story }: { story: Story }) {
         {/* Title */}
         <h3
           style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: "clamp(16px, 1.5vw, 19px)",
-            fontWeight: 700,
+            fontFamily: "Venus Rising",
+            fontSize: "clamp(10px, 1.5vw, 14px)",
+            fontWeight: 500,
             color: "#1a2427",
             lineHeight: 1.25,
             marginBottom: 14,
@@ -580,7 +593,13 @@ function StoryCard({ story }: { story: Story }) {
           <Quote
             size={28}
             color={story.color}
-            style={{ opacity: 0.13, position: "absolute", top: -4, left: -4 }}
+            style={{
+              opacity: 0.13,
+              position: "absolute",
+              top: -4,
+              left: -4,
+              fontFamily: "Xolonium",
+            }}
           />
           <p
             style={{
@@ -589,6 +608,7 @@ function StoryCard({ story }: { story: Story }) {
               lineHeight: 1.8,
               paddingLeft: 6,
               fontStyle: "italic",
+              fontFamily: "Xolonium",
             }}
           >
             {expanded
@@ -610,7 +630,7 @@ function StoryCard({ story }: { story: Story }) {
                 padding: "6px 0 0",
                 letterSpacing: "0.06em",
                 textTransform: "uppercase",
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "Xolonium",
               }}
             >
               {expanded ? "Show Less ↑" : "Read More ↓"}
@@ -629,6 +649,7 @@ function StoryCard({ story }: { story: Story }) {
             padding: "10px 14px",
             marginTop: 18,
             border: `1px solid ${story.color}22`,
+            fontFamily: "Xolonium",
           }}
         >
           <TrendingUp size={14} color={story.color} />
@@ -647,6 +668,7 @@ function StoryCard({ story }: { story: Story }) {
           alignItems: "center",
           justifyContent: "space-between",
           gap: 12,
+          fontFamily: "Xolonium",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -663,13 +685,20 @@ function StoryCard({ story }: { story: Story }) {
               fontSize: 14,
               fontWeight: 800,
               color: "#fff",
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "Venus Rising",
             }}
           >
             {story.avatar}
           </div>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: "#1a2427" }}>
+            <div
+              style={{
+                fontSize: 14,
+                fontWeight: 700,
+                color: "#1a2427",
+                fontFamily: "Xolonium",
+              }}
+            >
               {story.name}
             </div>
             <div
@@ -678,6 +707,7 @@ function StoryCard({ story }: { story: Story }) {
                 color: "#9aa6aa",
                 marginTop: 1,
                 fontWeight: 500,
+                fontFamily: "Xolonium",
               }}
             >
               {story.year}
@@ -690,6 +720,7 @@ function StoryCard({ story }: { story: Story }) {
             style={{
               display: "inline-flex",
               alignItems: "center",
+              fontFamily: "Xolonium",
               gap: 5,
               fontSize: 10,
               fontWeight: 800,
@@ -721,6 +752,7 @@ function SkeletonCard() {
         border: "1px solid #e8ecea",
         overflow: "hidden",
         animation: "ss-pulse 1.8s ease-in-out infinite",
+        fontFamily: "Xolonium",
       }}
     >
       <div style={{ height: 4, background: "#e8ecea" }} />
@@ -730,6 +762,7 @@ function SkeletonCard() {
           display: "flex",
           flexDirection: "column",
           gap: 12,
+          fontFamily: "Xolonium",
         }}
       >
         <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -980,7 +1013,7 @@ export default function SuccessStoriesPage() {
                   fontSize: 13,
                   color: "#1a2427",
                   background: "#fff",
-                  fontFamily: "'DM Sans',sans-serif",
+                  fontFamily: "Xolonium",
                   transition: "border-color 0.2s",
                 }}
                 onFocus={(e) => (e.target.style.borderColor = "#6c7e7f")}
@@ -1032,7 +1065,7 @@ export default function SuccessStoriesPage() {
                       border: `1.5px solid ${isActive ? "#6c7e7f" : "#e8ecea"}`,
                       background: isActive ? "#6c7e7f" : "transparent",
                       color: isActive ? "#fff" : "#6b7280",
-                      fontFamily: "'DM Sans',sans-serif",
+                      fontFamily: "Xolonium",
                     }}
                   >
                     {f}
@@ -1092,7 +1125,7 @@ export default function SuccessStoriesPage() {
                 <Users size={52} color="#e5e7eb" style={{ marginBottom: 16 }} />
                 <h3
                   style={{
-                    fontFamily: "'Playfair Display',serif",
+                    fontFamily: "Xolonium",
                     fontSize: 24,
                     color: "#1a2427",
                     marginBottom: 10,
@@ -1100,7 +1133,13 @@ export default function SuccessStoriesPage() {
                 >
                   No stories found
                 </h3>
-                <p style={{ fontSize: 14, color: "#9aa6aa" }}>
+                <p
+                  style={{
+                    fontSize: 14,
+                    color: "#9aa6aa",
+                    fontFamily: "Xolonium",
+                  }}
+                >
                   Try adjusting your search or filter.
                 </p>
                 <button
@@ -1118,6 +1157,7 @@ export default function SuccessStoriesPage() {
                     fontSize: 13,
                     fontWeight: 700,
                     cursor: "pointer",
+                    fontFamily: "Xolonium",
                   }}
                 >
                   Reset Filters
@@ -1184,8 +1224,8 @@ export default function SuccessStoriesPage() {
         >
           <h2
             style={{
-              fontFamily: "'Playfair Display',serif",
-              fontSize: "clamp(30px,4vw,52px)",
+              fontFamily: "Venus Rising",
+              fontSize: "clamp(20px,4vw,32px)",
               color: "#fff",
               marginBottom: 16,
               lineHeight: 1.1,
@@ -1194,7 +1234,11 @@ export default function SuccessStoriesPage() {
             Ready to Write Your
             <br />
             <span
-              style={{ fontStyle: "italic", color: "rgba(255,255,255,0.85)" }}
+              style={{
+                fontStyle: "italic",
+                color: "rgba(255,255,255,0.85)",
+                fontFamily: "Xolonium",
+              }}
             >
               Own Story?
             </span>
@@ -1205,6 +1249,7 @@ export default function SuccessStoriesPage() {
               color: "rgba(255,255,255,0.75)",
               lineHeight: 1.8,
               marginBottom: 40,
+              fontFamily: "Xolonium",
             }}
           >
             Every great story began with a single decision. Start yours through
@@ -1216,6 +1261,7 @@ export default function SuccessStoriesPage() {
               gap: 14,
               justifyContent: "center",
               flexWrap: "wrap",
+              fontFamily: "Xolonium",
             }}
           >
             <Link
