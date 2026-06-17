@@ -564,6 +564,7 @@ export default function MediaGalleryPage() {
                 alignItems: "center",
                 marginBottom: 48,
                 gap: 16,
+                fontFamily: "Xolonium",
               }}
             >
               <div
