@@ -156,6 +156,7 @@ export default function EventDetailsPage() {
         display:grid;
         grid-template-columns:2fr 1fr;
         gap:40px;
+         font-family: "Xolonium"
       }
 
       .card{
@@ -269,18 +270,21 @@ export default function EventDetailsPage() {
                     style={{
                       color: "#1a2427",
                       marginBottom: 20,
+                      fontFamily: "Venus Rising",
                     }}
                   >
                     {event.title}
                   </h2>
 
                   <div
+                    className="font-xolonium"
                     dangerouslySetInnerHTML={{
                       __html: event.description || "",
                     }}
                     style={{
                       color: "#555",
                       lineHeight: 1.9,
+                      fontFamily: "Xolonium",
                     }}
                   />
                 </div>

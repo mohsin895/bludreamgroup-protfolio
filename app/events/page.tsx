@@ -241,7 +241,7 @@ function EventCard({ event, index }: { event: EventItem; index: number }) {
                   fontWeight: 800,
                   color: "#fff",
                   lineHeight: 1,
-                  fontFamily: "'Playfair Display', serif",
+                  fontFamily: "Xolonium",
                 }}
               >
                 {day}
@@ -302,6 +302,7 @@ function EventCard({ event, index }: { event: EventItem; index: number }) {
               letterSpacing: "0.1em",
               textTransform: "uppercase",
               color: isActive ? "#6c7e7f" : "#9ca3af",
+              fontFamily: "Xolonium",
             }}
           >
             {isActive ? "Upcoming" : "Ended"}
@@ -341,8 +342,8 @@ function EventCard({ event, index }: { event: EventItem; index: number }) {
         {/* Title */}
         <h3
           style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: "clamp(17px, 2vw, 21px)",
+            fontFamily: "Venus Rising",
+            fontSize: "clamp(12px, 2vw, 18px)",
             fontWeight: 700,
             color: "#1a2427",
             lineHeight: 1.25,
@@ -361,6 +362,7 @@ function EventCard({ event, index }: { event: EventItem; index: number }) {
             flexWrap: "wrap",
             gap: "8px 20px",
             marginBottom: 14,
+            fontFamily: "Xolonium",
           }}
         >
           {event.event_date && (
@@ -387,6 +389,7 @@ function EventCard({ event, index }: { event: EventItem; index: number }) {
                 fontSize: 12,
                 color: "#6b7280",
                 fontWeight: 500,
+                fontFamily: "Xolonium",
               }}
             >
               <Clock size={13} color="#95a49a" />
@@ -402,6 +405,7 @@ function EventCard({ event, index }: { event: EventItem; index: number }) {
                 fontSize: 12,
                 color: "#6b7280",
                 fontWeight: 500,
+                fontFamily: "Xolonium",
               }}
             >
               <MapPin size={13} color="#9aa6aa" />
@@ -427,6 +431,7 @@ function EventCard({ event, index }: { event: EventItem; index: number }) {
                 WebkitLineClamp: 3,
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
+                fontFamily: "Xolonium",
               } as React.CSSProperties
             }
           >
@@ -441,6 +446,7 @@ function EventCard({ event, index }: { event: EventItem; index: number }) {
             alignItems: "center",
             justifyContent: "space-between",
             marginTop: "auto",
+            fontFamily: "Xolonium",
           }}
         >
           <Link
@@ -733,31 +739,6 @@ export default function EventsPage() {
             backgroundSize: "32px 32px",
           }}
         />
-        {/* glows */}
-        <div
-          style={{
-            position: "absolute",
-            top: "-30%",
-            right: "-5%",
-            width: 500,
-            height: 500,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle,rgba(255,255,255,0.08),transparent 70%)",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            bottom: "-40%",
-            left: "5%",
-            width: 400,
-            height: 400,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle,rgba(255,255,255,0.05),transparent 70%)",
-          }}
-        />
 
         {/* Wave */}
         <div style={{ position: "absolute", bottom: -2, left: 0, right: 0 }}>
@@ -785,6 +766,7 @@ export default function EventsPage() {
           top: 0,
           zIndex: 100,
           boxShadow: "0 2px 16px rgba(108,126,127,0.06)",
+          fontFamily: "Xolonium",
         }}
       >
         <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
@@ -824,7 +806,7 @@ export default function EventsPage() {
                   fontSize: 13,
                   color: "#1a2427",
                   background: "#f8faf9",
-                  fontFamily: "'DM Sans', sans-serif",
+                  fontFamily: "Xolonium",
                   transition: "border-color 0.2s",
                 }}
                 onFocus={(e) => (e.target.style.borderColor = "#6c7e7f")}
@@ -878,7 +860,7 @@ export default function EventsPage() {
                       color: isActive ? "#fff" : "#6b7280",
                       cursor: "pointer",
                       whiteSpace: "nowrap",
-                      fontFamily: "'DM Sans', sans-serif",
+                      fontFamily: "Xolonium",
                     }}
                   >
                     {c.label}
@@ -940,7 +922,7 @@ export default function EventsPage() {
               <div style={{ fontSize: 48, marginBottom: 16 }}>📭</div>
               <h3
                 style={{
-                  fontFamily: "'Playfair Display', serif",
+                  fontFamily: "Xolonium",
                   fontSize: 24,
                   color: "#1a2427",
                   marginBottom: 10,
@@ -1067,7 +1049,7 @@ export default function EventsPage() {
                     alignItems: "center",
                     justifyContent: "center",
                     cursor: "pointer",
-                    fontFamily: "'DM Sans', sans-serif",
+                    fontFamily: "Xolonium",
                     boxShadow: isCurrent
                       ? "0 4px 14px rgba(108,126,127,0.3)"
                       : "none",
