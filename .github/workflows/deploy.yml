@@ -31,7 +31,7 @@ jobs:
         run: npm run build
 
       - name: Create deployment archive
-        run: tar -czf deploy.tar.gz .next public package.json package-lock.json next.config.ts server.js .env
+        run: tar -czf deploy.tar.gz .next public package.json package-lock.json next.config.ts .env
 
       - name: Setup SSH key
         run: |
