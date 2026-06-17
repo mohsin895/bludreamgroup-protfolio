@@ -22,30 +22,36 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Create .env file
+        run: |
+          echo "NEXT_PUBLIC_IMAGE_BASE_URL=${{ secrets.NEXT_PUBLIC_IMAGE_BASE_URL }}" >> .env
+          echo "NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}" >> .env
+
       - name: Build Next.js app
         run: npm run build
 
-      - name: Deploy files to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.SSH_PORT }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: ".next,public,package.json,package-lock.json,next.config.ts,server.js"
-          target: "/home/u653418944/domains/shopnillchowdhury.com/nodejs"
-          strip_components: 0
+      - name: Create deployment archive
+        run: tar -czf deploy.tar.gz .next public package.json package-lock.json next.config.ts server.js .env
 
-      - name: Install production deps & restart
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.SSH_PORT }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Upload archive via SCP
+        run: |
+          scp -P ${{ secrets.SSH_PORT }} -i ~/.ssh/id_rsa deploy.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/u653418944/domains/shopnillchowdhury.com/nodejs/
+
+      - name: Extract and restart on server
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'ENDSSH'
             export PATH=/opt/alt/alt-nodejs20/root/usr/bin:$PATH
             cd /home/u653418944/domains/shopnillchowdhury.com/nodejs
+            tar -xzf deploy.tar.gz
+            rm deploy.tar.gz
             npm ci --omit=dev
             touch tmp/restart.txt
-            echo "✅ Deployment complete!"
+            echo "Deployment complete!"
+          ENDSSH
