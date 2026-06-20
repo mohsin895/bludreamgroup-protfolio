@@ -1,16 +1,11 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import {
-  ArrowLeft,
-  Calendar,
-  CheckCircle,
-  ChevronRight,
-  Shield,
-} from "lucide-react";
+import { CheckCircle, Shield } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import Footer from "./Footer";
+import PageHero from "./HeroPage";
 import Navbar from "./Navbar";
 
 /* ─── ENV ─── */
@@ -143,20 +138,21 @@ export default function PolicyLayout({
           color: #374151;
           line-height: 1.9;
           margin-bottom: 14px;
+          font-family: "Xolonium"
         }
         .policy-content h1,
         .policy-content h2 {
-          
-          font-size: clamp(20px, 2.2vw, 26px);
+          font-family: "Venus Rising",
+          font-size: clamp(12px, 2.2vw, 20px);
           color: #1a2427;
-          font-weight: 700;
+          font-weight: 500;
           margin: 36px 0 14px;
           line-height: 1.25;
           padding-bottom: 10px;
           border-bottom: 2px solid #6c7e7f22;
         }
         .policy-content h3 {
-          
+          font-family: "Xolonium";
           font-size: clamp(17px, 1.8vw, 21px);
           color: #1a2427;
           font-weight: 700;
@@ -164,6 +160,7 @@ export default function PolicyLayout({
           line-height: 1.3;
         }
         .policy-content h4 {
+        font-family: "Xolonium";
           font-size: 15px; font-weight: 700;
           color: #6c7e7f; margin: 22px 0 8px;
           text-transform: uppercase; letter-spacing: 0.06em;
@@ -176,6 +173,7 @@ export default function PolicyLayout({
           display: flex;
           flex-direction: column;
           gap: 10px;
+          font-family: "Xolonium"
         }
         .policy-content li {
           font-size: 14px;
@@ -188,6 +186,7 @@ export default function PolicyLayout({
           background: #f8faf9;
           border-radius: 10px;
           border-left: 3px solid #6c7e7f;
+          font-family: "Xolonium"
         }
         .policy-content li::before {
           content: "✓";
@@ -196,11 +195,13 @@ export default function PolicyLayout({
           font-size: 13px;
           flex-shrink: 0;
           margin-top: 1px;
+          font-family: "Xolonium"
         }
         .policy-content a {
           color: #6c7e7f;
           font-weight: 600;
           text-decoration: underline;
+          font-family: "Xolonium"
         }
         .policy-content strong {
           color: #1a2427;
@@ -214,10 +215,11 @@ export default function PolicyLayout({
           margin: 20px 0;
           font-style: italic;
           color: #4b5563;
+          font-family: "Xolonium"
         }
 
         /* ── TOC ── */
-        .toc-link { transition: all 0.2s; }
+        .toc-link { transition: all 0.2s;font-family: "Xolonium" }
         .toc-link:hover { color: #6c7e7f !important; padding-left: 6px !important; }
 
         /* ── Scroll progress ── */
@@ -247,211 +249,7 @@ export default function PolicyLayout({
       {/* ════════════════════════
           HERO
       ════════════════════════ */}
-      <section
-        style={{
-          background:
-            "linear-gradient(135deg, #6c7e7f 0%, #7a9190 42%, #95a49a 100%)",
-          position: "relative",
-          overflow: "hidden",
-          paddingTop: 80,
-        }}
-      >
-        {/* Dot grid */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            opacity: 0.07,
-            backgroundImage:
-              "radial-gradient(circle, #fff 1px, transparent 1px)",
-            backgroundSize: "30px 30px",
-          }}
-        />
-        {/* Glows */}
-        <div
-          style={{
-            position: "absolute",
-            top: "-25%",
-            right: "-5%",
-            width: 520,
-            height: 520,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%)",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            bottom: "-35%",
-            left: "3%",
-            width: 380,
-            height: 380,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(255,255,255,0.06), transparent 70%)",
-          }}
-        />
-
-        <div
-          className="policy-hero-inner"
-          style={{
-            maxWidth: 900,
-            margin: "0 auto",
-            padding: "80px 24px 68px",
-            position: "relative",
-            zIndex: 1,
-          }}
-        >
-          {/* Breadcrumb */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              marginBottom: 28,
-            }}
-          >
-            <Link
-              href="/"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 5,
-                color: "rgba(255,255,255,0.65)",
-                textDecoration: "none",
-                fontSize: 13,
-                fontWeight: 500,
-                transition: "color 0.2s",
-              }}
-            >
-              <ArrowLeft size={13} /> Home
-            </Link>
-            <ChevronRight size={13} color="rgba(255,255,255,0.4)" />
-            <span
-              style={{
-                fontSize: 13,
-                color: "rgba(255,255,255,0.85)",
-                fontWeight: 600,
-              }}
-            >
-              {crumb}
-            </span>
-          </motion.div>
-
-          <motion.div initial="hidden" animate="show" variants={stagger}>
-            {/* Badge */}
-            <motion.div variants={fadeUp} style={{ marginBottom: 20 }}>
-              <span
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  background: "rgba(255,255,255,0.15)",
-                  border: "1px solid rgba(255,255,255,0.25)",
-                  color: "#fff",
-                  borderRadius: 40,
-                  padding: "7px 20px",
-                  fontSize: 11,
-                  fontWeight: 800,
-                  letterSpacing: "0.13em",
-                  textTransform: "uppercase",
-                }}
-              >
-                {badgeIcon ?? <Shield size={13} />}
-                &nbsp;Legal Document
-              </span>
-            </motion.div>
-
-            {/* Title */}
-            <motion.h1
-              variants={fadeUp}
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: "clamp(40px, 6vw, 80px)",
-                color: "#ffffff",
-                lineHeight: 1.05,
-                letterSpacing: "-0.022em",
-                marginBottom: 18,
-              }}
-            >
-              {title}
-            </motion.h1>
-
-            <motion.p
-              variants={fadeUp}
-              style={{
-                fontSize: "clamp(14px, 1.6vw, 18px)",
-                color: "rgba(255,255,255,0.75)",
-                lineHeight: 1.78,
-                maxWidth: 580,
-                marginBottom: 36,
-              }}
-            >
-              {subtitle}
-            </motion.p>
-
-            {/* Meta chips */}
-            <motion.div
-              variants={fadeUp}
-              style={{ display: "flex", gap: 12, flexWrap: "wrap" }}
-            >
-              {updatedAt && (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 7,
-                    background: "rgba(255,255,255,0.12)",
-                    border: "1px solid rgba(255,255,255,0.18)",
-                    borderRadius: 20,
-                    padding: "6px 16px",
-                    fontSize: 12,
-                    color: "rgba(255,255,255,0.85)",
-                    fontWeight: 600,
-                  }}
-                >
-                  <Calendar size={12} /> Last updated: {updatedAt}
-                </div>
-              )}
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 7,
-                  background: "rgba(255,255,255,0.12)",
-                  border: "1px solid rgba(255,255,255,0.18)",
-                  borderRadius: 20,
-                  padding: "6px 16px",
-                  fontSize: 12,
-                  color: "rgba(255,255,255,0.85)",
-                  fontWeight: 600,
-                }}
-              >
-                <CheckCircle size={12} />{" "}
-                {setting?.site_name ?? "Shopnill Chowdhury"}
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
-
-        {/* Wave */}
-        <div style={{ position: "absolute", bottom: -2, left: 0, right: 0 }}>
-          <svg
-            viewBox="0 0 1440 72"
-            preserveAspectRatio="none"
-            style={{ width: "100%", height: 72, display: "block" }}
-          >
-            <path
-              d="M0,36 C480,72 960,0 1440,36 L1440,72 L0,72 Z"
-              fill="#f4f7f6"
-            />
-          </svg>
-        </div>
-      </section>
+      <PageHero title={title} currentPage="" />
 
       {/* ════════════════════════
           BODY
@@ -465,6 +263,7 @@ export default function PolicyLayout({
               gridTemplateColumns: "1fr 300px",
               gap: 48,
               alignItems: "flex-start",
+              fontFamily: "Xolonium",
             }}
           >
             {/* ── Main content ── */}
@@ -551,7 +350,7 @@ export default function PolicyLayout({
                   />
                   <h3
                     style={{
-                      fontFamily: "'Playfair Display', serif",
+                      fontFamily: "Xolonium",
                       fontSize: 22,
                       color: "#1a2427",
                       marginBottom: 10,

@@ -97,12 +97,12 @@ export default function Navbar() {
           >
             {/* Logo */}
             <Link href="/">
-              <div style={{ width: 120, height: 40, position: "relative" }}>
+              <div className="relative w-[200px] h-[20px] sm:w-[250px] sm:h-[38px] md:w-[360px] md:h-[44px]">
                 <Image
                   src="/logo-removebg-preview.png"
                   alt="Logo"
                   fill
-                  style={{ objectFit: "contain" }}
+                  className="object-contain"
                 />
               </div>
             </Link>
