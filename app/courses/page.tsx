@@ -589,7 +589,7 @@ export default function CoursesPage(): ReactNode {
           padding: "clamp(40px,6vw,80px) 0 clamp(60px,8vw,120px)",
         }}
       >
-        <div className="container">
+        <div className="courses-container">
           {/* Filter tabs */}
           {!loading && courses.length > 0 && (
             <FadeUp>
@@ -688,11 +688,18 @@ export default function CoursesPage(): ReactNode {
           ) : !error ? (
             <div style={{ textAlign: "center", padding: "60px 20px" }}>
               <div style={{ fontSize: 48, marginBottom: 16 }}>📚</div>
+              <h2
+                className="font-xolonium text-2xl md:text-4xl"
+                style={{ color: "#4a5dd4" }}
+              >
+                Something Great Is On The Way
+              </h2>
               <p
                 className="font-xolonium"
-                style={{ color: "#8492a6", fontSize: 15 }}
+                style={{ color: "#800", fontSize: 15 }}
               >
-                No courses found for this level.
+                We're developing new courses packed with practical knowledge and
+                real-world insights. Stay connected for the launch.
               </p>
               <button
                 onClick={() => setActiveLevel("All")}
@@ -772,7 +779,7 @@ export default function CoursesPage(): ReactNode {
             padding: "clamp(60px,8vw,100px) 0",
           }}
         >
-          <div className="container">
+          <div className="courses-container">
             <FadeUp>
               <div
                 style={{ maxWidth: 580, margin: "0 auto", textAlign: "center" }}
@@ -841,30 +848,6 @@ export default function CoursesPage(): ReactNode {
                     whileTap={{ scale: 0.97 }}
                   >
                     <Link
-                      href="/teach"
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 8,
-                        padding: "13px 32px",
-                        background: "linear-gradient(90deg,#4a5dd4,#3a8bd4)",
-                        color: "#fff",
-                        borderRadius: "100px",
-                        fontWeight: 700,
-                        fontSize: 13,
-                        letterSpacing: "0.05em",
-                        textDecoration: "none",
-                        boxShadow: "0 6px 20px rgba(74,93,212,0.28)",
-                      }}
-                    >
-                      Apply to Teach →
-                    </Link>
-                  </motion.div>
-                  <motion.div
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.97 }}
-                  >
-                    <Link
                       href="/success-stories"
                       style={{
                         display: "inline-flex",
@@ -897,7 +880,7 @@ export default function CoursesPage(): ReactNode {
 
         * { box-sizing: border-box; }
 
-        .container {
+        .courses-container {
           max-width: 1200px;
           margin: 0 auto;
           padding: 0 clamp(16px, 4vw, 40px);

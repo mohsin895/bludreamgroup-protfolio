@@ -97,7 +97,7 @@ export default function Navbar() {
           >
             {/* Logo */}
             <Link href="/">
-              <div className="relative w-[200px] h-[20px] sm:w-[250px] sm:h-[38px] md:w-[360px] md:h-[44px]">
+              <div className="relative   w-[200px] h-[20px] sm:w-[250px] sm:h-[38px] md:w-[360px] md:h-[44px]">
                 <Image
                   src="/logo-removebg-preview.png"
                   alt="Logo"
@@ -110,7 +110,7 @@ export default function Navbar() {
             {/* Desktop Nav */}
             <div
               ref={dropdownRef}
-              style={{ display: "flex", alignItems: "center", gap: "2px" }}
+              style={{ display: "flex", alignItems: "center", gap: "1px" }}
               className="desktop-nav"
             >
               {primaryNav.map((item) => (

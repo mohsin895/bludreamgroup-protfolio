@@ -45,6 +45,7 @@ const footerLinks = {
     { label: "Gallery", href: "/media" },
     { label: "Contact", href: "/contact" },
     { label: "Events", href: "/events" },
+    { label: "Corporate Social Responsibility", href: "/csr" },
   ],
 };
 
@@ -231,43 +232,29 @@ export default function Footer() {
                 marginBottom: 24,
               }}
             >
-              <div
-                style={{
-                  width: 78,
-                  height: 48,
-
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                }}
-              >
-                <Image
-                  src="/logo.jpeg"
-                  alt="Logo"
-                  width={68}
-                  height={68}
-                  style={
-                    {
-                      // objectFit: "cover",
-                    }
-                  }
-                />
-              </div>
-
               <div>
-                <h3
+                <div
                   style={{
-                    fontSize: 12,
-                    color: "#fff",
-                    margin: 0,
-                    fontWeight: 500,
-                    lineHeight: 1.6,
-                    fontFamily: "Venus Rising",
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
                   }}
                 >
-                  {setting.site_name ?? "KSM Shopnil Chowdhury Shohag"}
-                </h3>
+                  <Image
+                    src="/logo.jpeg"
+                    alt="Logo"
+                    width={280}
+                    height={208}
+                    style={
+                      {
+                        // objectFit: "cover",
+                      }
+                    }
+                  />
+                </div>
 
                 <p
                   className="font-xolonium"

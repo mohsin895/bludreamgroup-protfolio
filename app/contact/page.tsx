@@ -87,7 +87,7 @@ function FaqItem({ q, a, i }: { q: string; a: string; i: number }) {
             style={{
               fontSize: "14px",
               lineHeight: 1.75,
-              color: "#fff9",
+              color: "#fff",
               paddingBottom: "22px",
               margin: 0,
             }}
@@ -341,7 +341,7 @@ export default function ContactPage() {
                       onBlur={() => setFocused(null)}
                       style={{
                         ...inputStyle("subject"),
-                        color: formState.subject ? "#fff" : "#fff9",
+                        color: formState.subject ? "#fff" : "#fff",
                       }}
                     >
                       <option

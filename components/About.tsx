@@ -185,7 +185,7 @@ export default function AboutSection() {
             </div>
 
             {/* Floating stat card */}
-            <motion.div
+            {/* <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
               style={{
@@ -221,7 +221,7 @@ export default function AboutSection() {
               >
                 Years of Experience
               </div>
-            </motion.div>
+            </motion.div> */}
           </motion.div>
 
           {/* Right: Text */}

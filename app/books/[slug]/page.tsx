@@ -54,13 +54,6 @@ const PAYMENT_OPTIONS = [
     label: "Nagad",
     desc: "Mobile financial service",
   },
-  { key: "card", emoji: "💳", label: "Card", desc: "Visa, Mastercard, Amex" },
-  {
-    key: "bank",
-    emoji: "🏦",
-    label: "Bank Transfer",
-    desc: "Direct bank transfer",
-  },
 ] as const;
 
 type PayMethod = (typeof PAYMENT_OPTIONS)[number]["key"];
@@ -85,6 +78,8 @@ interface OrderForm {
   cvv: string;
   bankRef: string;
   note: string;
+  deliveryType: "dhaka" | "outside";
+  transactionId: string;
 }
 
 const EMPTY_FORM: OrderForm = {
@@ -104,6 +99,8 @@ const EMPTY_FORM: OrderForm = {
   cvv: "",
   bankRef: "",
   note: "",
+  deliveryType: "dhaka",
+  transactionId: "",
 };
 
 /* ─────────────────────────────────────────────────────────
@@ -406,9 +403,9 @@ function RelatedCard({ book }: { book: Product }) {
               src={imgSrc}
               alt={book.title}
               style={{
-                width: "80px",
-                height: "120px",
-                objectFit: "cover",
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
                 borderRadius: "4px",
                 boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
               }}
@@ -696,7 +693,11 @@ export default function BookDetailPage() {
 
         delivery_detail: {
           method: "standard",
-          shipping: 60,
+          shipping: shippingCost,
+
+          full_order_total: totalPrice,
+
+          total: totalPrice,
           is_free: false,
         },
 
@@ -713,11 +714,13 @@ export default function BookDetailPage() {
 
         pricing: {
           subtotal: Number(selectedFormat.price),
-          shipping: 60,
+          shipping: shippingCost,
+
+          full_order_total: totalPrice,
+
+          total: totalPrice,
           tax: 0,
           cod_fee: 0,
-          full_order_total: Number(selectedFormat.price) + 60,
-          total: Number(selectedFormat.price) + 60,
         },
 
         note: form.note,
@@ -749,6 +752,9 @@ export default function BookDetailPage() {
       setOrdering(false);
     }
   };
+  const shippingCost = form.deliveryType === "dhaka" ? 60 : 110;
+
+  const totalPrice = Number(selectedFormat?.price || 0) + shippingCost;
 
   /* ── Loading / not found ── */
   if (loading)
@@ -1196,42 +1202,6 @@ export default function BookDetailPage() {
                     />
                   </div>
 
-                  <div
-                    className="order-grid font-xolonium"
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "1fr 1fr 1fr",
-                      gap: "18px",
-                      marginTop: "18px",
-                    }}
-                  >
-                    <NiceField
-                      icon={MapPin}
-                      label="City / District"
-                      name="city"
-                      value={form.city}
-                      onChange={setField("city")}
-                      placeholder="ঢাকা"
-                    />
-                    <NiceField
-                      icon={Hash}
-                      label="ZIP / Postal"
-                      name="zip"
-                      value={form.zip}
-                      onChange={setField("zip")}
-                      placeholder="1216"
-                    />
-                    <NiceField
-                      icon={Globe}
-                      label="Country"
-                      name="country"
-                      value={form.country}
-                      onChange={setField("country")}
-                      placeholder="Bangladesh"
-                      required={false}
-                    />
-                  </div>
-
                   {/* ── STEP 3: Payment Method ── */}
                   <div style={{ marginTop: "28px" }}>
                     <label
@@ -1273,91 +1243,233 @@ export default function BookDetailPage() {
                     {(form.payMethod === "bkash" ||
                       form.payMethod === "nagad") && (
                       <div
-                        className="font-xolonium"
-                        style={{ marginTop: "14px" }}
-                      >
-                        <NiceField
-                          icon={Smartphone}
-                          label={`${form.payMethod === "bkash" ? "bKash" : "Nagad"} Number`}
-                          name="mobileNumber"
-                          value={form.mobileNumber}
-                          onChange={setField("mobileNumber")}
-                          placeholder="01XXXXXXXXX"
-                          type="tel"
-                        />
-                      </div>
-                    )}
-
-                    {/* Card fields */}
-                    {form.payMethod === "card" && (
-                      <div
-                        className="font-xolonium"
                         style={{
-                          marginTop: "14px",
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "14px",
+                          marginTop: "20px",
+                          padding: "20px",
+                          border: "1px solid #ddd",
+                          borderRadius: "12px",
+                          background: "#fafafa",
                         }}
                       >
-                        <NiceField
-                          icon={CreditCard}
-                          label="Card Number"
-                          name="cardNumber"
-                          value={form.cardNumber}
-                          onChange={setField("cardNumber")}
-                          placeholder="•••• •••• •••• ••••"
-                        />
-                        <NiceField
-                          icon={User}
-                          label="Cardholder Name"
-                          name="cardName"
-                          value={form.cardName}
-                          onChange={setField("cardName")}
-                          placeholder="Name on card"
-                        />
-                        <div
-                          className="order-grid"
+                        <h4
+                          className="font-xolonium"
                           style={{
-                            display: "grid",
-                            gridTemplateColumns: "1fr 1fr",
-                            gap: "14px",
+                            marginBottom: "15px",
+                            fontSize: "16px",
+                            fontWeight: 700,
                           }}
                         >
+                          {form.payMethod === "bkash"
+                            ? "bKash Payment Information"
+                            : "Nagad Payment Information"}
+                        </h4>
+
+                        {/* Image */}
+                        <img
+                          src={
+                            form.payMethod === "bkash"
+                              ? "/bkash.png"
+                              : "/nogod.png"
+                          }
+                          alt="payment"
+                          style={{
+                            width: "120px",
+                            marginBottom: "15px",
+                            borderRadius: "8px",
+                          }}
+                        />
+
+                        <p className="font-xolonium">
+                          <strong>Send Money Number:</strong> 017XXXXXXXX
+                        </p>
+
+                        <div style={{ marginTop: "15px" }}>
                           <NiceField
-                            icon={Calendar}
-                            label="Expiry"
-                            name="expiry"
-                            value={form.expiry}
-                            onChange={setField("expiry")}
-                            placeholder="MM/YY"
+                            icon={Smartphone}
+                            label="Your bKash / Nagad Number"
+                            name="mobileNumber"
+                            value={form.mobileNumber}
+                            onChange={setField("mobileNumber")}
+                            placeholder="01XXXXXXXXX"
                           />
+                        </div>
+
+                        <div style={{ marginTop: "15px" }}>
                           <NiceField
                             icon={Hash}
-                            label="CVV"
-                            name="cvv"
-                            value={form.cvv}
-                            onChange={setField("cvv")}
-                            placeholder="•••"
+                            label="Transaction ID"
+                            name="transactionId"
+                            value={form.transactionId}
+                            onChange={setField("transactionId")}
+                            placeholder="Enter Transaction ID"
                           />
                         </div>
                       </div>
                     )}
-
-                    {/* Bank transfer ref */}
-                    {form.payMethod === "bank" && (
-                      <div style={{ marginTop: "14px" }}>
-                        <NiceField
-                          icon={Hash}
-                          label="Transaction Reference"
-                          name="bankRef"
-                          value={form.bankRef}
-                          onChange={setField("bankRef")}
-                          placeholder="Reference / Transaction ID"
-                        />
-                      </div>
-                    )}
                   </div>
 
+                  {/* ── STEP 4: Delivery Option ── */}
+
+                  <div style={{ marginTop: "24px" }}>
+                    <label
+                      className="form-label font-xolonium"
+                      style={{
+                        display: "flex",
+
+                        alignItems: "center",
+
+                        gap: "8px",
+
+                        marginBottom: "14px",
+
+                        color: "#000",
+
+                        fontSize: "13px",
+
+                        fontWeight: 600,
+                      }}
+                    >
+                      <MapPin size={14} /> Delivery Area
+                    </label>
+
+                    <div
+                      className="order-grid"
+                      style={{
+                        display: "grid",
+
+                        gridTemplateColumns: "1fr 1fr",
+
+                        gap: "12px",
+                      }}
+                    >
+                      {/* Dhaka */}
+                      <div
+                        onClick={() =>
+                          setForm((f) => ({ ...f, deliveryType: "dhaka" }))
+                        }
+                        style={{
+                          padding: "16px",
+
+                          borderRadius: "12px",
+
+                          border:
+                            form.deliveryType === "dhaka"
+                              ? `2px solid ${accent}`
+                              : "1px solid #ddd",
+
+                          background:
+                            form.deliveryType === "dhaka"
+                              ? `${accent}12`
+                              : "#fff",
+
+                          cursor: "pointer",
+
+                          transition: "all 0.2s",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <div>
+                            <p
+                              className="font-xolonium"
+                              style={{ fontWeight: 700, margin: 0 }}
+                            >
+                              Dhaka City
+                            </p>
+
+                            <p
+                              className="font-xolonium"
+                              style={{
+                                fontSize: "12px",
+                                color: "#666",
+                                margin: "4px 0 0",
+                              }}
+                            >
+                              Inside Dhaka
+                            </p>
+                          </div>
+
+                          <p
+                            className="font-xolonium"
+                            style={{
+                              fontWeight: 700,
+                              margin: 0,
+                              color: accent,
+                            }}
+                          >
+                            ৳60
+                          </p>
+                        </div>
+                      </div>{" "}
+                      {/* Outside Dhaka */}
+                      <div
+                        onClick={() =>
+                          setForm((f) => ({ ...f, deliveryType: "outside" }))
+                        }
+                        style={{
+                          padding: "16px",
+
+                          borderRadius: "12px",
+
+                          border:
+                            form.deliveryType === "outside"
+                              ? `2px solid ${accent}`
+                              : "1px solid #ddd",
+
+                          background:
+                            form.deliveryType === "outside"
+                              ? `${accent}12`
+                              : "#fff",
+
+                          cursor: "pointer",
+
+                          transition: "all 0.2s",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <div>
+                            <p
+                              className="font-xolonium"
+                              style={{ fontWeight: 700, margin: 0 }}
+                            >
+                              Outside Dhaka
+                            </p>
+
+                            <p
+                              className="font-xolonium"
+                              style={{
+                                fontSize: "12px",
+                                color: "#666",
+                                margin: "4px 0 0",
+                              }}
+                            >
+                              Anywhere in Bangladesh
+                            </p>
+                          </div>
+
+                          <p
+                            className="font-xolonium"
+                            style={{
+                              fontWeight: 700,
+                              margin: 0,
+                              color: accent,
+                            }}
+                          >
+                            ৳110
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   {/* ── STEP 4: Selected Price + Note ── */}
                   <div
                     className="order-grid"
@@ -1376,7 +1488,7 @@ export default function BookDetailPage() {
                           display: "flex",
                           alignItems: "center",
                           gap: "8px",
-                          marginBottom: "10px",
+                          marginBottom: "20px",
                           color: "#000",
                           fontSize: "13px",
                           fontWeight: 600,
@@ -1389,19 +1501,25 @@ export default function BookDetailPage() {
                         style={{
                           height: "52px",
                           borderRadius: "12px",
-                          background: `${accent === "var(--gold)" ? "#c9a84c" : accent}14`,
-                          border: `1px solid ${accent === "var(--gold)" ? "#c9a84c" : accent}55`,
                           display: "flex",
                           alignItems: "center",
                           padding: "0 18px",
                           color: "#000",
-                          fontWeight: 700,
-                          fontSize: "18px",
+                          fontWeight: 500,
+                          fontSize: "14px",
                         }}
                       >
-                        {selectedFormat
-                          ? formatPrice(selectedFormat.price)
-                          : "Select format"}
+                        {selectedFormat ? (
+                          <>
+                            Product: {formatPrice(selectedFormat.price)}
+                            <br />
+                            Delivery: {formatPrice(shippingCost)}
+                            <br />
+                            Total: {formatPrice(totalPrice)}
+                          </>
+                        ) : (
+                          "Select format"
+                        )}
                       </div>
                     </div>
 
@@ -1467,9 +1585,7 @@ export default function BookDetailPage() {
                       gap: "10px",
                     }}
                   >
-                    {ordering
-                      ? "Processing…"
-                      : `Confirm Order${selectedFormat ? ` · ${formatPrice(selectedFormat.price)}` : ""}`}
+                    {ordering ? "Processing…" : `Confirm Order`}
                   </button>
                 </form>
               </div>
