@@ -187,7 +187,7 @@ function Portrait({ quoteText }: { quoteText: string }) {
         initial={{ opacity: 0, x: 20, y: 10 }}
         whileInView={{ opacity: 1, x: 0, y: 0 }}
         viewport={{ once: true }}
-        transition={{ delay: 0.4, duration: 0.6, ease: "easeOut" }}
+        transition={{ delay: 0.4, duration: 0.6, ease: "easeOut" as const }}
         style={{
           position: "absolute",
           bottom: "48px",
@@ -271,7 +271,11 @@ function TimelineItem({
       ref={ref}
       initial={{ opacity: 0, x: -24 }}
       animate={inView ? { opacity: 1, x: 0 } : {}}
-      transition={{ delay: index * 0.1, duration: 0.5, ease: "easeOut" }}
+      transition={{
+        delay: index * 0.1,
+        duration: 0.5,
+        ease: "easeOut" as const,
+      }}
       style={{
         display: "grid",
         gridTemplateColumns: "90px 24px 1fr",
@@ -423,7 +427,11 @@ export default function AboutPage() {
 
   const fadeUp = {
     hidden: { opacity: 0, y: 24 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" as const },
+    },
   };
   const stagger = {
     hidden: {},
@@ -455,7 +463,7 @@ export default function AboutPage() {
             initial={{ opacity: 0, x: -36 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            transition={{ duration: 0.6, ease: "easeOut" as const }}
           >
             <Portrait quoteText={quoteText} />
           </motion.div>
