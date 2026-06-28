@@ -45,7 +45,7 @@ const footerLinks = {
     { label: "Gallery", href: "/media" },
     { label: "Contact", href: "/contact" },
     { label: "Events", href: "/events" },
-    { label: "Corporate Social Responsibility", href: "/csr" },
+    { label: "CSR", href: "/csr" },
   ],
 };
 

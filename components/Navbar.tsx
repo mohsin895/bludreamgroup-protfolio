@@ -96,8 +96,8 @@ export default function Navbar() {
             }}
           >
             {/* Logo */}
-            <Link href="/">
-              <div className="relative   w-[200px] h-[20px] sm:w-[250px] sm:h-[38px] md:w-[360px] md:h-[44px]">
+            <Link href="/" style={{ marginLeft: "16px" }}>
+              <div className="relative w-[200px] h-[20px] sm:w-[250px] sm:h-[38px] md:w-[360px] md:h-[44px]">
                 <Image
                   src="/logo-removebg-preview.png"
                   alt="Logo"

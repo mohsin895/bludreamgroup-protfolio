@@ -74,38 +74,38 @@ interface Reason {
 const reasons: Reason[] = [
   {
     icon: Flame,
-    title: "Motivation That Moves",
-    desc: "Not just inspiration — actionable fuel to help you take your next step with confidence and clarity.",
+    title: "Entrepreneurial Expertise",
+    desc: "As Managing Director of Blue Dream Group, he shares invaluable insights into building and scaling successful ventures, offering practical advice for navigating the complex world of modern apparel manufacturing.",
     accent: "brass",
   },
   {
     icon: TrendingUp,
-    title: "Leadership Thinking",
-    desc: "Develop the mindset, habits, and frameworks that separate great leaders from the rest.",
+    title: "Mentorship for Beginners",
+    desc: "He actively mentors young professionals, breaking down complex business strategies into actionable steps. His guidance helps aspiring entrepreneurs overcome early challenges and build strong foundations for their startup journeys.",
     accent: "sage",
   },
   {
     icon: Briefcase,
-    title: "Business Intelligence",
-    desc: "Real business strategies drawn from hands-on entrepreneurship and years of market experience.",
+    title: "Philanthropic Vision",
+    desc: "Leading the Asian Life Foundation demonstrates his deep commitment to social welfare. Following him provides a powerful look at how corporate success can actively fund meaningful community development initiatives.",
     accent: "brass",
   },
   {
     icon: Brain,
-    title: "Psychology of Success",
-    desc: "Understand the mental models behind achievement, resilience, and peak performance.",
+    title: "Authorship and Resources",
+    desc: "As a published author, he distills years of hands-on experience into accessible reading material. Followers gain direct access to his thought leadership, book updates, and proven frameworks for success.",
     accent: "sage",
   },
   {
     icon: BookMarked,
-    title: "Knowledge-Rich Books",
-    desc: "Each book is a complete transformation toolkit — packed with frameworks, stories, and insights.",
+    title: "Tech-Driven Leadership",
+    desc: "Utilizing a software engineering background, he provides unique perspectives on integrating technology into traditional industries. He highlights how digital transformation drives efficiency, modernization, and innovation across corporate business landscapes.",
     accent: "brass",
   },
   {
     icon: Handshake,
-    title: "Personal Mentorship",
-    desc: "Direct guidance tailored to your life, career, and business goals through one-on-one sessions.",
+    title: "Daily Motivation and Mindset ",
+    desc: "His journey from technical expert to leading industrialist serves as daily motivation. He consistently posts about maintaining a resilient mindset, balancing dedicated hard work with purpose and ongoing personal growth.",
     accent: "sage",
   },
 ];
@@ -305,20 +305,25 @@ export default function WhyFollowSection() {
           variants={stagger}
           className="why-header"
         >
-          <motion.div variants={fadeUp} className="why-eyebrow font-xolonium">
+          {/* <motion.div variants={fadeUp} className="why-eyebrow font-xolonium">
             <span className="why-rule " />
             <span>Why Follow This Brand</span>
             <span className="why-rule" />
-          </motion.div>
+          </motion.div> */}
 
           <motion.h2 variants={fadeUp} className="why-heading">
-            What You Get When You{" "}
-            <span className="why-heading-accent">Follow Along</span>
+            Why You Should Follow{" "}
+            <span className="why-heading-accent">
+              {" "}
+              <br />
+              K.S.M. Shopnill Chowdhury Shohag
+            </span>
           </motion.h2>
 
           <motion.p variants={fadeUp} className="why-subhead font-xolonium">
-            Every resource, book, and session is designed to give you one thing
-            — a measurable step forward in your life and career.
+            Follow K.S.M. Shopnill Chowdhury Shohag for daily inspiration on
+            business, philanthropy, and personal growth from a proven industry
+            leader.
           </motion.p>
         </motion.div>
 
@@ -339,7 +344,7 @@ export default function WhyFollowSection() {
         .why-section {
           position: relative;
           background: ${palette.bg};
-          padding: clamp(64px, 10vw, 120px) 0;
+          padding: clamp(64px, 10vw, 80px) 0;
           overflow: hidden;
         }
 
@@ -375,12 +380,12 @@ export default function WhyFollowSection() {
           z-index: 1;
           max-width: 1200px;
           margin: 0 auto;
-          padding: 0 24px;
+          padding: 0 20px;
         }
 
         .why-header {
           text-align: center;
-          margin-bottom: clamp(48px, 6vw, 72px);
+          margin-bottom: clamp(48px, 6vw, 52px);
         }
         .why-eyebrow {
           display: flex;

@@ -5,6 +5,7 @@ import PageHero from "@/components/HeroPage";
 import Navbar from "@/components/Navbar";
 import { motion, useInView } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 const IMAGE_BASE = process.env.NEXT_PUBLIC_IMAGE_BASE_URL;
@@ -13,19 +14,33 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 type CsrItem = {
   id: number;
   title: string;
+  slug: string;
   description: string;
-  image: string;
+  image: string; // raw JSON string from API
   visits?: string | number;
   category?: string;
 };
 
-// ── Static fallback data (Google images) ────────────────────────────────────
+function parseImage(raw: string): string {
+  try {
+    const parsed = JSON.parse(raw);
+    return `${IMAGE_BASE}${parsed.medium ?? parsed.original}`;
+  } catch {
+    return raw.startsWith("http") ? raw : `${IMAGE_BASE}${raw}`;
+  }
+}
+
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]*>/g, "").trim();
+}
+
+// ── Static fallback ───────────────────────────────────────────────────────────
 const staticCsrData: CsrItem[] = [
   {
     id: 1,
+    slug: "clean-water",
     title: "Clean Water Initiative",
-    description:
-      "Providing safe drinking water access to rural communities across Bangladesh, ensuring health and well-being for thousands of families.",
+    description: "Providing safe drinking water to rural communities.",
     image:
       "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
     visits: "12,400",
@@ -33,9 +48,9 @@ const staticCsrData: CsrItem[] = [
   },
   {
     id: 2,
+    slug: "education",
     title: "Education for All",
-    description:
-      "Funding scholarships and building classrooms for underprivileged children, creating pathways to a brighter future through quality education.",
+    description: "Funding scholarships for underprivileged children.",
     image:
       "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&q=80",
     visits: "8,200",
@@ -43,9 +58,9 @@ const staticCsrData: CsrItem[] = [
   },
   {
     id: 3,
+    slug: "women",
     title: "Women Empowerment Program",
-    description:
-      "Supporting women entrepreneurs with micro-finance and skill development training to build sustainable livelihoods and independence.",
+    description: "Supporting women entrepreneurs with micro-finance.",
     image:
       "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=80",
     visits: "6,700",
@@ -53,9 +68,9 @@ const staticCsrData: CsrItem[] = [
   },
   {
     id: 4,
+    slug: "trees",
     title: "Tree Plantation Drive",
-    description:
-      "Planting thousands of trees across coastal and urban areas to combat climate change and restore natural ecosystems for future generations.",
+    description: "Planting thousands of trees across coastal areas.",
     image:
       "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&q=80",
     visits: "9,100",
@@ -63,9 +78,9 @@ const staticCsrData: CsrItem[] = [
   },
   {
     id: 5,
-    title: "Health Camp for the Underprivileged",
-    description:
-      "Organizing free medical camps offering checkups, medicines, and specialist consultations to remote communities lacking healthcare access.",
+    slug: "health",
+    title: "Health Camp",
+    description: "Free medical camps for remote communities.",
     image:
       "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=800&q=80",
     visits: "5,300",
@@ -73,9 +88,9 @@ const staticCsrData: CsrItem[] = [
   },
   {
     id: 6,
+    slug: "flood",
     title: "Flood Relief Operations",
-    description:
-      "Delivering emergency food, clothing, and shelter to flood-affected families during Bangladesh's monsoon season when communities need help most.",
+    description: "Emergency aid to flood-affected families.",
     image:
       "https://images.unsplash.com/photo-1594708767771-a7502209ff51?w=800&q=80",
     visits: "15,800",
@@ -83,7 +98,7 @@ const staticCsrData: CsrItem[] = [
   },
 ];
 
-// ── Stat counter component ────────────────────────────────────────────────────
+// ── Stat Counter ──────────────────────────────────────────────────────────────
 function StatCounter({ end, label }: { end: number; label: string }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
@@ -92,29 +107,39 @@ function StatCounter({ end, label }: { end: number; label: string }) {
   useEffect(() => {
     if (!inView) return;
     let start = 0;
-    const duration = 1800;
-    const step = end / (duration / 16);
+    const step = end / (1800 / 16);
     const timer = setInterval(() => {
       start += step;
       if (start >= end) {
         setCount(end);
         clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
+      } else setCount(Math.floor(start));
     }, 16);
     return () => clearInterval(timer);
   }, [inView, end]);
 
   return (
-    <div ref={ref} className="text-center">
+    <div ref={ref} style={{ textAlign: "center" }}>
       <div
-        className="md:text-4xl text-xl font-rising font-bold mb-1 "
-        style={{ color: "#6c7e7f" }}
+        className="font-rising"
+        style={{
+          fontSize: "clamp(28px,3.5vw,40px)",
+          fontWeight: 700,
+          color: "#6c7e7f",
+          marginBottom: "6px",
+        }}
       >
         {count.toLocaleString()}+
       </div>
-      <div className="text-sm font-xolonium text-gray-500 font-medium uppercase tracking-wider">
+      <div
+        className="font-xolonium"
+        style={{
+          fontSize: "11px",
+          color: "#8a9a9a",
+          textTransform: "uppercase",
+          letterSpacing: "0.12em",
+        }}
+      >
         {label}
       </div>
     </div>
@@ -125,243 +150,435 @@ function StatCounter({ end, label }: { end: number; label: string }) {
 function CsrCard({ item, index }: { item: CsrItem; index: number }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
-
   const imgSrc = item.image.startsWith("http")
     ? item.image
-    : `${IMAGE_BASE}${item.image}`;
+    : parseImage(item.image);
+  const desc = stripHtml(item.description);
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 36 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, delay: (index % 3) * 0.1 }}
-      whileHover={{ y: -6 }}
-      className="group font-xolonium bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col"
     >
-      {/* Image */}
-      <div className="relative w-full h-56 overflow-hidden">
-        <Image
-          src={imgSrc}
-          alt={item.title}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        {item.category && (
-          <span
-            className="absolute top-3 left-3 text-white text-xs font-semibold px-3 py-1 rounded-full"
-            style={{ background: "#6c7e7f" }}
-          >
-            {item.category}
-          </span>
-        )}
-      </div>
-
-      {/* Content */}
-      <div
-        style={{
-          padding: "10px",
-          marginTop: "5px",
-        }}
-        className="p-6 flex flex-col flex-1"
-      >
-        <h3 className="text-lg font-semibold text-gray-800 mb-3 group-hover:text-[#6c7e7f] transition-colors duration-200">
-          {item.title}
-        </h3>
-        <p
-          style={{ marginTop: "5px" }}
-          className="text-gray-500 text-sm leading-relaxed flex-1"
+      <Link href={`/csr/${item.slug}`} style={{ textDecoration: "none" }}>
+        <motion.div
+          whileHover={{
+            y: -6,
+            boxShadow: "0 16px 48px rgba(108,126,127,0.15)",
+          }}
+          transition={{ duration: 0.28 }}
+          style={{
+            background: "#fff",
+            borderRadius: "12px",
+            overflow: "hidden",
+            boxShadow: "0 3px 16px rgba(0,0,0,0.07)",
+            border: "1px solid rgba(108,126,127,0.1)",
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            cursor: "pointer",
+          }}
         >
-          {item.description}
-        </p>
-
-        {item.visits && (
-          <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-2">
-            <svg
-              className="w-4 h-4 text-[#6c7e7f]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
-            <span
+          {/* Image */}
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              height: "220px",
+              overflow: "hidden",
+            }}
+          >
+            <Image
+              src={imgSrc}
+              alt={item.title}
+              fill
+              style={{ objectFit: "cover", transition: "transform 0.5s ease" }}
+              onMouseEnter={(e) =>
+                ((e.currentTarget as HTMLImageElement).style.transform =
+                  "scale(1.06)")
+              }
+              onMouseLeave={(e) =>
+                ((e.currentTarget as HTMLImageElement).style.transform =
+                  "scale(1)")
+              }
+            />
+            <div
               style={{
-                marginBottom: "10px",
+                position: "absolute",
+                inset: 0,
+                background:
+                  "linear-gradient(to top, rgba(0,0,0,0.35) 0%, transparent 55%)",
               }}
-              className="text-sm text-gray-400"
-            >
-              <span className="font-semibold text-gray-600">{item.visits}</span>{" "}
-              people benefited
-            </span>
+            />
+            {item.category && (
+              <span
+                className="font-xolonium"
+                style={{
+                  position: "absolute",
+                  top: "12px",
+                  left: "12px",
+                  background: "#6c7e7f",
+                  color: "#fff",
+                  fontSize: "10px",
+                  padding: "4px 12px",
+                  borderRadius: "20px",
+                  letterSpacing: "0.08em",
+                }}
+              >
+                {item.category}
+              </span>
+            )}
           </div>
-        )}
-      </div>
+
+          {/* Content */}
+          <div
+            style={{
+              padding: "22px 24px",
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+            }}
+          >
+            <h3
+              className="font-rising"
+              style={{
+                fontSize: "17px",
+                color: "#1a2a2a",
+                marginBottom: "10px",
+                lineHeight: 1.35,
+              }}
+            >
+              {item.title}
+            </h3>
+            <p
+              className="font-xolonium"
+              style={{
+                fontSize: "13px",
+                color: "#6a7e7e",
+                lineHeight: 1.75,
+                flex: 1,
+              }}
+            >
+              {desc.length > 110 ? desc.slice(0, 110) + "…" : desc}
+            </p>
+
+            {item.visits && (
+              <div
+                style={{
+                  marginTop: "16px",
+                  paddingTop: "14px",
+                  borderTop: "1px solid rgba(108,126,127,0.1)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                }}
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  fill="none"
+                  stroke="#6c7e7f"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+                <span
+                  className="font-xolonium"
+                  style={{ fontSize: "12px", color: "#8a9a9a" }}
+                >
+                  <span style={{ fontWeight: 700, color: "#4a6262" }}>
+                    {item.visits}
+                  </span>{" "}
+                  people benefited
+                </span>
+              </div>
+            )}
+
+            {/* Read more arrow */}
+            <div
+              style={{
+                marginTop: "14px",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
+            >
+              <span
+                className="font-xolonium"
+                style={{
+                  fontSize: "11px",
+                  color: "#6c7e7f",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                }}
+              >
+                Learn More
+              </span>
+              <svg
+                width="12"
+                height="12"
+                fill="none"
+                stroke="#6c7e7f"
+                viewBox="0 0 24 24"
+                strokeWidth={2.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </div>
+          </div>
+        </motion.div>
+      </Link>
     </motion.div>
   );
 }
 
-// ── Main Page ─────────────────────────────────────────────────────────────────
+// ── Skeleton Card ─────────────────────────────────────────────────────────────
+function SkeletonCard() {
+  return (
+    <div
+      style={{
+        background: "#fff",
+        borderRadius: "12px",
+        overflow: "hidden",
+        border: "1px solid rgba(108,126,127,0.08)",
+      }}
+    >
+      <div
+        style={{
+          height: "220px",
+          background: "rgba(0,0,0,0.07)",
+          animation: "shimmer 1.5s ease-in-out infinite",
+        }}
+      />
+      <div
+        style={{
+          padding: "22px 24px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+        }}
+      >
+        <div
+          style={{
+            height: "18px",
+            width: "60%",
+            background: "rgba(0,0,0,0.06)",
+            borderRadius: "4px",
+            animation: "shimmer 1.5s ease-in-out 0.1s infinite",
+          }}
+        />
+        <div
+          style={{
+            height: "13px",
+            width: "90%",
+            background: "rgba(0,0,0,0.04)",
+            borderRadius: "4px",
+            animation: "shimmer 1.5s ease-in-out 0.15s infinite",
+          }}
+        />
+        <div
+          style={{
+            height: "13px",
+            width: "75%",
+            background: "rgba(0,0,0,0.04)",
+            borderRadius: "4px",
+            animation: "shimmer 1.5s ease-in-out 0.2s infinite",
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ── Page ─────────────────────────────────────────────────────────────────────
 export default function CsrPage() {
-  const [csrData, setCsrData] = useState<CsrItem[]>(staticCsrData);
+  const [csrData, setCsrData] = useState<CsrItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const heroRef = useRef(null);
-  const heroInView = useInView(heroRef, { once: true });
-
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       try {
-        const res = await fetch(`${API_BASE}/csr`);
-        if (!res.ok) throw new Error("API not available");
-        const data = await res.json();
-        if (data?.data?.length) setCsrData(data.data);
+        const res = await fetch(`${API_BASE}/socila-responsibility`);
+        if (!res.ok) throw new Error();
+        const json = await res.json();
+        if (json?.data?.length) {
+          setCsrData(
+            json.data.map((d: any) => ({
+              id: d.id,
+              title: d.title,
+              slug: d.slug,
+              description: d.description ?? "",
+              image: d.image ?? "",
+            })),
+          );
+        } else {
+          setCsrData(staticCsrData);
+        }
       } catch {
-        // keep static data
+        setCsrData(staticCsrData);
       } finally {
         setLoading(false);
       }
-    };
-    fetchData();
+    })();
   }, []);
-
-  const containerVariants = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.08 } },
-  };
 
   return (
     <>
+      <style>{`@keyframes shimmer { 0%,100%{opacity:0.45} 50%{opacity:1} }`}</style>
       <Navbar />
+      <main style={{ minHeight: "100vh", background: "#F4F7F6" }}>
+        <PageHero title="Corporate Social Responsibility" currentPage="CSR" />
 
-      <main className="min-h-screen bg-[#f9f9f7]">
-        {/* ── Hero ── */}
-        <PageHero title="Corporate Social Responsibility" currentPage="csr" />
-
-        {/* ── Stats ── */}
+        {/* Stats */}
         <section
           style={{
-            padding: "10px 20px",
+            background: "#fff",
+            borderBottom: "1px solid rgba(108,126,127,0.1)",
+            padding: "56px 0",
           }}
-          className="py-16 bg-white border-y border-gray-100"
         >
-          <div className="container mx-auto px-4">
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-8"
+          <div className="container">
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(4,1fr)",
+                gap: "32px",
+              }}
             >
               <StatCounter end={57600} label="Lives Impacted" />
               <StatCounter end={120} label="Projects Done" />
               <StatCounter end={48} label="Districts Covered" />
               <StatCounter end={14} label="Years of Service" />
-            </motion.div>
+            </div>
           </div>
         </section>
 
-        {/* ── Section title ── */}
-        <section
-          style={{
-            marginTop: "40px",
-          }}
-          className="py-16 px-4"
-        >
-          <div className="container mx-auto max-w-6xl">
+        {/* Grid */}
+        <section style={{ padding: "80px 0" }}>
+          <div className="container">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="text-center mb-12"
+              style={{ textAlign: "center", marginBottom: "56px" }}
             >
-              <h2 className="text-3xl  md:text-4xl font-bold text-gray-800 mb-4 font-xolonium">
+              <p
+                className="font-xolonium"
+                style={{
+                  fontSize: "11px",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "#6c7e7f",
+                  marginBottom: "14px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "10px",
+                }}
+              >
+                <span
+                  style={{
+                    width: "26px",
+                    height: "2px",
+                    background: "#6c7e7f",
+                    borderRadius: "1px",
+                    display: "inline-block",
+                  }}
+                />
+                Our Work
+                <span
+                  style={{
+                    width: "26px",
+                    height: "2px",
+                    background: "#6c7e7f",
+                    borderRadius: "1px",
+                    display: "inline-block",
+                  }}
+                />
+              </p>
+              <h2
+                className="font-rising"
+                style={{
+                  fontSize: "clamp(32px,4vw,48px)",
+                  color: "#1a2a2a",
+                  marginBottom: "14px",
+                }}
+              >
                 Our Initiatives
               </h2>
               <p
+                className="font-xolonium"
                 style={{
-                  margin: "auto",
+                  fontSize: "14px",
+                  color: "#6a7e7e",
+                  maxWidth: "480px",
+                  margin: "0 auto",
+                  lineHeight: 1.75,
                 }}
-                className="text-gray-400 text-center max-w-xl mx-auto text-base"
               >
                 From education to environment — here's a glimpse into the work
                 we do and the communities we serve.
               </p>
-              <div
-                className="w-16 h-1 mx-auto mt-6 rounded-full"
-                style={{ background: "#6c7e7f" }}
-              />
             </motion.div>
 
-            {/* ── Grid ── */}
-            {loading ? (
-              <div
-                style={{
-                  padding: "10px",
-                }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-              >
-                {[...Array(6)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 animate-pulse"
-                  >
-                    <div className="h-56 bg-gray-200" />
-                    <div className="p-6 space-y-3">
-                      <div className="h-4 bg-gray-200 rounded w-3/4" />
-                      <div className="h-3 bg-gray-100 rounded w-full" />
-                      <div className="h-3 bg-gray-100 rounded w-5/6" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div
-                style={{
-                  margin: "30px 0px",
-                }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-              >
-                {csrData.map((item, i) => (
-                  <CsrCard key={item.id} item={item} index={i} />
-                ))}
-              </div>
-            )}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3,1fr)",
+                gap: "24px",
+              }}
+            >
+              {loading
+                ? [...Array(6)].map((_, i) => <SkeletonCard key={i} />)
+                : csrData.map((item, i) => (
+                    <CsrCard key={item.id} item={item} index={i} />
+                  ))}
+            </div>
           </div>
         </section>
 
-        {/* ── CTA Banner ── */}
+        {/* CTA */}
         <motion.section
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="py-20 px-4 text-center rounded-2xl"
           style={{
             background: "#6c7e7f",
-            margin: "15px",
-            marginBottom: "20px",
+            margin: "0 0 0 0",
+            padding: "80px 20px",
+            textAlign: "center",
           }}
         >
           <h2
+            className="font-rising"
             style={{
-              padding: "20px",
+              fontSize: "clamp(28px,3.5vw,42px)",
+              color: "#fff",
+              marginBottom: "14px",
             }}
-            className="text-3xl md:text-4xl font-bold text-white mb-4 font-xolonium"
           >
             Want to Join Our Mission?
           </h2>
           <p
+            className="font-xolonium"
             style={{
-              margin: "auto",
+              color: "rgba(255,255,255,0.72)",
+              maxWidth: "440px",
+              margin: "0 auto 32px",
+              lineHeight: 1.75,
+              fontSize: "14px",
             }}
-            className="text-white/70 max-w-md mx-auto mb-8 text-base"
           >
             Together we can create lasting change. Reach out to collaborate or
             support our ongoing CSR efforts.
@@ -370,15 +587,36 @@ export default function CsrPage() {
             href="/contact"
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-block bg-white font-semibold px-8 py-3 rounded-full text-base transition-colors"
-            style={{ color: "#6c7e7f", margin: "10px", padding: "10px" }}
+            className="font-xolonium"
+            style={{
+              display: "inline-block",
+              background: "#fff",
+              color: "#6c7e7f",
+              padding: "13px 36px",
+              borderRadius: "40px",
+              fontSize: "12px",
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              textDecoration: "none",
+              textTransform: "uppercase",
+            }}
           >
             Get Involved
           </motion.a>
         </motion.section>
       </main>
-
       <Footer />
+
+      <style>{`
+        @media (max-width: 900px) {
+          .csr-grid { grid-template-columns: repeat(2,1fr) !important; }
+          .stat-grid { grid-template-columns: repeat(2,1fr) !important; }
+        }
+        @media (max-width: 560px) {
+          .csr-grid { grid-template-columns: 1fr !important; }
+          .stat-grid { grid-template-columns: repeat(2,1fr) !important; }
+        }
+      `}</style>
     </>
   );
 }

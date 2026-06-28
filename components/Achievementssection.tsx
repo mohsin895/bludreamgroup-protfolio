@@ -65,14 +65,14 @@ interface StatItem {
 const defaultStats: StatItem[] = [
   {
     label: "Books Published",
-    value: 30,
+    value: 5,
     suffix: "+",
     icon: BookOpen,
     accent: "brass",
   },
   {
     label: "Readers Reached",
-    value: 50000,
+    value: 500000,
     suffix: "+",
     icon: Users,
     accent: "sage",
@@ -86,7 +86,7 @@ const defaultStats: StatItem[] = [
   },
   {
     label: "Years Experience",
-    value: 15,
+    value: 20,
     suffix: "+",
     icon: Award,
     accent: "sage",
@@ -427,7 +427,7 @@ export default function AchievementsSection() {
         .ach-container {
           position: relative;
           z-index: 1;
-          max-width: 1200px;
+          max-width: 1400px;
           margin: 0 auto;
           padding: 0 24px;
         }
@@ -450,7 +450,7 @@ export default function AchievementsSection() {
         .achievements-grid {
           display: grid;
           grid-template-columns: repeat(5, minmax(0, 1fr));
-          gap: 22px;
+          gap: 16px;
         }
 
         .achievement-card {
@@ -459,7 +459,7 @@ export default function AchievementsSection() {
           backdrop-filter: blur(14px);
           border: 1px solid rgba(255,255,255,0.18);
           border-radius: 20px;
-          padding: 34px 22px;
+          padding: 34px 16px;
           text-align: center;
           transform-style: preserve-3d;
           perspective: 900px;

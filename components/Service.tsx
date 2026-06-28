@@ -28,44 +28,44 @@ interface Service {
 const fallbackServices = [
   {
     id: 1,
-    title: "One-on-One Consultation",
+    title: "Entrepreneurial Expertise ",
     icon: "Users",
-    desc: "Personalized strategy sessions tailored to your business and life goals.",
+    desc: "As Managing Director of Blue Dream Group, he shares invaluable insights into building and scaling successful ventures, offering practical advice for navigating the complex world of modern apparel manufacturing.",
     mode: "Online / Offline",
   },
   {
     id: 2,
-    title: "Motivational Speaking",
+    title: "Mentorship for Beginners",
     icon: "Mic",
-    desc: "Powerful keynote addresses that energize teams and shift perspectives.",
+    desc: "He actively mentors young professionals, breaking down complex business strategies into actionable steps. His guidance helps aspiring entrepreneurs overcome early challenges and build strong foundations for their startup journeys.",
     mode: "On-site",
   },
   {
     id: 3,
-    title: "Business Coaching",
+    title: "Philanthropic Vision",
     icon: "Briefcase",
-    desc: "Structured mentoring programs for entrepreneurs at every stage.",
+    desc: "Leading the Asian Life Foundation demonstrates his deep commitment to social welfare. Following him provides a powerful look at how corporate success can actively fund meaningful community development initiatives.",
     mode: "Online",
   },
   {
     id: 4,
-    title: "Workshops & Training",
+    title: "Authorship and Resources ",
     icon: "Zap",
-    desc: "Hands-on interactive workshops on leadership, mindset, and business.",
+    desc: "As a published author, he distills years of hands-on experience into accessible reading material. Followers gain direct access to his thought leadership, book updates, and proven frameworks for success.",
     mode: "On-site / Online",
   },
   {
     id: 5,
-    title: "Corporate Sessions",
+    title: "Tech-Driven Leadership ",
     icon: "Calendar",
-    desc: "Customized corporate training programs for teams and organizations.",
+    desc: "Utilizing a software engineering background, he provides unique perspectives on integrating technology into traditional industries. He highlights how digital transformation drives efficiency, modernization, and innovation across corporate business landscapes.",
     mode: "On-site",
   },
   {
     id: 6,
-    title: "Online Masterclass",
+    title: "Daily Motivation and Mindset ",
     icon: "Video",
-    desc: "Recorded and live online sessions for growth-focused professionals.",
+    desc: "His journey from technical expert to leading industrialist serves as daily motivation. He consistently posts about maintaining a resilient mindset, balancing dedicated hard work with purpose and ongoing personal growth.",
     mode: "Online",
   },
 ];
@@ -167,9 +167,9 @@ export default function ServicesSection() {
               lineHeight: 1.1,
             }}
           >
-            How I Can{" "}
+            Why You Should Follow <br />
             <span style={{ color: "#6c7e7f", fontStyle: "italic" }}>
-              Help You Grow
+              K.S.M. Shopnill Chowdhury Shohag
             </span>
           </motion.h2>
           <motion.p
@@ -178,13 +178,14 @@ export default function ServicesSection() {
             style={{
               fontSize: 16,
               color: "#6b7280",
-              maxWidth: 480,
+              maxWidth: 680,
               margin: "20px auto 0",
               lineHeight: 1.75,
             }}
           >
-            From individual mentoring to large-scale corporate training — every
-            service is built around your transformation.
+            Follow K.S.M. Shopnill Chowdhury Shohag for daily inspiration on
+            business, philanthropy, and personal growth from a proven industry
+            leader.
           </motion.p>
         </motion.div>
 

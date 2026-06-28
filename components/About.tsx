@@ -75,7 +75,7 @@ export default function AboutSection() {
         paddingBottom: "40px",
       }}
     >
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 4px" }}>
         {/* Section label */}
         <motion.div
           initial="hidden"
@@ -185,43 +185,60 @@ export default function AboutSection() {
             </div>
 
             {/* Floating stat card */}
-            {/* <motion.div
+            <motion.div
+              className="about-floating-card"
               animate={{ y: [0, -8, 0] }}
               transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
               style={{
                 position: "absolute",
                 bottom: 30,
-                right: -20,
-                background: "#ffffff",
+                right: -30,
+                background: "#5A6B6C",
                 borderRadius: 14,
-                padding: "16px 22px",
+                padding: "16px",
                 boxShadow: "0 16px 48px rgba(108,126,127,0.18)",
                 border: "1px solid #6c7e7f1a",
               }}
             >
               <div
-                className="font-rising"
+                className="font-xolonium about-card-name"
                 style={{
-                  fontSize: 28,
-                  fontWeight: 800,
-                  color: "#6c7e7f",
+                  fontSize: 16,
+                  fontWeight: 500,
+                  lineHeight: 1,
+                  color: "#fff",
+                }}
+              >
+                K.S.M Shopnill Chowdhury Shohag
+              </div>
+              <div
+                className="font-xolonium about-card-degree"
+                style={{
+                  fontSize: 12,
+                  fontWeight: 500,
+                  color: "#fff",
                   lineHeight: 1,
                 }}
               >
-                16+
+                <br /> B.Sc in Computer Science & Engineering <br /> M.Sc
+                Software Engineer <br /> PhD in Textile & Business Management{" "}
+                <br /> ( Germany)
               </div>
               <div
-                className="font-xolonium"
+                className="font-xolonium about-card-designation"
                 style={{
-                  fontSize: 12,
-                  color: "#6b7280",
-                  marginTop: 4,
+                  fontSize: 14,
+                  color: "#fff",
+
                   fontWeight: 500,
+                  lineHeight: "16px",
                 }}
               >
-                Years of Experience
+                Founder & Managing
+                <br />
+                Director Blue Dream Group
               </div>
-            </motion.div> */}
+            </motion.div>
           </motion.div>
 
           {/* Right: Text */}
@@ -235,23 +252,28 @@ export default function AboutSection() {
             <motion.div
               variants={fadeUp}
               style={{
-                fontSize: "clamp(15px, 1.6vw, 18px)",
+                fontSize: "clamp(12px, 1.6vw, 15px)",
                 color: "#374151",
                 lineHeight: 1.9,
                 marginBottom: 24,
+                textAlign: "justify",
+                textJustify: "inter-word",
               }}
               className="about-description font-xolonium"
-              dangerouslySetInnerHTML={{
-                __html:
-                  about?.description ||
-                  `
-      <p>
-        KSM Shopnill Chowdhury Shohag is a celebrated Bangladeshi author,
-        entrepreneur, and life mentor whose writing has inspired thousands.
-      </p>
-    `,
-              }}
-            />
+            >
+              K.S.M. Shopnill Chowdhury Shohag is a multifaceted Bangladeshi
+              entrepreneur, software engineer, and author recognized for his
+              significant contributions to the garment industry and social
+              development. As the founder and Managing Director of Blue Dream
+              Group, he has established a prominent footprint in apparel
+              manufacturing. Beyond his business ventures, he demonstrates a
+              profound commitment to humanitarian efforts as the chair of the
+              Asian Life Foundation. A passionate mentor, he actively guides
+              aspiring entrepreneurs and shares his professional insights
+              through published books on business success. His work seamlessly
+              bridges the gap between technical expertise, industrial
+              leadership, and a dedicated spirit of community service.
+            </motion.div>
 
             {/* Qualities */}
             <motion.div
@@ -351,42 +373,75 @@ export default function AboutSection() {
         .about-cta:hover { background: #5a6b6c !important; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(108,126,127,0.3); }
         .about-quality-card:hover { border-color: #95a49a !important; transform: translateX(4px); }
         .about-stat-card:hover { border-color: #6c7e7f !important; transform: translateY(-4px); box-shadow: 0 12px 32px rgba(108,126,127,0.12); }
+        .about-floating-card{
+  width:320px;
+}
         @media (max-width: 900px) {
           .about-grid { flex-direction: column !important; gap: 40px !important; }
           .about-image-col { flex: none !important; width: 100% !important; max-width: 340px; margin: 0 auto; }
           .about-stats { grid-template-columns: repeat(2, 1fr) !important; }
+           .about-image-col{
+    max-width: 420px !important;
+    width:100% !important;
+  }
+ 
+  .about-floating-card{
+    right:-10px !important;
+    bottom:20px !important;
+
+    width:230px !important;
+    padding:12px !important;
+    border-radius:10px !important;
+  }
+
+  .about-card-name{
+    font-size:16px !important;
+    line-height:1.25 !important;
+  }
+
+  .about-card-degree{
+    font-size:10px !important;
+    line-height:1.45 !important;
+  }
+
+  .about-card-designation{
+    font-size:11px !important;
+    line-height:1.3 !important;
+  }
         }
+        
         @media (max-width: 480px) {
-          .about-stats { grid-template-columns: 1fr 1fr !important; }
-        }
-          .about-description p{
-    margin-bottom:16px;
-    color:#4b5563;
-    font-size:16px;
-    line-height:1.9;
+
+  .about-stats {
+    grid-template-columns: 1fr 1fr !important;
   }
 
-  .about-description strong{
-    color:#1f2937;
-    font-weight:700;
+  .about-image-col{
+    max-width:100% !important;
   }
 
-  .about-description h1,
-  .about-description h2,
-  .about-description h3{
-    color:#1f2937;
-    margin-bottom:14px;
-    margin-top:18px;
+  .about-floating-card{
+    width:185px !important;
+    right:8px !important;
+    bottom:2px !important;
+    padding:6px !important;
   }
 
-  .about-description ul{
-    padding-left:20px;
-    margin-bottom:16px;
+  .about-card-name{
+    font-size:11px !important;
   }
 
-  .about-description li{
-    margin-bottom:8px;
+  .about-card-degree{
+    font-size:9px !important;
+    line-height:1.35 !important;
   }
+
+  .about-card-designation{
+    font-size:10px !important;
+    line-height:1.2 !important;
+  }
+
+}
       `}</style>
     </section>
   );

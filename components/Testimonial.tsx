@@ -180,16 +180,17 @@ export default function TestimonialsSection() {
                   }}
                 >
                   {imgSrc ? (
-                    <img
-                      src={imgSrc}
-                      alt={current.name}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
+                    <></>
                   ) : (
+                    // <img
+                    //   src={imgSrc}
+                    //   alt={current.name}
+                    //   style={{
+                    //     width: "100%",
+                    //     height: "100%",
+                    //     objectFit: "cover",
+                    //   }}
+                    // />
                     <span
                       className="font-rising"
                       style={{ fontSize: 20, fontWeight: 700, color: "#fff" }}

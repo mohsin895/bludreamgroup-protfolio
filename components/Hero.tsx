@@ -327,9 +327,6 @@ export default function Hero() {
                     style={{ ...styles.thumbnailMedia, background: "#648181" }}
                   />
                 )}
-                <div style={styles.thumbnailOverlay}>
-                  <span style={styles.thumbnailTitle}>{s.title}</span>
-                </div>
               </button>
             );
           })}
@@ -361,7 +358,7 @@ const styles: Record<string, React.CSSProperties> = {
     width: "100%",
     height: "100%",
     objectFit: "cover",
-    marginTop: "20px",
+    marginTop: "80px",
     objectPosition: "center",
   },
   fallbackBg: {
@@ -420,7 +417,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   counter: {
     position: "absolute",
-    top: "clamp(100px,14vh,130px)",
+    top: "clamp(100px,14vh,30px)",
     right: "clamp(24px,5vw,64px)",
     display: "flex",
     alignItems: "center",
@@ -557,7 +554,7 @@ const styles: Record<string, React.CSSProperties> = {
   thumbnailStrip: {
     position: "absolute",
     right: "clamp(24px,5vw,64px)",
-    bottom: "100px",
+    bottom: "20px",
     zIndex: 10,
     display: "flex",
     flexDirection: "column",
@@ -565,7 +562,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   thumbnail: {
     width: "100px",
-    height: "64px",
+    height: "74px",
     borderRadius: "4px",
     overflow: "hidden",
     cursor: "pointer",

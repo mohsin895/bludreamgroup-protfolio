@@ -960,7 +960,7 @@ function AwardCard({ item, index }: { item: AwardItem; index: number }) {
           className="font-rising"
           style={{
             color: "#fff",
-            fontSize: "clamp(15px, 1.6vw, 18px)",
+            fontSize: "clamp(10px, 1.6vw, 14px)",
             lineHeight: 1.3,
           }}
         >
@@ -1336,7 +1336,7 @@ export default function AchievementsPage() {
               <h2
                 className="font-rising"
                 style={{
-                  fontSize: "clamp(28px, 4vw, 48px)",
+                  fontSize: "clamp(20px, 4vw, 38px)",
                   color: "#fff",
                   lineHeight: 1.1,
                 }}

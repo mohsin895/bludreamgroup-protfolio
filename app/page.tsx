@@ -22,10 +22,8 @@ export default function Home() {
       <AchievementsSection />
       <Testimonial />
       <BlogPreviewSection />
-
       <Event />
       <NewsletterSection />
-
       <Footer />
     </main>
   );
