@@ -38,14 +38,15 @@ const footerLinks = {
   ],
   Resources: [
     { label: "Courses", href: "/courses" },
-    { label: "Success Stories", href: "/success-stories" },
+    // { label: "Success Stories", href: "/success-stories" },
+    { label: "CSR", href: "/csr" },
     { label: "Blog", href: "/blog" },
   ],
   Media: [
     { label: "Gallery", href: "/media" },
     { label: "Contact", href: "/contact" },
     { label: "Events", href: "/events" },
-    { label: "CSR", href: "/csr" },
+    
   ],
 };
 
