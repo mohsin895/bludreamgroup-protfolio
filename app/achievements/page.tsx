@@ -377,122 +377,75 @@ function HorizontalTimeline({ items }: { items: Achievement[] }) {
                   transition: "color 0.3s",
                 }}
               >
-                {item.year}
+                {/* {item.year} */}
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Detail card */}
+      {/* Detail Card */}
       <AnimatePresence mode="wait">
-        <motion.div
-          key={active}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          style={{ marginTop: 40 }}
-        >
-          {items[active] &&
-            (() => {
-              const item = items[active];
-              const cat = CAT_CONFIG[item.category ?? ""] ?? CAT_CONFIG.default;
-              return (
-                <div
-                  style={{
-                    background: "rgba(255,255,255,0.8)",
-                    backdropFilter: "blur(16px)",
-                    border: `1px solid ${cat.color}22`,
-                    borderRadius: 24,
-                    padding: "36px 40px",
-                    display: "grid",
-                    gridTemplateColumns: "auto 1fr",
-                    gap: 32,
-                    alignItems: "flex-start",
-                  }}
-                  className="detail-card-inner"
-                >
-                  {/* Icon block */}
-                  <div
-                    style={{
-                      width: 72,
-                      height: 72,
-                      borderRadius: 20,
-                      background: `linear-gradient(135deg, ${cat.color}22, ${cat.color}08)`,
-                      border: `1px solid ${cat.color}30`,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0,
-                    }}
-                  >
-                    <cat.icon size={30} color={cat.color} />
-                  </div>
+        {items.length > 0 && (
+          <motion.div
+            key={active}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.35 }}
+            style={{
+              marginTop: 40,
+              background: "rgba(255,255,255,0.85)",
+              backdropFilter: "blur(12px)",
+              border: "1px solid rgba(108,126,127,0.15)",
+              borderRadius: 24,
+              padding: 32,
+              boxShadow: "0 12px 40px rgba(0,0,0,0.06)",
+            }}
+          >
+            {items[active].category && (
+              <span
+                className="font-xolonium"
+                style={{
+                  display: "inline-block",
+                  marginBottom: 12,
+                  padding: "5px 14px",
+                  borderRadius: 20,
+                  background: "#6c7e7f15",
+                  color: "#6c7e7f",
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: ".1em",
+                  textTransform: "uppercase",
+                }}
+              >
+                {items[active].category}
+              </span>
+            )}
 
-                  <div>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 12,
-                        marginBottom: 12,
-                        flexWrap: "wrap",
-                      }}
-                    >
-                      <span
-                        className="font-xolonium"
-                        style={{
-                          fontSize: 10,
-                          fontWeight: 800,
-                          color: cat.color,
-                          background: `${cat.color}18`,
-                          padding: "4px 14px",
-                          borderRadius: 20,
-                          letterSpacing: "0.1em",
-                          textTransform: "uppercase",
-                        }}
-                      >
-                        {item.category}
-                      </span>
-                      <span
-                        className="font-xolonium"
-                        style={{
-                          fontSize: 11,
-                          color: "#9aa6aa",
-                          fontWeight: 700,
-                        }}
-                      >
-                        {item.year}
-                      </span>
-                    </div>
-                    <h3
-                      className="font-rising"
-                      style={{
-                        fontSize: "clamp(20px, 2.5vw, 28px)",
-                        color: "#1a2427",
-                        marginBottom: 12,
-                        lineHeight: 1.2,
-                      }}
-                    >
-                      {item.title}
-                    </h3>
-                    <p
-                      className="font-xolonium"
-                      style={{
-                        fontSize: 14,
-                        color: "#6b7280",
-                        lineHeight: 1.8,
-                        margin: 0,
-                      }}
-                    >
-                      {item.description}
-                    </p>
-                  </div>
-                </div>
-              );
-            })()}
-        </motion.div>
+            <h3
+              className="font-rising"
+              style={{
+                fontSize: "clamp(22px,2vw,32px)",
+                color: "#1a2427",
+                marginBottom: 14,
+              }}
+            >
+              {items[active].title}
+            </h3>
+
+            <p
+              className="font-xolonium"
+              style={{
+                color: "#6b7280",
+                lineHeight: 1.8,
+                fontSize: 13,
+              }}
+            >
+              {items[active].description}
+            </p>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {/* Prev / Next */}
@@ -959,12 +912,11 @@ export default function AchievementsPage() {
       .then(([achRes, awardRes]) => {
         if (achRes.status === "fulfilled") {
           const data = achRes.value?.data ?? achRes.value;
-          setAchievements(
-            Array.isArray(data) && data.length > 0
-              ? data
-              : FALLBACK_ACHIEVEMENTS,
-          );
-        } else setAchievements(FALLBACK_ACHIEVEMENTS);
+
+          setAchievements(Array.isArray(data) ? data : []);
+        } else {
+          setAchievements([]);
+        }
         if (awardRes.status === "fulfilled") {
           const data = awardRes.value?.data ?? awardRes.value;
           if (Array.isArray(data)) setAwards(data);
