@@ -261,7 +261,10 @@ export default function BlogDetailPage() {
       `}</style>
 
       <Navbar />
-      <PageHero title={post?.title} currentPage="Blog Details" />
+      <PageHero
+        title={post?.title || "Blog Details"}
+        currentPage="Blog Details"
+      />
       {/* ── Loading ── */}
       {loading && (
         <div
