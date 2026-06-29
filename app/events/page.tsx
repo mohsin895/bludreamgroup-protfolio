@@ -10,8 +10,6 @@ import {
   ChevronRight,
   Clock,
   MapPin,
-  Search,
-  X,
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
@@ -708,7 +706,12 @@ export default function EventsPage() {
         }
         @media (max-width: 600px) {
           .ev-grid { grid-template-columns: 1fr !important; }
-          .filter-bar { flex-direction: column !important; gap: 12px !important; }
+          .cat-pill{padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 500;
+    transition: all 0.22s ease;}
+          .filter-bar { flex-direction: columns !important; gap: 4px !important; }
           .cat-pills-wrap { overflow-x: auto; padding-bottom: 4px; }
           .cat-pills-wrap::-webkit-scrollbar { display: none; }
           .page-controls { gap: 6px !important; }
@@ -720,7 +723,7 @@ export default function EventsPage() {
           HERO HEADER
       ══════════════════════════════════ */}
       <PageHero title="Events & Programs" currentPage="Events" />
-      <section
+      {/* <section
         style={{
           background:
             "linear-gradient(135deg, #6c7e7f 0%, #7a9190 40%, #95a49a 100%)",
@@ -728,7 +731,6 @@ export default function EventsPage() {
           overflow: "hidden",
         }}
       >
-        {/* dot pattern */}
         <div
           style={{
             position: "absolute",
@@ -740,7 +742,6 @@ export default function EventsPage() {
           }}
         />
 
-        {/* Wave */}
         <div style={{ position: "absolute", bottom: -2, left: 0, right: 0 }}>
           <svg
             viewBox="0 0 1440 64"
@@ -753,7 +754,7 @@ export default function EventsPage() {
             />
           </svg>
         </div>
-      </section>
+      </section> */}
 
       {/* ══════════════════════════════════
           FILTER BAR
@@ -780,7 +781,7 @@ export default function EventsPage() {
             }}
           >
             {/* Search */}
-            <div style={{ position: "relative", flex: "0 0 260px" }}>
+            {/* <div style={{ position: "relative", flex: "0 0 260px" }}>
               <Search
                 size={15}
                 color="#9aa6aa"
@@ -829,7 +830,7 @@ export default function EventsPage() {
                   <X size={14} />
                 </button>
               )}
-            </div>
+            </div> */}
 
             {/* Category pills */}
             <div
@@ -851,7 +852,7 @@ export default function EventsPage() {
                       padding: "7px 16px",
                       borderRadius: 20,
                       fontSize: 12,
-                      fontWeight: 700,
+                      fontWeight: 600,
                       letterSpacing: "0.05em",
                       border: `1.5px solid ${isActive ? (catStyle?.bg ?? "#6c7e7f") : "#e8eceb"}`,
                       background: isActive

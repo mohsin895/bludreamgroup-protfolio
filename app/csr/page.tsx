@@ -11,16 +11,27 @@ import { useEffect, useRef, useState } from "react";
 const IMAGE_BASE = process.env.NEXT_PUBLIC_IMAGE_BASE_URL;
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-type CsrItem = {
+interface ExecutiveMember {
+  id: number;
+  name: string;
+  batch: string | null;
+  designation?: string;
+  position_title: string;
+  start_date: string;
+  end_date: string;
+  company_name: string;
+  image: string;
+  formatted_range: string;
+}
+interface CsrItem {
   id: number;
   title: string;
   slug: string;
   description: string;
-  image: string; // raw JSON string from API
-  visits?: string | number;
+  image: string;
   category?: string;
-};
-
+  visits?: number;
+}
 function parseImage(raw: string): string {
   try {
     const parsed = JSON.parse(raw);
@@ -33,70 +44,6 @@ function parseImage(raw: string): string {
 function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, "").trim();
 }
-
-// ── Static fallback ───────────────────────────────────────────────────────────
-const staticCsrData: CsrItem[] = [
-  {
-    id: 1,
-    slug: "clean-water",
-    title: "Clean Water Initiative",
-    description: "Providing safe drinking water to rural communities.",
-    image:
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
-    visits: "12,400",
-    category: "Water & Sanitation",
-  },
-  {
-    id: 2,
-    slug: "education",
-    title: "Education for All",
-    description: "Funding scholarships for underprivileged children.",
-    image:
-      "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&q=80",
-    visits: "8,200",
-    category: "Education",
-  },
-  {
-    id: 3,
-    slug: "women",
-    title: "Women Empowerment Program",
-    description: "Supporting women entrepreneurs with micro-finance.",
-    image:
-      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=80",
-    visits: "6,700",
-    category: "Empowerment",
-  },
-  {
-    id: 4,
-    slug: "trees",
-    title: "Tree Plantation Drive",
-    description: "Planting thousands of trees across coastal areas.",
-    image:
-      "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&q=80",
-    visits: "9,100",
-    category: "Environment",
-  },
-  {
-    id: 5,
-    slug: "health",
-    title: "Health Camp",
-    description: "Free medical camps for remote communities.",
-    image:
-      "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=800&q=80",
-    visits: "5,300",
-    category: "Healthcare",
-  },
-  {
-    id: 6,
-    slug: "flood",
-    title: "Flood Relief Operations",
-    description: "Emergency aid to flood-affected families.",
-    image:
-      "https://images.unsplash.com/photo-1594708767771-a7502209ff51?w=800&q=80",
-    visits: "15,800",
-    category: "Disaster Relief",
-  },
-];
 
 // ── Stat Counter ──────────────────────────────────────────────────────────────
 function StatCounter({ end, label }: { end: number; label: string }) {
@@ -186,7 +133,7 @@ function CsrCard({ item, index }: { item: CsrItem; index: number }) {
             style={{
               position: "relative",
               width: "100%",
-              height: "220px",
+              height: "clamp(180px, 28vw, 220px)",
               overflow: "hidden",
             }}
           >
@@ -363,7 +310,7 @@ function SkeletonCard() {
       />
       <div
         style={{
-          padding: "22px 24px",
+          padding: "clamp(16px,3vw,22px)",
           display: "flex",
           flexDirection: "column",
           gap: "10px",
@@ -423,10 +370,10 @@ export default function CsrPage() {
             })),
           );
         } else {
-          setCsrData(staticCsrData);
+          setCsrData([]);
         }
       } catch {
-        setCsrData(staticCsrData);
+        setCsrData([]);
       } finally {
         setLoading(false);
       }
@@ -450,6 +397,7 @@ export default function CsrPage() {
         >
           <div className="container">
             <div
+              className="stat-grid"
               style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(4,1fr)",
@@ -533,6 +481,7 @@ export default function CsrPage() {
             </motion.div>
 
             <div
+              className="csr-grid"
               style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(3,1fr)",
@@ -556,7 +505,7 @@ export default function CsrPage() {
           style={{
             background: "#6c7e7f",
             margin: "0 0 0 0",
-            padding: "80px 20px",
+            padding: "clamp(50px,8vw,80px) 20px",
             textAlign: "center",
           }}
         >
@@ -608,15 +557,26 @@ export default function CsrPage() {
       <Footer />
 
       <style>{`
-        @media (max-width: 900px) {
-          .csr-grid { grid-template-columns: repeat(2,1fr) !important; }
-          .stat-grid { grid-template-columns: repeat(2,1fr) !important; }
-        }
-        @media (max-width: 560px) {
-          .csr-grid { grid-template-columns: 1fr !important; }
-          .stat-grid { grid-template-columns: repeat(2,1fr) !important; }
-        }
-      `}</style>
+  @media (max-width: 900px) {
+    .csr-grid {
+      grid-template-columns: repeat(2,1fr) !important;
+    }
+
+    .stat-grid {
+      grid-template-columns: repeat(2,1fr) !important;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .csr-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    .stat-grid {
+      grid-template-columns: repeat(2,1fr) !important;
+    }
+  }
+`}</style>
     </>
   );
 }

@@ -327,7 +327,7 @@ export default function ContactPage() {
                     </div>
                   </AnimatedSection>
 
-                  <AnimatedSection className="font-xolonium" delay={0.1}>
+                  {/* <AnimatedSection className="font-xolonium" delay={0.1}>
                     <label className="font-xolonium" style={labelStyle}>
                       Subject
                     </label>
@@ -376,7 +376,7 @@ export default function ContactPage() {
                         Other
                       </option>
                     </select>
-                  </AnimatedSection>
+                  </AnimatedSection> */}
 
                   <AnimatedSection className="font-xolonium" delay={0.15}>
                     <label style={labelStyle}>Message</label>
