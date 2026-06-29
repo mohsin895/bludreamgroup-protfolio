@@ -193,14 +193,14 @@ export default function Navbar() {
                 className="hover:bg-[#95a49a] font-xolonium"
                 style={{
                   marginLeft: "16px",
-                  fontSize: "16px",
-                  padding: "10px 16px",
+                  fontSize: "14px",
+                  padding: "8px 12px",
                   background: "#6c7e7f",
                   color: "#fff",
                   border: "1px solid #6c7e7f",
                 }}
               >
-                Find Your Next Read
+                Start Reading
               </Link>
             </div>
 
