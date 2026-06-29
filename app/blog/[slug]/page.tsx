@@ -261,7 +261,7 @@ export default function BlogDetailPage() {
       `}</style>
 
       <Navbar />
-      <PageHero title={slug} currentPage="Blog Details" />
+      <PageHero title={post?.title} currentPage="Blog Details" />
       {/* ── Loading ── */}
       {loading && (
         <div
@@ -344,7 +344,7 @@ export default function BlogDetailPage() {
                       color: "#000",
                     }}
                   >
-                    {post.slug}
+                    {post.title}
                   </h2>
                   {/* Hero image */}
                   <HeroImage url={post.imageUrl} title={post.title} />
