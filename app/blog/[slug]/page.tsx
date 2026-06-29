@@ -337,7 +337,7 @@ export default function BlogDetailPage() {
             <article id="article-body">
               <div className="article-inner">
                 <AnimatedSection>
-                  <h2
+                  {/* <h2
                     className="font-rising text-black"
                     style={{
                       margin: "0px 0px 50px 0px",
@@ -348,7 +348,7 @@ export default function BlogDetailPage() {
                     }}
                   >
                     {post.title}
-                  </h2>
+                  </h2> */}
                   {/* Hero image */}
                   <HeroImage url={post.imageUrl} title={post.title} />
 
