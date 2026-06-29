@@ -165,7 +165,7 @@ function Portrait({ quoteText }: { quoteText: string }) {
         }}
       >
         <Image
-          src="chairman2.jpeg"
+          src="/chairman2.jpeg"
           alt="Portrait"
           fill
           style={{ objectFit: "cover" }}
