@@ -100,105 +100,6 @@ const FALLBACK_STATS: Stat[] = [
   },
 ];
 
-const FALLBACK_ACHIEVEMENTS: Achievement[] = [
-  {
-    id: 1,
-    year: 2009,
-    category: "Author",
-    title: "First Book Published",
-    description:
-      "Debut book launched, marking the beginning of an author's journey that would touch millions.",
-  },
-  {
-    id: 2,
-    year: 2011,
-    category: "Speaking",
-    title: "First Keynote Speech",
-    description:
-      "Delivered a keynote to 500+ audience, establishing credibility as a public speaker.",
-  },
-  {
-    id: 3,
-    year: 2013,
-    category: "Author",
-    title: "10th Book Milestone",
-    description:
-      "Published the 10th title — spanning self-development, entrepreneurship, and psychology.",
-  },
-  {
-    id: 4,
-    year: 2015,
-    category: "Impact",
-    title: "10,000 Readers Milestone",
-    description:
-      "Reached 10,000 active readers across Bangladesh, marking a significant growth in influence.",
-  },
-  {
-    id: 5,
-    year: 2016,
-    category: "Business",
-    title: "Consultation Practice Launched",
-    description:
-      "Officially launched a personal consultation service to directly impact entrepreneurs and leaders.",
-  },
-  {
-    id: 6,
-    year: 2018,
-    category: "Media",
-    title: "National TV Feature",
-    description:
-      "Featured on national television as a leading voice in entrepreneurship and personal development.",
-  },
-  {
-    id: 7,
-    year: 2019,
-    category: "Author",
-    title: "20th Book Published",
-    description:
-      "A landmark achievement — 20 books spanning multiple genres and topics of transformation.",
-  },
-  {
-    id: 8,
-    year: 2020,
-    category: "Impact",
-    title: "Online Presence Expanded",
-    description:
-      "Built a community of 100,000+ followers across social media platforms during the pandemic era.",
-  },
-  {
-    id: 9,
-    year: 2021,
-    category: "Speaking",
-    title: "International Speaking Debut",
-    description:
-      "First international speaking engagement, connecting with audiences beyond the borders of Bangladesh.",
-  },
-  {
-    id: 10,
-    year: 2022,
-    category: "Author",
-    title: "Bestseller Achievement",
-    description:
-      "Multiple titles became bestsellers in Bangladeshi bookstores during Ekushey Book Fair.",
-  },
-  {
-    id: 11,
-    year: 2023,
-    category: "Impact",
-    title: "50,000 Readers Worldwide",
-    description:
-      "The global readership crossed 50,000 — a testament to the universal appeal of the message.",
-  },
-  {
-    id: 12,
-    year: 2024,
-    category: "Business",
-    title: "30th Book Published",
-    description:
-      "Celebrated the 30-book milestone with a major launch event attended by readers and media.",
-  },
-];
-
 const CAT_CONFIG: Record<
   string,
   {
@@ -727,7 +628,7 @@ function VerticalTimeline({ items }: { items: Achievement[] }) {
                   whiteSpace: "nowrap",
                 }}
               >
-                {item.year}
+                {/* {item.year} */}
               </motion.div>
             </div>
 
