@@ -257,7 +257,7 @@ export default function BlogDetailPage() {
         .back-bar { background:var(--parchment); padding:24px; border-top:1px solid var(--border); text-align:center; }
         .back-link { display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:500; color:var(--muted); text-decoration:none; letter-spacing:0.04em; transition:color 0.2s; }
         .back-link:hover { color:var(--ink); }
-        .container { max-width:1160px; margin:0 auto; padding:0 24px; }
+        .blog-container { max-width:1160px; margin:0 auto; padding:0 24px; }
       `}</style>
 
       <Navbar />
