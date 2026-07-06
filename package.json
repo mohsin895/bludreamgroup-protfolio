@@ -19,6 +19,7 @@
         "lottie-react": "^2.4.1",
         "lucide-react": "^1.8.0",
         "next": "16.2.3",
+        "postcss": "^8.5.16",
         "react": "19.2.4",
         "react-dom": "19.2.4",
         "react-redux": "^9.2.0",
@@ -27,13 +28,13 @@
         "tailwindcss-animate": "^1.0.7"
     },
     "devDependencies": {
-        "@tailwindcss/postcss": "^4",
+        "@tailwindcss/postcss": "^4.3.2",
         "@types/node": "^20",
         "@types/react": "^19",
         "@types/react-dom": "^19",
         "eslint": "^9",
         "eslint-config-next": "16.2.3",
-        "tailwindcss": "^4",
+        "tailwindcss": "^4.3.2",
         "typescript": "^5"
     }
 }

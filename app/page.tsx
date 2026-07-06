@@ -5,6 +5,7 @@ import Books from "@/components/Books";
 import Event from "@/components/Event";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
+// import Hero from "@/components/Hero";
 import Navbar from "@/components/Navbar";
 import NewsletterSection from "@/components/Newslettersection";
 import Testimonial from "@/components/Testimonial";

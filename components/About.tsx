@@ -1,19 +1,26 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Award, BookOpen, Heart, Lightbulb, Target, Users } from "lucide-react";
+import { Heart, Lightbulb, Target } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+interface AboutData {
+  id: number;
+  name: string;
+  quote: string;
+  page_title: string;
+  about_title: string;
+  logo: string;
+  resume: string;
+  description: string;
+}
+
+const LIME = "#6C7E7F";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 const IMG_BASE = process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? "";
-
-interface AboutData {
-  title?: string;
-  description?: string;
-  logo?: string | null;
-  short_bio?: string;
-}
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -26,18 +33,10 @@ const fadeUp = {
     },
   },
 };
-
 const stagger = {
   hidden: {},
   show: { transition: { staggerChildren: 0.12 } },
 };
-
-const values = [
-  { icon: BookOpen, label: "30+ Books", sub: "Published & Counting" },
-  { icon: Users, label: "50,000+", sub: "Lives Impacted" },
-  { icon: Award, label: "200+", sub: "Events Conducted" },
-  { icon: Heart, label: "100%", sub: "Passion Driven" },
-];
 
 const qualities = [
   {
@@ -56,393 +55,220 @@ const qualities = [
     desc: "Believes every person carries extraordinary untapped potential.",
   },
 ];
-
-export default function AboutSection() {
+export default function AboutMe() {
   const [about, setAbout] = useState<AboutData | null>(null);
 
   useEffect(() => {
     fetch(`${API_BASE}/about`)
-      .then((r) => r.json())
-      .then((json) => setAbout(json?.data ?? json))
-      .catch(() => {});
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.status) {
+          setAbout(json.data);
+        }
+      })
+      .catch(console.error);
   }, []);
-
   return (
     <section
       style={{
-        background: "#f8f9fa",
-        paddingTop: "100px",
-        paddingBottom: "40px",
+        padding: "40px 10px",
       }}
+      className="relative overflow-hidden bg-[#fff] py-20 sm:py-28"
     >
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 4px" }}>
-        {/* Section label */}
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-16 px-5 sm:px-8 lg:grid-cols-2">
+        {/* ── Left: portrait ── */}
         <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          variants={fadeUp}
-          style={{ textAlign: "center", marginBottom: 34 }}
+          initial={{ opacity: 0, x: -32 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="relative"
         >
+          {/* corner accent */}
           <span
-            className="font-xolonium"
-            style={{
-              display: "inline-block",
-              background: "#6c7e7f1a",
-              color: "#6c7e7f",
-              borderRadius: 40,
-              padding: "6px 20px",
-              fontSize: 12,
-              fontWeight: 700,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              marginBottom: 16,
-            }}
-          >
-            About The Author
-          </span>
-          <h2
-            className="font-rising"
-            style={{
-              fontSize: "clamp(22px, 4vw, 36px)",
-              color: "#1f2937",
-              margin: 0,
-              lineHeight: 1.1,
-            }}
-          >
-            The Man Behind The{" "}
-            <span style={{ color: "#6c7e7f", fontStyle: "italic" }}>
-              Vision
-            </span>
-          </h2>
+            aria-hidden
+            className="absolute -top-4 right-6 h-10 w-10 border-r-2 border-t-2"
+            style={{ borderColor: LIME }}
+          />
+
+          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-black bg-neutral-900">
+            {/* Replace src with the real photo in /public */}
+            <Image
+              src={`${IMG_BASE}${about?.logo}`}
+              alt={about?.about_title || ""}
+              fill
+              sizes="(max-width:1024px) 90vw,40vw"
+              className="object-cover grayscale"
+            />
+          </div>
+
+          <span
+            aria-hidden
+            className="absolute -bottom-4 left-6 h-10 w-10 border-b-2 border-l-2"
+            style={{ borderColor: LIME }}
+          />
         </motion.div>
 
-        {/* Two-col layout */}
-        <div
-          className="about-grid"
-          style={{ display: "flex", gap: 64, alignItems: "center" }}
-        >
-          {/* Left: Image */}
-          <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{
-              duration: 0.8,
-              ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
-            }}
-            className="about-image-col"
-            style={{ flex: "0 0 500px", position: "relative" }}
-          >
-            <div
-              style={{
-                width: "100%",
-                aspectRatio: "4/5",
-                borderRadius: "40% 60% 60% 40% / 40% 40% 60% 60%",
-                overflow: "hidden",
-                background: "linear-gradient(135deg, #6c7e7f22, #95a49a22)",
-                border: "2px solid #6c7e7f1a",
-                position: "relative",
-              }}
-            >
-              {about?.logo ? (
-                <img
-                  src={`${IMG_BASE}${about.logo}`}
-                  alt="About"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    position: "absolute",
-                    inset: 0,
-                  }}
-                />
-              ) : (
-                // <img
-                //   // src={`${IMG_BASE}${about.image}`}
-                //   src="/chairman2.jpeg"
-                //   alt="About"
-                //   style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                // />
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "linear-gradient(160deg, #6c7e7f33, #9aa6aa33)",
-                  }}
-                >
-                  <BookOpen
-                    size={56}
-                    color="#6c7e7f"
-                    style={{ opacity: 0.4 }}
-                  />
-                </div>
-              )}
-            </div>
+        {/* ── Right: content ── */}
+        <div className="relative">
+          {/* ghost number */}
 
-            {/* Floating stat card */}
-            <motion.div
-              className="about-floating-card"
-              animate={{ y: [0, -8, 0] }}
-              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-              style={{
-                position: "absolute",
-                bottom: 30,
-                right: -30,
-                background: "#5A6B6C",
-                borderRadius: 14,
-                padding: "16px",
-                boxShadow: "0 16px 48px rgba(108,126,127,0.18)",
-                border: "1px solid #6c7e7f1a",
-              }}
-            >
-              <div
-                className="font-xolonium about-card-name"
-                style={{
-                  fontSize: 16,
-                  fontWeight: 500,
-                  lineHeight: 1,
-                  color: "#fff",
-                }}
-              >
-                K.S.M Shopnill Chowdhury Shohag
-              </div>
-              <div
-                className="font-xolonium about-card-degree"
-                style={{
-                  fontSize: 12,
-                  fontWeight: 500,
-                  color: "#fff",
-                  lineHeight: 1,
-                }}
-              >
-                <br /> B.Sc in Computer Science & Engineering <br /> M.Sc
-                Software Engineer <br /> PhD in Textile & Business Management{" "}
-                <br /> ( Germany)
-              </div>
-              <div
-                className="font-xolonium about-card-designation"
-                style={{
-                  fontSize: 14,
-                  color: "#fff",
-
-                  fontWeight: 500,
-                  lineHeight: "16px",
-                }}
-              >
-                Founder & Managing
-                <br />
-                Director Blue Dream Group
-              </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Right: Text */}
           <motion.div
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true }}
-            variants={stagger}
-            style={{ flex: 1 }}
+            viewport={{ once: true, amount: 0.4 }}
+            variants={fadeUp}
+            className="mb-3 flex font-xolonium items-center gap-3 text-sm font-semibold uppercase tracking-[0.2em]"
+            style={{ color: LIME }}
           >
-            <motion.div
-              variants={fadeUp}
-              style={{
-                fontSize: "clamp(12px, 1.6vw, 15px)",
-                color: "#374151",
-                lineHeight: 1.9,
-                marginBottom: 24,
-                textAlign: "justify",
-                textJustify: "inter-word",
-              }}
-              className="about-description font-xolonium"
-            >
-              K.S.M. Shopnill Chowdhury Shohag is a multifaceted Bangladeshi
-              entrepreneur, software engineer, and author recognized for his
-              significant contributions to the garment industry and social
-              development. As the founder and Managing Director of Blue Dream
-              Group, he has established a prominent footprint in apparel
-              manufacturing. Beyond his business ventures, he demonstrates a
-              profound commitment to humanitarian efforts as the chair of the
-              Asian Life Foundation. A passionate mentor, he actively guides
-              aspiring entrepreneurs and shares his professional insights
-              through published books on business success. His work seamlessly
-              bridges the gap between technical expertise, industrial
-              leadership, and a dedicated spirit of community service.
-            </motion.div>
+            <span
+              className="h-px w-8 font-xolonium"
+              style={{ background: LIME }}
+            />
+            Who I Am
+          </motion.div>
 
-            {/* Qualities */}
-            <motion.div
-              variants={stagger}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 16,
-                marginBottom: 40,
-              }}
-            >
-              {qualities.map((q) => (
-                <motion.div
-                  key={q.title}
-                  variants={fadeUp}
+          <motion.h2
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.4 }}
+            variants={fadeUp}
+            custom={1}
+            className="font-rising relative mb-6 text-4xl leading-[0.95] text-black sm:text-5xl"
+          >
+            ABOUT <span style={{ color: LIME }}>ME</span>
+          </motion.h2>
+
+          <h2
+            className="font-rising"
+            style={{
+              fontSize: "clamp(22px,4vw,36px)",
+              color: "#000",
+              margin: 0,
+            }}
+          >
+            {about?.page_title}
+          </h2>
+
+          <motion.p
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.4 }}
+            variants={fadeUp}
+            custom={2}
+            className="mb-8 font-xolonium max-w-xl text-base leading-relaxed text-black"
+          >
+            Hello, I&apos;m K.S.M. Shopnill Chowdhury Shohag— a{" "}
+            <span className="font-semibold text-black">
+              is a multifaceted &amp;
+            </span>{" "}
+            Bangladeshi entrepreneur, software engineer, and author recognized
+            for his significant contributions to the garment industry and social
+            development. As the founder and Managing Director of Blue Dream
+            Group, he has established a prominent footprint in apparel
+            manufacturing. Beyond his business ventures, he demonstrates a
+            profound commitment to humanitarian efforts as the chair of the
+            Asian Life Foundation. A passionate mentor, he actively guides
+            aspiring entrepreneurs and shares his professional insights through
+            published books on business success. His work seamlessly bridges the
+            gap between technical expertise, industrial leadership, and a
+            dedicated spirit of community service.
+          </motion.p>
+
+          {/* Info list */}
+          <motion.div
+            variants={stagger}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 16,
+              marginBottom: 40,
+              marginTop: 20,
+            }}
+          >
+            {qualities.map((q) => (
+              <motion.div
+                key={q.title}
+                variants={fadeUp}
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 16,
+                  padding: "16px 20px",
+                  background: "#ffffff",
+                  borderRadius: 12,
+                  border: "1px solid #e5e7eb",
+                  transition: "border-color 0.2s, transform 0.2s",
+                }}
+                className="about-quality-card"
+              >
+                <div
                   style={{
+                    width: 40,
+                    height: 40,
+                    flexShrink: 0,
+                    background: "#6c7e7f15",
+                    borderRadius: 10,
                     display: "flex",
-                    alignItems: "flex-start",
-                    gap: 16,
-                    padding: "16px 20px",
-                    background: "#ffffff",
-                    borderRadius: 12,
-                    border: "1px solid #e5e7eb",
-                    transition: "border-color 0.2s, transform 0.2s",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
-                  className="about-quality-card"
                 >
+                  <q.icon size={20} color="#95a49a" />
+                </div>
+                <div>
                   <div
+                    className="font-rising"
                     style={{
-                      width: 40,
-                      height: 40,
-                      flexShrink: 0,
-                      background: "#6c7e7f15",
-                      borderRadius: 10,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
+                      fontSize: 12,
+                      fontWeight: 500,
+                      color: "#1f2937",
+                      marginBottom: 2,
                     }}
                   >
-                    <q.icon size={20} color="#95a49a" />
+                    {q.title}
                   </div>
-                  <div>
-                    <div
-                      className="font-rising"
-                      style={{
-                        fontSize: 12,
-                        fontWeight: 500,
-                        color: "#1f2937",
-                        marginBottom: 2,
-                      }}
-                    >
-                      {q.title}
-                    </div>
-                    <div
-                      className="font-xolonium"
-                      style={{
-                        fontSize: 13,
-                        color: "#6b7280",
-                        lineHeight: 1.6,
-                      }}
-                    >
-                      {q.desc}
-                    </div>
+                  <div
+                    className="font-xolonium"
+                    style={{
+                      fontSize: 13,
+                      color: "#6b7280",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {q.desc}
                   </div>
-                </motion.div>
-              ))}
-            </motion.div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
 
-            <motion.div variants={fadeUp}>
-              <Link
-                href="/about"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  background: "#6c7e7f",
-                  color: "#ffffff",
-                  padding: "14px 28px",
-                  borderRadius: 6,
-                  fontSize: 13,
-                  fontWeight: 700,
-                  letterSpacing: "0.06em",
-                  textTransform: "uppercase",
-                  textDecoration: "none",
-                  transition: "all 0.25s",
-                }}
-                className="about-cta font-xolonium"
-              >
-                Read Full Story →
-              </Link>
-            </motion.div>
+          <motion.div variants={fadeUp}>
+            <Link
+              href="/about"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                background: "#6c7e7f",
+                color: "#ffffff",
+                padding: "14px 28px",
+                borderRadius: 6,
+                fontSize: 13,
+                fontWeight: 700,
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                textDecoration: "none",
+                transition: "all 0.25s",
+                marginTop: "6px",
+              }}
+              className="about-cta font-xolonium"
+            >
+              Read Full Story →
+            </Link>
           </motion.div>
         </div>
       </div>
-
-      <style>{`
-        .about-cta:hover { background: #5a6b6c !important; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(108,126,127,0.3); }
-        .about-quality-card:hover { border-color: #95a49a !important; transform: translateX(4px); }
-        .about-stat-card:hover { border-color: #6c7e7f !important; transform: translateY(-4px); box-shadow: 0 12px 32px rgba(108,126,127,0.12); }
-        .about-floating-card{
-  width:320px;
-}
-        @media (max-width: 900px) {
-          .about-grid { flex-direction: column !important; gap: 40px !important; }
-          .about-image-col { flex: none !important; width: 100% !important; max-width: 340px; margin: 0 auto; }
-          .about-stats { grid-template-columns: repeat(2, 1fr) !important; }
-           .about-image-col{
-    max-width: 420px !important;
-    width:100% !important;
-  }
- 
-  .about-floating-card{
-    right:-10px !important;
-    bottom:20px !important;
-
-    width:230px !important;
-    padding:12px !important;
-    border-radius:10px !important;
-  }
-
-  .about-card-name{
-    font-size:16px !important;
-    line-height:1.25 !important;
-  }
-
-  .about-card-degree{
-    font-size:10px !important;
-    line-height:1.45 !important;
-  }
-
-  .about-card-designation{
-    font-size:11px !important;
-    line-height:1.3 !important;
-  }
-        }
-        
-        @media (max-width: 480px) {
-
-  .about-stats {
-    grid-template-columns: 1fr 1fr !important;
-  }
-
-  .about-image-col{
-    max-width:100% !important;
-  }
-
-  .about-floating-card{
-    width:185px !important;
-    right:8px !important;
-    bottom:2px !important;
-    padding:6px !important;
-  }
-
-  .about-card-name{
-    font-size:11px !important;
-  }
-
-  .about-card-degree{
-    font-size:9px !important;
-    line-height:1.35 !important;
-  }
-
-  .about-card-designation{
-    font-size:10px !important;
-    line-height:1.2 !important;
-  }
-
-}
-      `}</style>
     </section>
   );
 }

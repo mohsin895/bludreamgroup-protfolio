@@ -1,352 +1,243 @@
 "use client";
 
-import { selectIsDrawerOpen, selectTotalItems } from "@/store/cartSlice";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { Menu, X } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-
-import { CartDrawer } from "@/components/CartDrawer";
-import { useSetting } from "@/hooks/useSetting";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  ArrowUp,
+  Briefcase,
+  Code2,
+  FileText,
+  Home,
+  LayoutGrid,
+  Mail,
+  Menu,
+  Quote,
+  Rss,
+  Tag,
+  User,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
-type NavChild = {
-  label: string;
-  href: string;
-};
+const LIME = "#6C7E7F";
 
 type NavItem = {
   label: string;
   href: string;
-  children?: NavChild[];
+  icon: LucideIcon;
 };
 
-const primaryNav: NavItem[] = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Books", href: "/books" },
-  { label: "Blog", href: "/blog" },
-  { label: "Courses", href: "/courses" },
-  { label: "CSR", href: "/csr" },
-  { label: "Achievement", href: "/achievements" },
-  { label: "Contact", href: "/contact" },
+const navItems: NavItem[] = [
+  { label: "Home", href: "/", icon: Home },
+  { label: "About", href: "/about", icon: User },
+  { label: "Skills", href: "/skills", icon: Code2 },
+  { label: "Services", href: "/services", icon: LayoutGrid },
+  { label: "Portfolio", href: "/portfolio", icon: Briefcase },
+  { label: "Resume", href: "/resume", icon: FileText },
+  { label: "Testimonials", href: "/testimonials", icon: Quote },
+  { label: "Pricing", href: "/pricing", icon: Tag },
+  { label: "Blog", href: "/blog", icon: Rss },
+  { label: "Contact", href: "/contact", icon: Mail },
 ];
 
 export default function Navbar() {
-  const dispatch = useAppDispatch();
-  const totalItems = useAppSelector(selectTotalItems);
-  const isDrawerOpen = useAppSelector(selectIsDrawerOpen);
-
-  const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-
+  const [showTop, setShowTop] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const { setting, logoUrl } = useSetting();
 
-  const isHomePage = pathname === "/";
-  const solidNav = !isHomePage || scrolled || isDrawerOpen;
-
-  // ── Hydration guard ────────────────────────────────────────────────────────
+  // ── Scroll state: solid bg + scroll-to-top button ──
   useEffect(() => {
-    setMounted(true);
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40);
+      setShowTop(window.scrollY > 500);
+    };
+    onScroll();
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
-        setActiveDropdown(null);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
+    if (menuOpen) {
+      const scrollY = window.scrollY;
+
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
+
+      return () => {
+        const top = document.body.style.top;
+
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.left = "";
+        document.body.style.right = "";
+        document.body.style.width = "";
+
+        window.scrollTo(0, parseInt(top || "0") * -1);
+      };
+    }
+  }, [menuOpen]);
+
+  // ── Close on route change ──
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
     <>
-      <nav
+      {/* ── Top bar ── */}
+      <header
         style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 1000,
-          transition: "all 0.4s ease",
-          background: "rgba(255,255,255,0.92)",
-          backdropFilter: "blur(18px)",
-          borderBottom: "1px solid rgba(108,126,127,0.08)",
+          padding: "10px",
         }}
+        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
+          scrolled
+            ? "bg-white/80 backdrop-blur-md border-b border-white/10 py-4"
+            : "bg-transparent py-6 border-b border-transparent"
+        }`}
       >
-        <div className="container">
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              height: scrolled ? "64px" : "80px",
-              transition: "height 0.4s ease",
-            }}
-          >
-            {/* Logo */}
-            <Link href="/" style={{ marginLeft: "16px" }}>
-              <div className="relative w-[200px] h-[20px] sm:w-[250px] sm:h-[38px] md:w-[360px] md:h-[44px]">
-                <Image
-                  src="/logo-removebg-preview.png"
-                  alt="Logo"
-                  fill
-                  className="object-contain"
-                />
-              </div>
-            </Link>
-
-            {/* Desktop Nav */}
-            <div
-              ref={dropdownRef}
-              style={{ display: "flex", alignItems: "center", gap: "1px" }}
-              className="desktop-nav"
-            >
-              {primaryNav.map((item) => (
-                <div
-                  key={item.label}
-                  style={{ position: "relative", color: "#000" }}
-                >
-                  {item.href && (
-                    <Link
-                      href={item.href}
-                      style={{
-                        display: "block",
-                        padding: "8px 14px",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        letterSpacing: "0.04em",
-                        color: pathname === item.href ? "#6c7e7f" : "#1f2937",
-                        textDecoration: "none",
-                        transition: "color 0.2s",
-                      }}
-                    >
-                      {item.label}
-                    </Link>
-                  )}
-
-                  {/* Dropdown */}
-                  {item.children && (
-                    <div
-                      onMouseLeave={() => setActiveDropdown(null)}
-                      style={{
-                        position: "absolute",
-                        top: "calc(100% + 8px)",
-                        left: "50%",
-                        background: "#648181",
-                        border: "1px solid rgba(255,255,255,0.08)",
-                        color: "#648181",
-                        borderRadius: "6px",
-                        padding: "8px",
-                        minWidth: "200px",
-                        boxShadow: "0 20px 60px rgba(0,0,0,0.6)",
-                        opacity: activeDropdown === item.label ? 1 : 0,
-                        pointerEvents:
-                          activeDropdown === item.label ? "all" : "none",
-                        transform:
-                          activeDropdown === item.label
-                            ? "translateX(-50%) translateY(0)"
-                            : "translateX(-50%) translateY(-8px)",
-                        transition: "opacity 0.2s, transform 0.2s",
-                        maxHeight: "400px",
-                        overflowY: "auto",
-                      }}
-                    >
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.label}
-                          href={child.href}
-                          style={{
-                            display: "block",
-                            padding: "9px 16px",
-                            fontSize: "14px",
-                            fontWeight: 400,
-                            color: "#1f2937",
-                            textDecoration: "none",
-                            borderRadius: "4px",
-                            transition: "all 0.15s",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-
-              <Link
-                href="/books"
-                className="hover:bg-[#95a49a] font-xolonium"
-                style={{
-                  marginLeft: "16px",
-                  fontSize: "14px",
-                  padding: "8px 12px",
-                  background: "#6c7e7f",
-                  color: "#fff",
-                  border: "1px solid #6c7e7f",
-                }}
-              >
-                Start Reading
-              </Link>
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-8">
+          <Link href="/" style={{ marginLeft: "16px" }}>
+            <div className="relative w-[200px] h-[20px] sm:w-[250px] sm:h-[38px] md:w-[360px] md:h-[44px]">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                fill
+                className="object-contain"
+              />
             </div>
+          </Link>
 
-            {/* Mobile toggle */}
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              style={{
-                background: "none",
-                border: "1px solid rgba(255,255,255,0.12)",
-                color: "#1f2937",
-                padding: "8px",
-                cursor: "pointer",
-                zIndex: 1100,
-                borderRadius: "4px",
-                display: "none",
-              }}
-              className="mobile-toggle hover:bg-[#f3f4f6] hover:text-[#6c7e7f]"
-            >
-              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
-          </div>
+          {/* Menu toggle — stays on top of the panel */}
+          <button
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            className="relative z-[110] cursor-pointer flex h-12 w-12 items-center justify-center rounded-full text-white shadow-lg transition-transform hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            style={{ background: LIME }}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {menuOpen ? (
+                <motion.span
+                  key="close"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <X size={26} />
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="menu"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Menu size={26} />
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </button>
         </div>
+      </header>
 
-        {/* Gold line at bottom */}
-        <div
-          style={{
-            height: "1px",
-            background:
-              "linear-gradient(90deg,transparent,rgba(108,126,127,0.3),transparent)",
-            opacity: solidNav ? 0 : 0.2,
-          }}
-        />
-      </nav>
+      {/* ── Backdrop + sliding right panel ── */}
+      <AnimatePresence>
+        {menuOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMenuOpen(false)}
+              className="fixed inset-0 z-[90] bg-black/20 backdrop-blur-sm"
+            />
 
-      {/* Mobile Menu */}
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "#ffffff",
-          zIndex: 999,
-          transform: mobileOpen ? "translateX(0)" : "translateX(100%)",
-          transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-          overflowY: "auto",
-          paddingTop: "80px",
-        }}
-      >
-        <div
-          className="container"
-          style={{ paddingTop: "26px", paddingBottom: "26px" }}
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            {primaryNav.map((item, i) => (
-              <div key={item.label}>
-                {item.children ? (
-                  <>
-                    <div
-                      className="font-xolonium"
-                      style={{
-                        padding: "14px 0",
-                        fontSize: "28px",
-
-                        color: "#ffff",
-                        borderBottom: "1px solid rgba(255,255,255,0.04)",
-                        animation: mobileOpen
-                          ? `fadeIn 0.4s ${i * 0.05}s both`
-                          : "none",
-                      }}
+            <motion.aside
+              style={{
+                padding: "20px 5px",
+                right: "40px",
+                marginTop: "60px",
+              }}
+              key="panel"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+              className="fixed right-0 top-0 z-[95] h-full w-full max-w-[240px] overflow-y-auto bg-[#141414] pb-24 pt-28 shadow-2xl"
+            >
+              <nav className="flex gap-4 flex-col px-6">
+                {navItems.map((item, i) => {
+                  const active = pathname === item.href;
+                  return (
+                    <motion.div
+                      key={item.href}
+                      initial={{ opacity: 0, x: 24 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.35, delay: 0.05 * i }}
                     >
-                      {item.label}
-                    </div>
-                    <div style={{ paddingLeft: "16px" }}>
-                      {item.children.map((child) => (
-                        <Link
-                          className="font-xolonium"
-                          key={child.label}
-                          href={child.href}
+                      <Link
+                        href={item.href}
+                        className="group flex items-center gap-4  py-6"
+                      >
+                        <span
+                          className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg border transition-colors"
                           style={{
-                            display: "block",
-                            padding: "10px 0",
-                            fontSize: "15px",
-                            color: "#ffff",
-                            textDecoration: "none",
-                            borderBottom: "1px solid rgba(255,255,255,0.03)",
+                            background: active ? `#fff` : "#1f1f1f",
+                            borderColor: active
+                              ? LIME
+                              : "rgba(255,255,255,0.08)",
+                            color: active ? LIME : "rgba(255,255,255,0.6)",
                           }}
                         >
-                          {child.label}
-                        </Link>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <Link
-                    className="font-xolonium"
-                    href={item.href}
-                    style={{
-                      display: "block",
-                      padding: "10px 0",
-                      fontSize: "22px",
+                          <item.icon size={18} />
+                        </span>
+                        <span
+                          className="text-sm md:text-lg font-bold uppercase tracking-widest transition-colors"
+                          style={{
+                            color: active ? LIME : "rgba(255,255,255,0.85)",
+                          }}
+                        >
+                          {item.label}
+                        </span>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </nav>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
 
-                      fontWeight: 400,
-                      color: pathname === item.href ? "#6c7e7f" : "#1f2937",
-                      textDecoration: "none",
-                      borderBottom: "1px solid rgba(255,255,255,0.08)",
-                      animation: mobileOpen
-                        ? `slideIn 0.4s ${i * 0.05}s both`
-                        : "none",
-                    }}
-                  >
-                    {item.label}
-                  </Link>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div style={{ marginTop: "40px" }}>
-            <Link
-              href="/contact"
-              className="btn-primary font-xolonium"
-              style={{
-                display: "inline-flex",
-                background: "#6c7e7f",
-                color: "#fff",
-                border: "1px solid #6c7e7f",
-              }}
-            >
-              Work With Me
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      <CartDrawer />
-
-      <style>{`
-        @media (max-width: 900px) {
-          .desktop-nav { display: none !important; }
-          .mobile-toggle { display: flex !important; }
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
-      `}</style>
+      {/* ── Scroll-to-top button ── */}
+      <AnimatePresence>
+        {showTop && (
+          <motion.button
+            key="scroll-top"
+            onClick={scrollToTop}
+            aria-label="Scroll to top"
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.6 }}
+            transition={{ duration: 0.25 }}
+            className="fixed bottom-6 right-6 z-[100] flex h-12 w-12 items-center justify-center rounded-full text-black shadow-lg transition-transform hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            style={{ background: LIME }}
+          >
+            <ArrowUp size={20} />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </>
   );
 }
