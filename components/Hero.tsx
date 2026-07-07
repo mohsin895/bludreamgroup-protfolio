@@ -91,28 +91,14 @@ export default function Hero() {
           animate="show"
           className="relative z-10"
         >
-          {/* <motion.div
-            variants={item}
-            className="mb-5 flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.2em] text-white/60"
-          >
-            <span className="h-px w-8" style={{ background: LIME }} />
-            <span>👋 Hello, I&apos;m</span>
-          </motion.div> */}
-
           {/* Name with ghost depth text */}
           <div className="relative mb-6">
-            <motion.h1
-              variants={item}
-              className=" font-rising relative text-[15vw] leading-[0.9] text-white sm:text-7xl lg:text-8xl"
-            >
+            <motion.h1 variants={item} className="hero-title">
               {hero?.title}
             </motion.h1>
           </div>
 
-          <motion.p
-            variants={item}
-            className="max-w-md font-xolonium text-base leading-relaxed text-white/60"
-          >
+          <motion.p variants={item} className="hero-subtitle">
             {hero?.sub_title}
           </motion.p>
 
@@ -172,6 +158,86 @@ export default function Hero() {
     opacity: 0.8;
     z-index: 1;
     animation: glowMove 5s ease-in-out infinite alternate;
+}
+    .hero-title {
+  font-family: "Rising", sans-serif;
+  font-size: 120px;
+  line-height: 0.9;
+  color: #fff;
+}
+
+.hero-subtitle {
+  max-width: 32rem;
+  font-family: "Xolonium", sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Large Desktop */
+@media (max-width: 1400px) {
+  .hero-title {
+    font-size: 80px;
+  }
+}
+
+/* Laptop */
+@media (max-width: 1200px) {
+  .hero-title {
+    font-size: 80px;
+  }
+    .hero-subtitle {
+    font-size: 15px;
+    margin-top: 20px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 992px) {
+  .hero-title {
+    font-size: 64px;
+    margin-top: 80px;
+   
+  }
+
+  .hero-subtitle {
+    font-size: 15px;
+    margin-top: 20px
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 48px;
+  }
+
+  .hero-subtitle {
+    font-size: 14px;
+    max-width: 100%;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 576px) {
+  .hero-title {
+    font-size: 36px;
+  }
+
+  .hero-subtitle {
+    font-size: 13px;
+  }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 400px) {
+  .hero-title {
+    font-size: 32px;
+  }
+
+  .hero-subtitle {
+    font-size: 12px;
+  }
 }
       `}</style>
     </section>

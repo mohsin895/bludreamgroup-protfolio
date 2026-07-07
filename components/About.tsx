@@ -260,7 +260,6 @@ export default function AboutMe() {
                 textTransform: "uppercase",
                 textDecoration: "none",
                 transition: "all 0.25s",
-                marginTop: "6px",
               }}
               className="about-cta font-xolonium"
             >

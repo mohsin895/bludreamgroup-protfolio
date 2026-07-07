@@ -106,7 +106,7 @@ export default function Navbar() {
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-8">
           <Link href="/" style={{ marginLeft: "16px" }}>
-            <div className="relative w-[200px] h-[20px] sm:w-[250px] sm:h-[38px] md:w-[360px] md:h-[44px]">
+            <div className="relative w-[200px] h-[60px] sm:w-[250px] sm:h-[38px] md:w-[360px] md:h-[44px]">
               <Image
                 src="/logo.png"
                 alt="Logo"
