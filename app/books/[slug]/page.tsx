@@ -10,6 +10,7 @@ import {
   type Product,
   type ProductFormat,
 } from "@/lib/api/product";
+import { AnimatePresence, motion } from "framer-motion";
 
 import {
   BookOpen,
@@ -297,7 +298,7 @@ function FormatSelector({
                   fontWeight: 700,
                   textTransform: "uppercase",
                   letterSpacing: "0.1em",
-                  background: accent ? `${accent}22` : "rgba(201,168,76,0.2)",
+                  background: accent ? `#fff` : "#fff",
                   color: accent ?? "#000",
                   padding: "2px 6px",
                   borderRadius: "4px",
@@ -583,6 +584,9 @@ export default function BookDetailPage() {
     null,
   );
   const [addedToCart, setAddedToCart] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+
+  const previewUrl = product?.preview ? imageUrl(product.preview) : "";
 
   // ── Order form state ──
   const [form, setForm] = useState<OrderForm>(EMPTY_FORM);
@@ -990,30 +994,57 @@ export default function BookDetailPage() {
                 }}
               />
 
-              {/* Format selector — unchanged */}
-              {product.formats?.length > 0 && (
-                <div>
-                  <p
-                    className="font-xolonium"
+              <div className="md:flex grid gap-6 md:gap-6">
+                {product?.preview && (
+                  <button
                     style={{
-                      fontSize: "11px",
-                      color: "#000",
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase",
-                      fontWeight: 700,
-                      marginBottom: "14px",
+                      padding: "5px",
                     }}
+                    onClick={() => setPreviewOpen(true)}
+                    className="flex  cursor-pointer items-center gap-4 rounded-xl border p-3 hover:shadow-lg transition"
                   >
-                    Choose Format
-                  </p>
-                  <FormatSelector
-                    formats={product.formats}
-                    selected={selectedFormat}
-                    onSelect={setSelectedFormat}
-                    accent={product.cover_accent ?? undefined}
-                  />
-                </div>
-              )}
+                    <img
+                      src={coverImg}
+                      alt={product.title}
+                      className="w-14 h-20 object-cover rounded"
+                    />
+
+                    <div className="text-left">
+                      <p className="font-semibold text-black">
+                        📖 Read Preview PDF
+                      </p>
+                      <p className="text-sm text-gray-800">
+                        Click to preview this book
+                      </p>
+                    </div>
+                  </button>
+                )}
+
+                {/* Format selector — unchanged */}
+                {product.formats?.length > 0 && (
+                  <div>
+                    <p
+                      className="font-xolonium "
+                      style={{
+                        fontSize: "11px",
+                        color: "#000",
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase",
+                        fontWeight: 700,
+                        marginBottom: "14px",
+                      }}
+                    >
+                      Choose Format
+                    </p>
+                    <FormatSelector
+                      formats={product.formats}
+                      selected={selectedFormat}
+                      onSelect={setSelectedFormat}
+                      accent={product.cover_accent ?? undefined}
+                    />
+                  </div>
+                )}
+              </div>
 
               {/* Discount badge — unchanged */}
               {hasDiscount && (
@@ -1741,7 +1772,34 @@ export default function BookDetailPage() {
           `}</style>
         </section>
       )}
+      <AnimatePresence>
+        {previewOpen && (
+          <motion.div
+            className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setPreviewOpen(false)}
+          >
+            <motion.div
+              onClick={(e) => e.stopPropagation()}
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              className="relative bg-white rounded-xl w-[95%] max-w-5xl h-[90vh]"
+            >
+              <button
+                onClick={() => setPreviewOpen(false)}
+                className="absolute right-4 top-4 z-10"
+              >
+                ✕
+              </button>
 
+              <iframe src={previewUrl} className="w-full h-full rounded-xl" />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <Footer />
       <style>{`@media(max-width:860px){.detail-grid{grid-template-columns:1fr!important;gap:40px!important;}}`}</style>
     </>

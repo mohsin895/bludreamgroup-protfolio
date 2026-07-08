@@ -3,16 +3,12 @@
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowUp,
-  Briefcase,
-  Code2,
-  FileText,
+  Award,
+  BookOpen,
   Home,
-  LayoutGrid,
   Mail,
   Menu,
-  Quote,
   Rss,
-  Tag,
   User,
   X,
   type LucideIcon,
@@ -23,23 +19,24 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const LIME = "#6C7E7F";
+type NavChild = {
+  label: string;
+  href: string;
+};
 
 type NavItem = {
   label: string;
   href: string;
   icon: LucideIcon;
+  children?: NavChild[];
 };
 
 const navItems: NavItem[] = [
   { label: "Home", href: "/", icon: Home },
   { label: "About", href: "/about", icon: User },
-  { label: "Skills", href: "/skills", icon: Code2 },
-  { label: "Services", href: "/services", icon: LayoutGrid },
-  { label: "Portfolio", href: "/portfolio", icon: Briefcase },
-  { label: "Resume", href: "/resume", icon: FileText },
-  { label: "Testimonials", href: "/testimonials", icon: Quote },
-  { label: "Pricing", href: "/pricing", icon: Tag },
+  { label: "Books", href: "/books", icon: BookOpen },
   { label: "Blog", href: "/blog", icon: Rss },
+  { label: "Achievement", href: "/achievements", icon: Award },
   { label: "Contact", href: "/contact", icon: Mail },
 ];
 
@@ -49,6 +46,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
 
+  const isHome = pathname === "/";
   // ── Scroll state: solid bg + scroll-to-top button ──
   useEffect(() => {
     const onScroll = () => {
@@ -99,9 +97,11 @@ export default function Navbar() {
           padding: "10px",
         }}
         className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
-          scrolled
-            ? "bg-white/80 backdrop-blur-md border-b border-white/10 py-4"
-            : "bg-transparent py-6 border-b border-transparent"
+          isHome
+            ? scrolled
+              ? "bg-white/90 backdrop-blur-md border-b border-gray-200 py-4"
+              : "bg-transparent py-6 border-b border-transparent"
+            : "bg-white backdrop-blur-md border-b border-gray-200 py-4"
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-8">
