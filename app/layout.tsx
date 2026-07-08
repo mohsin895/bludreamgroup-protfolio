@@ -138,7 +138,7 @@ export default function RootLayout({
                             name: "Blue Dream Group",
                             url: "https://bluedreamgroup.com",
                         },
-                     
+
                         sameAs: [
                             "https://www.facebook.com/shopnillchowdhuryshohag/",
                         ],
@@ -161,7 +161,7 @@ export default function RootLayout({
         {/* ================= APP ================= */}
         <SmoothScroll>
             <ReduxProvider>
-                <SeoHead />
+                {/* <SeoHead />  <-- remove if it injects title/meta tags */}
                 <AuthProvider>{children}</AuthProvider>
                 <ToastContainer position="top-right" autoClose={3000} />
             </ReduxProvider>
