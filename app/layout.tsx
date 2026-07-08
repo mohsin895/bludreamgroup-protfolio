@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
     const s = await fetchSettings();
 
     const title = s?.seo_title ?? "KSM Shopnill Chowdhury Shohag";
-    const description = s?.seo_description ?? "";
+    const description = s?.seo_description ?? "KSM Shopnill Chowdhury Shohag";
     const faviconHref = s?.favicon ? imgUrl(s.favicon) : "/favicon.ico";
     const logoHref = s?.logo ? imgUrl(s.logo) : undefined;
 
