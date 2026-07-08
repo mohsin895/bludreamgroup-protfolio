@@ -107,6 +107,15 @@ export default function EventsSection() {
   }, []);
 
   const display = events.length > 0 ? events : fallbackEvents;
+  function truncateText(text: string, maxLength = 150) {
+    if (!text) return "";
+
+    const plain = stripHtml(text).trim();
+
+    if (plain.length <= maxLength) return plain;
+
+    return plain.slice(0, maxLength).trimEnd() + "...";
+  }
 
   return (
     <section
@@ -337,7 +346,10 @@ export default function EventsSection() {
                       margin: "0 0 16px",
                     }}
                   >
-                    {stripHtml(ev.short_description ?? ev.description ?? "")}
+                    {truncateText(
+                      ev.short_description ?? ev.description ?? "",
+                      200,
+                    )}
                   </p>
                   <div
                     className="font-xolonium"

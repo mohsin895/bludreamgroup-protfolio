@@ -30,12 +30,12 @@ export default function PageHero({
   return (
     <section className="page-hero">
       {/* Decorative shapes */}
-      <span className="deco deco-triangle md:block hidden" aria-hidden="true" />
+      {/* <span className="deco deco-triangle md:block hidden" aria-hidden="true" />
       <span className="deco deco-plus md:block hidden" aria-hidden="true">
         +
       </span>
       <div className="deco deco-circle" aria-hidden="true" />
-      <div className="deco deco-circle-sm" aria-hidden="true" />
+      <div className="deco deco-circle-sm" aria-hidden="true" /> */}
 
       {/* Main content */}
       <div className="hero-content">
@@ -96,14 +96,9 @@ export default function PageHero({
       <style jsx>{`
         .page-hero {
           position: relative;
-          background: linear-gradient(
-            180deg,
-            #46595a 0%,
-            #6c7e7f 45%,
-            #8d9b9c 75%,
-            #c7d1d2 100%
-          );
           overflow: hidden;
+          isolation: isolate;
+
           padding: 4rem 1.5rem 5rem;
           text-align: center;
           min-height: 360px;
@@ -111,6 +106,33 @@ export default function PageHero({
           align-items: center;
           justify-content: center;
           margin-bottom: 60px;
+        }
+        .page-hero::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+
+          background: url("/chairman2.jpeg") center/cover no-repeat;
+
+          filter: blur(10px) brightness(0.95);
+          transform: scale(1.08);
+
+          z-index: -2;
+        }
+
+        .page-hero::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+
+          background: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.15),
+            rgba(0, 0, 0, 0.2),
+            rgba(0, 0, 0, 0.3)
+          );
+
+          z-index: -1;
         }
 
         /* ── Decorative elements ── */
@@ -161,40 +183,45 @@ export default function PageHero({
         .hero-content {
           position: relative;
           z-index: 2;
+
           display: flex;
           flex-direction: column;
           align-items: center;
+          justify-content: center;
+
           gap: 1rem;
           width: 100%;
           max-width: 720px;
           margin: 0 auto;
           padding-top: 40px;
         }
-
         .hero-title {
-          font-size: clamp(1.2rem, 4vw, 2.5rem);
-          font-weight: 500;
-          color: #ffffff;
-          margin: 20px 0 0; /* top margin */
+          font-size: clamp(1.8rem, 4vw, 3rem);
+          font-weight: 600;
+          color: #fff;
           line-height: 1.15;
-          letter-spacing: -0.5px;
-        }
+          margin-top: 20px;
 
+          text-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
+        }
         .breadcrumb {
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
+
           color: rgba(255, 255, 255, 0.85);
-          font-size: 0.92rem;
+          font-size: 0.95rem;
+
+          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .breadcrumb .active {
+          color: #fff;
         }
 
         .breadcrumb .sep {
           opacity: 0.6;
           font-size: 0.8rem;
-        }
-
-        .breadcrumb .active {
-          color: #ffffff;
         }
 
         /* ── Search bar ── */
@@ -249,22 +276,6 @@ export default function PageHero({
         .search-bar button:active {
           transform: scale(0.96);
         }
-
-        /* ── Wave ── */
-        // .wave-wrapper {
-        //   position: absolute;
-        //   bottom: -1px;
-        //   left: 0;
-        //   right: 0;
-        //   z-index: 1;
-        //   line-height: 0;
-        // }
-
-        // .wave-wrapper svg {
-        //   display: block;
-        //   width: 100%;
-        //   height: 80px;
-        // }
 
         /* ── Responsive ── */
         @media (max-width: 768px) {

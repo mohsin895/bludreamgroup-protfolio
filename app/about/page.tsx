@@ -445,7 +445,7 @@ export default function AboutPage() {
     <>
       <style>{GLOBAL_CSS}</style>
       <Navbar />
-      <PageHero title="About Us" currentPage="About" />
+      <PageHero title="About ME" currentPage="About" />
 
       {/* ── Bio Section ── */}
       <section style={{ background: "#F4F7F6", padding: "100px 0 80px" }}>
