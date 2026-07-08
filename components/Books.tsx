@@ -352,7 +352,7 @@ export default function BooksSection() {
   }, []);
 
   return (
-    <section style={{ background: "#f8f9fa", padding: "50px 0" }}>
+    <section style={{ background: "#Ffff", padding: "50px 0" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
         {/* Header */}
         <motion.div
@@ -368,7 +368,7 @@ export default function BooksSection() {
             style={{
               display: "inline-block",
               background: "#6c7e7f1a",
-              color: "#6c7e7f",
+              color: "#000",
               borderRadius: 40,
               padding: "6px 20px",
               fontSize: 12,
@@ -385,7 +385,7 @@ export default function BooksSection() {
             variants={fadeUp}
             style={{
               fontSize: "clamp(24px, 4vw, 34px)",
-              color: "#1f2937",
+              color: "#000",
               margin: 0,
               lineHeight: 1.1,
             }}
@@ -400,7 +400,7 @@ export default function BooksSection() {
             variants={fadeUp}
             style={{
               fontSize: 16,
-              color: "#6b7280",
+              color: "#0009",
               maxWidth: 480,
               margin: "20px auto 0",
               lineHeight: 1.75,

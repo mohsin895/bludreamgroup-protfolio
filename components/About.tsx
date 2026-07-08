@@ -71,9 +71,9 @@ export default function AboutMe() {
   return (
     <section
       style={{
-        padding: "40px 10px",
+        padding: "60px 20px",
       }}
-      className="relative overflow-hidden bg-[#fff] py-20 sm:py-28"
+      className="relative overflow-hidden bg-[#F8F9FA] py-20 sm:py-28"
     >
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-16 px-5 sm:px-8 lg:grid-cols-2">
         {/* ── Left: portrait ── */}
