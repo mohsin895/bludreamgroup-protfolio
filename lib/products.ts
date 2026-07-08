@@ -32,6 +32,7 @@ export interface Product {
   discount_amount?: number | string | null;
   discount_type?: string | null;
   has_discount?: string | null;
+  preview?: string | null;
 }
 
 export const products: Product[] = [];

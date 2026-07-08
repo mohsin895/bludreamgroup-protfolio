@@ -90,7 +90,7 @@ function ReasonCard({ reason }: { reason: Reason }) {
   return (
     <motion.div variants={fadeUp} className="wf-card" whileHover={{ y: -6 }}>
       <div className="wf-icon-box">
-        <Icon size={26} color={palette.accent} strokeWidth={1.6} />
+        <Icon size={26} color={"#fff"} strokeWidth={1.6} />
       </div>
 
       <h3 className="wf-title">{reason.title}</h3>
@@ -214,10 +214,10 @@ export default function WhyFollowSection() {
           transition: border-color 0.35s ease, background 0.35s ease;
         }
 
-        .wf-card:hover {
-          border-color: color-mix(in srgb, ${palette.accent} 55%, transparent);
-          background: rgba(255,255,255,0.035);
-        }
+        // .wf-card:hover {
+        //   border-color: color-mix(in srgb, ${palette.accent} 55%, transparent);
+        //   background: rgba(255,255,255,0.035);
+        // }
 
         .wf-icon-box {
           width: 64px;
@@ -242,7 +242,7 @@ export default function WhyFollowSection() {
         .wf-desc {
         font-family:Xolonium,sans-serif;
           font-size: 14.5px;
-          color: ${palette.inkSoft};
+          color: #fff9;
           line-height: 1.75;
           margin: 0;
         }

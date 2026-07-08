@@ -81,6 +81,7 @@ interface OrderForm {
   note: string;
   deliveryType: "dhaka" | "outside";
   transactionId: string;
+  preview?: string | null;
 }
 
 const EMPTY_FORM: OrderForm = {
