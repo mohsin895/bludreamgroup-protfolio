@@ -55,7 +55,9 @@ export async function generateMetadata(): Promise<Metadata> {
             description,
             images: logoHref ? [logoHref] : [],
         },
-
+        alternates: {
+            canonical: "/",
+        },
         verification: {
             google: "GxuNdLuxmbvGjyuovjq68Wkfw7gODl5eGo1HmknpzM8",
         },
