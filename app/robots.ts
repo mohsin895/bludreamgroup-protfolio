@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
         rules: {
             userAgent: "*",
             allow: "/",
-            disallow: ["/admin", "/api"], // adjust to whatever paths shouldn't be indexed
+            
         },
         sitemap: "https://shopnillchowdhury.com/sitemap.xml", // 👈 replace with your real domain
     };
