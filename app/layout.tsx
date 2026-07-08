@@ -116,6 +116,28 @@ export default function RootLayout({
             `,
                 }}
             />
+
+            {/* ================= PERSON SCHEMA ================= */}
+            <Script
+                id="person-schema"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "Person",
+                        name: "Shopnill Chowdhury Shohag",
+                        url: "https://shopnillchowdhury.com",
+                        image: "https://shopnillchowdhury.com/logo.webp",
+                        jobTitle: "Founder", // 👈 replace with your real title
+                        sameAs: [
+                            // 👈 add your real profile URLs here, e.g.:
+                            // "https://www.facebook.com/yourprofile",
+                            // "https://www.linkedin.com/in/yourprofile",
+                            // "https://www.instagram.com/yourprofile",
+                        ],
+                    }),
+                }}
+            />
         </head>
 
         <body>
