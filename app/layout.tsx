@@ -37,7 +37,6 @@ export async function generateMetadata(): Promise<Metadata> {
         title,
         description,
 
-
         icons: {
             icon: faviconHref,
             shortcut: faviconHref,
@@ -129,15 +128,26 @@ export default function RootLayout({
                     __html: JSON.stringify({
                         "@context": "https://schema.org",
                         "@type": "Person",
-                        name: "Shopnill Chowdhury Shohag",
+                        name: "K.S.M. Shopnill Chowdhury Shohag",
+                        alternateName: "Shopnill Chowdhury Shohag",
                         url: "https://shopnillchowdhury.com",
                         image: "https://shopnillchowdhury.com/logo.webp",
-                        jobTitle: "Founder", // 👈 replace with your real title
+                        jobTitle: "Founder & Managing Director",
+                        worksFor: {
+                            "@type": "Organization",
+                            name: "Blue Dream Group",
+                            url: "https://bluedreamgroup.com",
+                        },
+                        alumniOf: {
+                            "@type": "EducationalOrganization",
+                            name: "", // 👈 add your university if you want this included
+                        },
                         sameAs: [
-                            // 👈 add your real profile URLs here, e.g.:
-                            // "https://www.facebook.com/yourprofile",
-                            // "https://www.linkedin.com/in/yourprofile",
-                            // "https://www.instagram.com/yourprofile",
+                            // 👈 REQUIRED: add your real profile URLs here, e.g.:
+                             "https://www.facebook.com/shopnillchowdhuryshohag/",
+                            // "https://www.linkedin.com/in/yourrealprofile",
+                            // "https://www.instagram.com/yourrealprofile",
+                            // "https://www.youtube.com/yourrealchannel",
                         ],
                     }),
                 }}
