@@ -55,9 +55,13 @@ export async function generateMetadata(): Promise<Metadata> {
             description,
             images: logoHref ? [logoHref] : [],
         },
+
+        // 👇 Add this block
+        verification: {
+            google: "GxuNdLuxmbvGjyuovjq68Wkfw7gODl5eGo1HmknpzM8",
+        },
     };
 }
-
 /* ================= ROOT LAYOUT ================= */
 export default function RootLayout({
                                        children,
