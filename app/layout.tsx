@@ -138,16 +138,11 @@ export default function RootLayout({
                             name: "Blue Dream Group",
                             url: "https://bluedreamgroup.com",
                         },
-                        alumniOf: {
-                            "@type": "EducationalOrganization",
-                            name: "", // 👈 add your university if you want this included
-                        },
+
                         sameAs: [
-                            // 👈 REQUIRED: add your real profile URLs here, e.g.:
+                       
                              "https://www.facebook.com/shopnillchowdhuryshohag/",
-                            // "https://www.linkedin.com/in/yourrealprofile",
-                            // "https://www.instagram.com/yourrealprofile",
-                            // "https://www.youtube.com/yourrealchannel",
+                         ,
                         ],
                     }),
                 }}
