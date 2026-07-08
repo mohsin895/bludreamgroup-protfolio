@@ -138,11 +138,9 @@ export default function RootLayout({
                             name: "Blue Dream Group",
                             url: "https://bluedreamgroup.com",
                         },
-
+                     
                         sameAs: [
-                       
-                             "https://www.facebook.com/shopnillchowdhuryshohag/",
-                         ,
+                            "https://www.facebook.com/shopnillchowdhuryshohag/",
                         ],
                     }),
                 }}
