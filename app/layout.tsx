@@ -56,12 +56,12 @@ export async function generateMetadata(): Promise<Metadata> {
             images: logoHref ? [logoHref] : [],
         },
 
-        // 👇 Add this block
         verification: {
             google: "GxuNdLuxmbvGjyuovjq68Wkfw7gODl5eGo1HmknpzM8",
         },
     };
 }
+
 /* ================= ROOT LAYOUT ================= */
 export default function RootLayout({
                                        children,
@@ -94,7 +94,25 @@ export default function RootLayout({
               j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               'https://www.googletagmanager.com/gtm.js?id='+i+dl;
               f.parentNode.insertBefore(j,f);
-              })(window,document,'script','dataLayer','GTM-NJ97VPPH');
+              })(window,document,'script','dataLayer','GTM-MCH4M5QQ');
+            `,
+                }}
+            />
+
+            {/* ================= GOOGLE ANALYTICS (gtag.js) ================= */}
+            <Script
+                src="https://www.googletagmanager.com/gtag/js?id=G-E8ST0FBGCD"
+                strategy="afterInteractive"
+            />
+            <Script
+                id="gtag-init"
+                strategy="afterInteractive"
+                dangerouslySetInnerHTML={{
+                    __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-E8ST0FBGCD');
             `,
                 }}
             />
@@ -104,7 +122,7 @@ export default function RootLayout({
         {/* ================= GTM NOSCRIPT ================= */}
         <noscript>
             <iframe
-                src="https://www.googletagmanager.com/ns.html?id=GTM-NJ97VPPH"
+                src="https://www.googletagmanager.com/ns.html?id=GTM-MCH4M5QQ"
                 height="0"
                 width="0"
                 style={{ display: "none", visibility: "hidden" }}
