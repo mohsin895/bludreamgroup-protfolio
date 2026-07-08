@@ -56,7 +56,7 @@ export async function generateMetadata(): Promise<Metadata> {
             images: logoHref ? [logoHref] : [],
         },
         alternates: {
-            canonical: "/",
+            canonical: "https://shopnillchowdhury.com",
         },
         verification: {
             google: "GxuNdLuxmbvGjyuovjq68Wkfw7gODl5eGo1HmknpzM8",
