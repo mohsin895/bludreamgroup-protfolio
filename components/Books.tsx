@@ -52,7 +52,65 @@ function parseMainImage(
   }
   return null;
 }
+const wordFall = {
+    hidden: { opacity: 0, y: -40 },
+    show: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] },
+    },
+};
 
+const wordContainer = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.05 } },
+};
+
+function FallWords({ text, style }: { text: string; style?: React.CSSProperties }) {
+    return (
+        <>
+            {text.split(" ").map((word, i) => (
+                <motion.span
+                    key={i}
+                    variants={wordFall}
+                    style={{ display: "inline-block", marginRight: "0.3em", ...style }}
+                >
+                    {word}
+                </motion.span>
+            ))}
+        </>
+    );
+}
+
+const charFall = {
+    hidden: { opacity: 0, y: -60 },
+    show: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] },
+    },
+};
+
+const headingContainer = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.045 } },
+};
+
+function FallChars({ text, style }: { text: string; style?: React.CSSProperties }) {
+    return (
+        <>
+            {text.split("").map((ch, i) => (
+                <motion.span
+                    key={i}
+                    variants={charFall}
+                    style={{ display: "inline-block", whiteSpace: "pre", ...style }}
+                >
+                    {ch}
+                </motion.span>
+            ))}
+        </>
+    );
+}
 async function getFeaturedProducts(count = 3): Promise<Product[]> {
   try {
     const r = await fetch(`${API_BASE}/products?featured=1&limit=${count}`);
@@ -93,7 +151,7 @@ function BookCard({ book }: { book: Product }) {
           style={{
             background: "#ffffff",
             border: "1px solid #e5e7eb",
-            borderRadius: 16,
+
             overflow: "hidden",
             transition: "all 0.3s ease",
             display: "flex",
@@ -279,7 +337,7 @@ function BookCard({ book }: { book: Product }) {
                   color: "#fff",
                   border: "none",
                   padding: "8px 16px",
-                  borderRadius: 6,
+
                   fontSize: 11,
                   fontWeight: 700,
                   letterSpacing: "0.06em",
@@ -304,7 +362,7 @@ function SkeletonCard() {
       style={{
         background: "#f8f9fa",
         border: "1px solid #e5e7eb",
-        borderRadius: 16,
+
         overflow: "hidden",
         opacity: 0.6,
       }}
@@ -345,7 +403,7 @@ export default function BooksSection() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getFeaturedProducts(3).then((data) => {
+    getFeaturedProducts(5).then((data) => {
       setBooks(data);
       setLoading(false);
     });
@@ -380,21 +438,24 @@ export default function BooksSection() {
           >
             Published Works
           </motion.span>
-          <motion.h2
-            className="font-rising"
-            variants={fadeUp}
-            style={{
-              fontSize: "clamp(24px, 4vw, 34px)",
-              color: "#000",
-              margin: 0,
-              lineHeight: 1.1,
-            }}
-          >
-            Books That{" "}
-            <span style={{ color: "#6c7e7f", fontStyle: "italic" }}>
-              Change Minds
-            </span>
-          </motion.h2>
+
+            <motion.h2
+                initial="hidden"
+                whileInView="show"
+                className="font-rising"
+                viewport={{ once: true }}
+                variants={headingContainer}
+                style={{
+                    fontSize: "clamp(24px, 4vw, 34px)",
+                    color: "#000",
+                    margin: 0,
+                    lineHeight: 1.1,
+                }}
+            >
+                <FallChars text=" Books That  Change Minds" />
+
+            </motion.h2>
+          
           <motion.p
             className="font-xolonium"
             variants={fadeUp}
@@ -421,7 +482,7 @@ export default function BooksSection() {
               gap: 28,
             }}
           >
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3,4,5].map((i) => (
               <SkeletonCard key={i} />
             ))}
           </div>
@@ -468,7 +529,7 @@ export default function BooksSection() {
                 background: "#6c7e7f",
                 color: "#fff",
                 padding: "14px 32px",
-                borderRadius: 6,
+
                 fontSize: 13,
                 fontWeight: 700,
                 letterSpacing: "0.06em",

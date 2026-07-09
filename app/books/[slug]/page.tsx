@@ -1311,9 +1311,17 @@ export default function BookDetailPage() {
                           }}
                         />
 
-                        <p className="font-xolonium">
-                          <strong>Send Money Number:</strong> 017XXXXXXXX
-                        </p>
+                          <p className="font-xolonium">
+                              {form.payMethod === "bkash" ? (
+                                  <>
+                                      <strong>Bkash Merchant Number:</strong> 01958624002
+                                  </>
+                              ) : (
+                                  <>
+                                      <strong>Nagad Merchant Number:</strong> 01996598932
+                                  </>
+                              )}
+                          </p>
 
                         <div style={{ marginTop: "15px" }}>
                           <NiceField

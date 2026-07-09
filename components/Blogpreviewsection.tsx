@@ -32,23 +32,52 @@ interface BlogPost {
   published_at?: string;
 }
 
+
 function parseImage(raw: string | null | undefined): string | null {
   if (!raw) return null;
   return raw;
 }
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 36 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+    hidden: { opacity: 0, y: 36 },
+    show: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
     },
-  },
 };
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.12 } } };
+
+const charFall = {
+    hidden: { opacity: 0, y: -60 },
+    show: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] },
+    },
+};
+
+const headingContainer = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.045 } },
+};
+
+function FallChars({ text, style }: { text: string; style?: React.CSSProperties }) {
+    return (
+        <>
+            {text.split("").map((ch, i) => (
+                <motion.span
+                    key={i}
+                    variants={charFall}
+                    style={{ display: "inline-block", whiteSpace: "pre", ...style }}
+                >
+                    {ch}
+                </motion.span>
+            ))}
+        </>
+    );
+}
+
 
 function BlogCard({ post, delay }: { post: BlogPost; delay: number }) {
   const imgPath = parseImage(post.image ?? post.thumbnail);
@@ -68,11 +97,12 @@ function BlogCard({ post, delay }: { post: BlogPost; delay: number }) {
       className="blog-card"
       style={{
         background: "#ffffff",
-        border: "1px solid #e5e7eb",
-        borderRadius: 16,
+        border: "2px solid #e5e7eb",
+
         overflow: "hidden",
         transition: "all 0.3s ease",
         display: "flex",
+          opacity: 1,
         flexDirection: "column",
       }}
     >
@@ -295,11 +325,14 @@ export default function BlogPreviewSection() {
           style={{ textAlign: "center", marginBottom: 64 }}
         >
           <motion.span
-            variants={fadeUp}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              variants={headingContainer}
             className="font-xolonium"
             style={{
               display: "inline-block",
-              background: "#6c7e7f1a",
+
               color: "#6c7e7f",
               borderRadius: 40,
               padding: "6px 20px",
@@ -310,23 +343,28 @@ export default function BlogPreviewSection() {
               marginBottom: 16,
             }}
           >
-            From The Blog
+              <FallChars text=" From The Blog " />
+
           </motion.span>
-          <motion.h2
-            variants={fadeUp}
-            style={{
-              fontFamily: "'Venus Rising'",
-              fontSize: "clamp(24px, 4vw, 44px)",
-              color: "#1f2937",
-              margin: 0,
-              lineHeight: 1.1,
-            }}
-          >
-            Ideas That{" "}
-            <span style={{ color: "#6c7e7f", fontStyle: "italic" }}>
-              Spark Growth
-            </span>
-          </motion.h2>
+            <motion.h2
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                variants={headingContainer}
+                style={{
+                    fontFamily: "'Venus Rising'",
+                    fontSize: "clamp(24px, 4vw, 44px)",
+                    color: "#1f2937",
+                    margin: 0,
+                    lineHeight: 1.1,
+                }}
+            >
+                <FallChars text="Ideas That " />
+                <FallChars
+                    text="Spark Growth"
+                    style={{ color: "#6c7e7f", fontStyle: "italic" }}
+                />
+            </motion.h2>
         </motion.div>
 
         <motion.div

@@ -22,7 +22,65 @@ interface Testimonial {
   rating?: number;
   avatar?: string | null;
 }
+const wordFall = {
+    hidden: { opacity: 0, y: -40 },
+    show: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] },
+    },
+};
 
+const wordContainer = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.05 } },
+};
+
+function FallWords({ text, style }: { text: string; style?: React.CSSProperties }) {
+    return (
+        <>
+            {text.split(" ").map((word, i) => (
+                <motion.span
+                    key={i}
+                    variants={wordFall}
+                    style={{ display: "inline-block", marginRight: "0.3em", ...style }}
+                >
+                    {word}
+                </motion.span>
+            ))}
+        </>
+    );
+}
+
+const charFall = {
+    hidden: { opacity: 0, y: -60 },
+    show: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] },
+    },
+};
+
+const headingContainer = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.045 } },
+};
+
+function FallChars({ text, style }: { text: string; style?: React.CSSProperties }) {
+    return (
+        <>
+            {text.split("").map((ch, i) => (
+                <motion.span
+                    key={i}
+                    variants={charFall}
+                    style={{ display: "inline-block", whiteSpace: "pre", ...style }}
+                >
+                    {ch}
+                </motion.span>
+            ))}
+        </>
+    );
+}
 function Stars({ count }: { count: number }) {
   return (
     <div style={{ display: "flex", gap: 3 }}>
@@ -108,20 +166,26 @@ export default function TestimonialsSection() {
           >
             Testimonials
           </span>
-          <h2
-            style={{
-              fontFamily: "'Venus Rising'",
-              fontSize: "clamp(24px, 4vw, 44px)",
-              color: "#1f2937",
-              margin: 0,
-              lineHeight: 1.1,
-            }}
-          >
-            What Readers & Clients{" "}
-            <span style={{ color: "#6c7e7f", fontStyle: "italic" }}>
-              Are Saying
-            </span>
-          </h2>
+
+            <motion.h2
+                initial="hidden"
+                whileInView="show"
+
+                viewport={{ once: true }}
+                variants={headingContainer}
+                style={{
+                    fontFamily: "'Venus Rising'",
+                    fontSize: "clamp(24px, 4vw, 44px)",
+                    color: "#1f2937",
+                    margin: 0,
+                    lineHeight: 1.1,
+                }}
+
+            >
+                <FallChars text="What Readers & Clients   Are Saying" />
+
+            </motion.h2>
+
         </motion.div>
 
         {/* Slider */}

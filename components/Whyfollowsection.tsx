@@ -40,7 +40,65 @@ const stagger = {
   hidden: {},
   show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
 };
+const wordFall = {
+    hidden: { opacity: 0, y: -40 },
+    show: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] },
+    },
+};
 
+const wordContainer = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.05 } },
+};
+
+function FallWords({ text, style }: { text: string; style?: React.CSSProperties }) {
+    return (
+        <>
+            {text.split(" ").map((word, i) => (
+                <motion.span
+                    key={i}
+                    variants={wordFall}
+                    style={{ display: "inline-block", marginRight: "0.3em", ...style }}
+                >
+                    {word}
+                </motion.span>
+            ))}
+        </>
+    );
+}
+
+const charFall = {
+    hidden: { opacity: 0, y: -60 },
+    show: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] },
+    },
+};
+
+const headingContainer = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.045 } },
+};
+
+function FallChars({ text, style }: { text: string; style?: React.CSSProperties }) {
+    return (
+        <>
+            {text.split("").map((ch, i) => (
+                <motion.span
+                    key={i}
+                    variants={charFall}
+                    style={{ display: "inline-block", whiteSpace: "pre", ...style }}
+                >
+                    {ch}
+                </motion.span>
+            ))}
+        </>
+    );
+}
 /* -------------------------------- content --------------------------------- */
 /* content ager WhyFollowSection theke i rakha hoyeche, shudhu design change */
 
@@ -92,8 +150,18 @@ function ReasonCard({ reason }: { reason: Reason }) {
       <div className="wf-icon-box">
         <Icon size={26} color={"#fff"} strokeWidth={1.6} />
       </div>
+        <motion.h2
+            initial="hidden"
+            whileInView="show"
+            className="wf-title"
+            viewport={{ once: true }}
+            variants={headingContainer}
 
-      <h3 className="wf-title">{reason.title}</h3>
+        >
+            <FallChars text={reason.title} />
+
+        </motion.h2>
+
       <p className="wf-desc">{reason.desc}</p>
     </motion.div>
   );
@@ -112,23 +180,39 @@ export default function WhyFollowSection() {
           variants={stagger}
           className="wf-header"
         >
-          <motion.p variants={fadeUp} className="wf-eyebrow">
-            WHY FOLLOW HIM
-          </motion.p>
 
-          <motion.h2 variants={fadeUp} className="wf-heading">
-            Why You Should Follow{" "}
-            <span className="wf-heading-accent">
-              <br />
-              K.S.M. Shopnill Chowdhury Shohag
-            </span>
-          </motion.h2>
 
-          <motion.p variants={fadeUp} className="wf-subhead">
-            Follow K.S.M. Shopnill Chowdhury Shohag for daily inspiration on
-            business, philanthropy, and personal growth from a proven industry
-            leader.
-          </motion.p>
+            <motion.h2
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                variants={headingContainer}
+                style={{
+                    fontFamily: "'Venus Rising'",
+                    fontSize: "clamp(24px, 4vw, 44px)",
+                    color: "#1f2937",
+                    margin: 0,
+                    lineHeight: 1.1,
+                }}
+            >
+                <FallChars text="Why You Should Follow " />
+                <FallChars
+                    text=" K.S.M. Shopnill Chowdhury Shohag"
+                    style={{ color: "#6c7e7f", fontStyle: "italic" }}
+                />
+            </motion.h2>
+
+            <motion.p
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                variants={wordContainer}
+                className="wf-subhead"
+            >
+                <FallWords text="Follow K.S.M. Shopnill Chowdhury Shohag for daily inspiration on business, philanthropy, and personal growth from a proven industry leader." />
+            </motion.p>
+
+
         </motion.div>
 
         <motion.div

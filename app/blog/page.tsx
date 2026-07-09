@@ -198,7 +198,7 @@ export default function BlogPage() {
   gap: 20px;
   text-decoration: none;
   padding: 22px;
-  border-radius: 24px;
+ 
   transition: all 0.45s ease;
   background: #fff;
   overflow: hidden;
