@@ -135,55 +135,58 @@ export default function AboutMe() {
     >
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-16 px-5 sm:px-8 lg:grid-cols-2">
         {/* ── Left: portrait ── */}
-        <motion.div
-          initial={{ opacity: 0, x: -32 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="relative"
-        >
-          {/* corner accent */}
-            <span
-                aria-hidden
-                style={{
-                    position: 'absolute',
-                    top: '16px',
-                    right: '16px',
-                    width: '50px',
-                    height: '50px',
-                    borderTop: '2px solid rgb(108, 126, 127)',
-                    borderRight: '2px solid rgb(108, 126, 127)',
-                    borderRadius: '0 var(--r-md) 0 0',
-                    zIndex: 2,
-                }}
-            />
 
-          <div className="relative aspect-[4/5] w-full overflow-hidden  border border-black bg-neutral-900">
-            {/* Replace src with the real photo in /public */}
-            <Image
-              src={`${IMG_BASE}${about?.logo}`}
-              alt={about?.about_title || ""}
-              fill
-              sizes="(max-width:1024px) 90vw,40vw"
-              className="object-cover grayscale"
-            />
-          </div>
 
-            <span
-                aria-hidden
-                style={{
-                    position: 'absolute',
-                    bottom: '16px',
-                    left: '16px',
-                    width: '50px',
-                    height: '50px',
-                    borderBottom: `2px solid ${LIME}`, // or '#d4ff00'
-                    borderLeft: `2px solid ${LIME}`,   // or '#d4ff00'
-                    borderRadius: '0 0 0 var(--r-md)',
-                    zIndex: 2,
-                }}
-            />
-        </motion.div>
+          <motion.div
+              initial={{ opacity: 0, x: -32 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="relative group"   // 👈 added group here (portrait-frame)
+          >
+              {/* corner accents unchanged */}
+              <span
+                  aria-hidden
+                  style={{
+                      position: 'absolute',
+                      top: '16px',
+                      right: '16px',
+                      width: '50px',
+                      height: '50px',
+                      borderTop: '2px solid rgb(108, 126, 127)',
+                      borderRight: '2px solid rgb(108, 126, 127)',
+                      borderRadius: '0 var(--r-md) 0 0',
+                      zIndex: 2,
+                  }}
+              />
+
+              <div className="relative aspect-[4/5] w-full overflow-hidden border border-black bg-neutral-900">
+                  <Image
+                      src={`${IMG_BASE}${about?.logo}`}
+                      alt={about?.about_title || ""}
+                      fill
+                      sizes="(max-width:1024px) 90vw,40vw"
+                      className="object-cover grayscale transition-transform duration-500 ease-out group-hover:scale-[1.08]"
+                      // 👆 zoom on hover of the group (portrait-frame)
+                  />
+              </div>
+
+              <span
+                  aria-hidden
+                  style={{
+                      position: 'absolute',
+                      bottom: '16px',
+                      left: '16px',
+                      width: '50px',
+                      height: '50px',
+                      borderBottom: `2px solid ${LIME}`, // or '#d4ff00'
+                      borderLeft: `2px solid ${LIME}`,   // or '#d4ff00'
+                      borderRadius: '0 0 0 var(--r-md)',
+                      zIndex: 2,
+                  }}
+              />
+          </motion.div>
+      
 
         {/* ── Right: content ── */}
         <div className="relative">
