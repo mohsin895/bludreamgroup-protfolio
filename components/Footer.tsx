@@ -245,7 +245,7 @@ export default function Footer() {
                   }}
                 >
                   <Image
-                    src="/logo.jpeg"
+                      src="/logowhite.png"
                     alt="Logo"
                     width={280}
                     height={208}
@@ -264,7 +264,7 @@ export default function Footer() {
                     color: "#dbe4e4",
                     letterSpacing: "0.15em",
                     textTransform: "uppercase",
-                    marginTop: 4,
+                    marginTop: '15px',
                   }}
                 >
                   Author • Mentor • Entrepreneur
