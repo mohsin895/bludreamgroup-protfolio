@@ -60,13 +60,10 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL;
 
 /* ─── Payment Methods ──────────────────────────────────────── */
+/* ─── Payment Methods ──────────────────────────────────────── */
 const PAYMENT_METHODS = [
-  { value: "bkash", label: "bKash" },
-  { value: "nagad", label: "Nagad" },
-  { value: "rocket", label: "Rocket" },
-  { value: "bank_transfer", label: "Bank Transfer" },
-  { value: "credit_card", label: "Credit Card" },
-  { value: "debit_card", label: "Debit Card" },
+    { value: "bkash", label: "bKash" },
+    { value: "nagad", label: "Nagad" },
 ];
 
 /* ─── Selling price helper ──────────────────────────────────── */
@@ -854,27 +851,90 @@ export default function EnrollmentPage(): ReactNode {
                       </p>
                     </div>
 
-                    <FormSelect
-                      label="Payment Method"
-                      name="payment_type"
-                      options={PAYMENT_METHODS}
-                      value={formData.payment_type}
-                      onChange={handleChange}
-                      error={formErrors.payment_type}
-                      placeholder="Select a payment method"
-                      required
-                    />
+                      <FormSelect
+                          label="Payment Method"
+                          name="payment_type"
+                          options={PAYMENT_METHODS}
+                          value={formData.payment_type}
+                          onChange={handleChange}
+                          error={formErrors.payment_type}
+                          placeholder="Select a payment method"
+                          required
+                      />
 
-                    <FormInput
-                      label="Your Payment Account Number"
-                      name="payment_number"
-                      value={formData.payment_number}
-                      onChange={handleChange}
-                      error={formErrors.payment_number}
-                      placeholder="Your bKash/Nagad/account number"
-                      hint="The account number you sent the payment FROM"
-                      required
-                    />
+                      {/* ── Merchant Info Panel ── */}
+                      {(formData.payment_type === "bkash" ||
+                          formData.payment_type === "nagad") && (
+                          <div
+                              style={{
+                                  padding: "18px 20px",
+                                  background: "rgba(255,255,255,0.03)",
+                                  border: "1px solid rgba(201,168,76,0.15)",
+                                  borderRadius: "10px",
+                                  marginBottom: "24px",
+                              }}
+                          >
+                              <h4
+                                  style={{
+                                      margin: "0 0 12px",
+                                      fontSize: "13px",
+                                      fontWeight: 700,
+                                      color: "#fff",
+                                      letterSpacing: "0.04em",
+                                  }}
+                              >
+                                  {formData.payment_type === "bkash"
+                                      ? "bKash Payment Information"
+                                      : "Nagad Payment Information"}
+                              </h4>
+
+                              <img
+                                  src={formData.payment_type === "bkash" ? "/bkash.png" : "/nogod.png"}
+                                  alt="payment"
+                                  style={{
+                                      width: "100px",
+                                      marginBottom: "12px",
+                                      borderRadius: "6px",
+                                  }}
+                              />
+
+                              <p
+                                  style={{
+                                      margin: 0,
+                                      fontSize: "15px",
+                                      color: "#000",
+                                      lineHeight: 1.6,
+                                  }}
+                              >
+                                  {formData.payment_type === "bkash" ? (
+                                      <>
+                                          <strong style={{ color: "var(--gold)" }}>
+                                              Bkash Merchant Number:
+                                          </strong>{" "}
+                                          01958624002
+                                      </>
+                                  ) : (
+                                      <>
+                                          <strong style={{ color: "var(--gold)" }}>
+                                              Nagad Merchant Number:
+                                          </strong>{" "}
+                                          01996598932
+                                      </>
+                                  )}
+                              </p>
+                          </div>
+                      )}
+
+                      <FormInput
+                          label="Your Payment Account Number"
+                          name="payment_number"
+                          value={formData.payment_number}
+                          onChange={handleChange}
+                          error={formErrors.payment_number}
+                          placeholder="Your bKash/Nagad number"
+                          hint="The account number you sent the payment FROM"
+                          required
+                      />
 
                     <FormInput
                       label="Transaction Number"

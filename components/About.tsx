@@ -186,7 +186,7 @@ export default function AboutMe() {
                   }}
               />
           </motion.div>
-      
+
 
         {/* ── Right: content ── */}
         <div className="relative">

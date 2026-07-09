@@ -48,7 +48,7 @@ function StatusBadge({ status, paymentStatus }: StatusBadgeProps): ReactNode {
           background: isVerified
             ? "rgba(125,212,176,0.1)"
             : "rgba(255,193,7,0.1)",
-          border: `1px solid ${isVerified ? "rgba(125,212,176,0.3)" : "rgba(255,193,7,0.3)"}`,
+          border: `1px solid ৳{isVerified ? "rgba(125,212,176,0.3)" : "rgba(255,193,7,0.3)"}`,
           borderRadius: "6px",
           fontSize: "12px",
           fontWeight: 600,
@@ -68,7 +68,7 @@ function StatusBadge({ status, paymentStatus }: StatusBadgeProps): ReactNode {
         style={{
           padding: "8px 16px",
           background: isPaid ? "rgba(125,212,176,0.1)" : "rgba(255,79,79,0.1)",
-          border: `1px solid ${isPaid ? "rgba(125,212,176,0.3)" : "rgba(255,79,79,0.3)"}`,
+          border: `1px solid ৳{isPaid ? "rgba(125,212,176,0.3)" : "rgba(255,79,79,0.3)"}`,
           borderRadius: "6px",
           fontSize: "12px",
           fontWeight: 600,
@@ -105,7 +105,7 @@ export default function ConfirmationPage(): ReactNode {
 
     setLoading(true);
     fetch(
-      `${API_BASE_URL}/enrollments-confirmation?transaction_id=${transactionId}`,
+      `৳{API_BASE_URL}/enrollments-confirmation?transaction_id=৳{transactionId}`,
     )
       .then((res) => res.json())
       .then((data: ApiResponse) => {
@@ -307,7 +307,7 @@ export default function ConfirmationPage(): ReactNode {
                   }}
                 >
                   {enrollment.course_title ||
-                    `Course #${enrollment.product_id}`}
+                    `Course #৳{enrollment.product_id}`}
                 </h2>
                 <p
                   style={{
@@ -468,7 +468,7 @@ export default function ConfirmationPage(): ReactNode {
                       color: "#000",
                     }}
                   >
-                    ${parseFloat(enrollment.price || "0").toFixed(2)}
+                    ৳{parseFloat(enrollment.price || "0").toFixed(2)}
                   </span>
                 </div>
                 <div
@@ -488,7 +488,7 @@ export default function ConfirmationPage(): ReactNode {
                       fontWeight: 700,
                     }}
                   >
-                    ${parseFloat(enrollment.price || "0").toFixed(2)}
+                    ৳{parseFloat(enrollment.price || "0").toFixed(2)}
                   </span>
                 </div>
               </div>
