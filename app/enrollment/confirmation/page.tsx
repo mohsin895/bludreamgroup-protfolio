@@ -102,10 +102,10 @@ export default function ConfirmationPage(): ReactNode {
       setLoading(false);
       return;
     }
-
+  
     setLoading(true);
     fetch(
-      `৳{API_BASE_URL}/enrollments-confirmation?transaction_id=৳{transactionId}`,
+      `৳{API_BASE_URL}/enrollments-confirmation?transaction_id=${transactionId}`,
     )
       .then((res) => res.json())
       .then((data: ApiResponse) => {
