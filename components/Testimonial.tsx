@@ -1,11 +1,17 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
+import { motion } from "framer-motion";
+import { Quote } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { Autoplay, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 const IMG_BASE = process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? "";
+
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 interface Testimonial {
   id: number;
@@ -119,114 +125,129 @@ export default function TestimonialsSection() {
         </motion.div>
 
         {/* Slider */}
-        <div style={{ position: "relative", maxWidth: 860, margin: "0 auto" }}>
-          <AnimatePresence mode="wait" custom={dir}>
-            <motion.div
-              key={idx}
-              custom={dir}
-              initial={{ opacity: 0, x: dir * 60 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: dir * -60 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              style={{
-                background: "#ffffff",
-                border: "1px solid #e5e7eb",
-                borderRadius: 24,
-                padding: "48px 56px",
-                position: "relative",
-                boxShadow: "0 8px 40px rgba(108,126,127,0.08)",
-              }}
-            >
-              {/* Big quote */}
-              <Quote
-                size={56}
-                color="#6c7e7f"
-                style={{
-                  opacity: 0.12,
-                  position: "absolute",
-                  top: 24,
-                  left: 36,
-                }}
-              />
+        <div style={{ position: "relative", maxWidth: 1020, margin: "0 auto" }}>
+          <Swiper
+            modules={[Autoplay, Pagination]}
+            spaceBetween={24}
+            loop={true}
+            speed={1200}
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: false,
+            }}
+            breakpoints={{
+              0: {
+                slidesPerView: 1,
+              },
+              768: {
+                slidesPerView: 1,
+              },
+              1024: {
+                slidesPerView: 2,
+              },
+            }}
+          >
+            {items.map((current) => {
+              const imgSrc = current.avatar
+                ? `${IMG_BASE}${current.avatar}`
+                : null;
 
-              <p
-                style={{
-                  fontFamily: "'Xolonium'",
-                  fontSize: "clamp(14px, 2vw, 18px)",
-                  color: "#1f2937",
-                  lineHeight: 1.75,
-                  margin: "44px 0 32px",
-                  fontStyle: "italic",
-                }}
-              >
-                "
-                {current.quote ??
-                  "An incredible experience that truly changed my perspective."}
-                "
-              </p>
-
-              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                <div
-                  style={{
-                    width: 52,
-                    height: 52,
-                    borderRadius: "50%",
-                    overflow: "hidden",
-                    background: "linear-gradient(135deg, #6c7e7f, #95a49a)",
-                    flexShrink: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
+              return (
+                <SwiperSlide
+                  key={current.id}
+                  style={{ height: "auto", display: "flex" }}
                 >
-                  {imgSrc ? (
-                    <></>
-                  ) : (
-                    // <img
-                    //   src={imgSrc}
-                    //   alt={current.name}
-                    //   style={{
-                    //     width: "100%",
-                    //     height: "100%",
-                    //     objectFit: "cover",
-                    //   }}
-                    // />
-                    <span
-                      className="font-rising"
-                      style={{ fontSize: 20, fontWeight: 700, color: "#fff" }}
-                    >
-                      {current.name.charAt(0).toUpperCase()}
-                    </span>
-                  )}
-                </div>
-                <div>
                   <div
-                    className="font-rising"
-                    style={{ fontSize: 15, fontWeight: 700, color: "#1f2937" }}
-                  >
-                    {current.name}
-                  </div>
-                  <div
-                    className="font-xolonium"
                     style={{
-                      fontSize: 12,
-                      color: "#9aa6aa",
-                      marginTop: 2,
-                      fontWeight: 500,
+                      background: "#fff",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: 10,
+                      padding: "48px 40px",
+                      boxShadow: "0 8px 40px rgba(108,126,127,.08)",
+
+                      width: "100%",
+                      minHeight: 380, // অথবা 400
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
                     }}
                   >
-                    {current.role}{" "}
-                    {current.company ? `• ${current.company}` : ""}
-                  </div>
-                  <div>
-                    <Stars count={current.rating ?? 5} />
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+                    <Quote
+                      size={52}
+                      color="#6c7e7f"
+                      style={{ opacity: 0.12 }}
+                    />
 
-          {/* Controls */}
+                    <p
+                      style={{
+                        fontFamily: "Xolonium",
+                        lineHeight: 1.8,
+                        margin: "24px 0",
+                        fontStyle: "italic",
+                        flex: 1,
+                      }}
+                    >
+                      "{current.quote}"
+                    </p>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 14,
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 54,
+                          height: 54,
+                          borderRadius: "50%",
+                          overflow: "hidden",
+                          background: "#6c7e7f",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {imgSrc ? (
+                          <img
+                            src={imgSrc}
+                            alt={current.name}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        ) : (
+                          <span
+                            style={{
+                              color: "#fff",
+                              fontWeight: 700,
+                              fontSize: 18,
+                            }}
+                          >
+                            {current.name.charAt(0)}
+                          </span>
+                        )}
+                      </div>
+
+                      <div>
+                        <h4>{current.name}</h4>
+
+                        <p className="mt-10">
+                          {current.role}
+                          {current.company && ` • ${current.company}`}
+                        </p>
+
+                        <Stars count={current.rating ?? 5} />
+                      </div>
+                    </div>
+                  </div>
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
           <div
             style={{
               display: "flex",
@@ -236,28 +257,10 @@ export default function TestimonialsSection() {
               marginTop: 40,
             }}
           >
-            <button
-              onClick={() => go(-1)}
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: "50%",
-                background: "#ffffff",
-                border: "1px solid #e5e7eb",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                transition: "all 0.2s",
-                color: "#6c7e7f",
-              }}
-              className="testi-ctrl"
-            >
-              <ChevronLeft size={18} />
-            </button>
-
-            {/* Dots */}
+            {" "}
+            {/* Dots */}{" "}
             <div style={{ display: "flex", gap: 8 }}>
+              {" "}
               {items.map((_, i) => (
                 <button
                   key={i}
@@ -276,28 +279,8 @@ export default function TestimonialsSection() {
                     transition: "all 0.35s ease",
                   }}
                 />
-              ))}
-            </div>
-
-            <button
-              onClick={() => go(1)}
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: "50%",
-                background: "#ffffff",
-                border: "1px solid #e5e7eb",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                transition: "all 0.2s",
-                color: "#6c7e7f",
-              }}
-              className="testi-ctrl"
-            >
-              <ChevronRight size={18} />
-            </button>
+              ))}{" "}
+            </div>{" "}
           </div>
         </div>
       </div>
