@@ -14,20 +14,24 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 interface Testimonial {
-  id: number;
-  name: string;
-  role?: string;
-  company?: string;
-  quote?: string;
-  rating?: number;
-  avatar?: string | null;
+    id: number;
+    name: string;
+    role?: string;
+    company?: string;
+    quote?: string;
+    rating?: number;
+    avatar?: string | null;
 }
+
 const wordFall = {
     hidden: { opacity: 0, y: -40 },
     show: {
         opacity: 1,
         y: 0,
-        transition: { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] },
+        transition: {
+            duration: 0.5,
+            ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number],
+        },
     },
 };
 
@@ -36,14 +40,25 @@ const wordContainer = {
     show: { transition: { staggerChildren: 0.05 } },
 };
 
-function FallWords({ text, style }: { text: string; style?: React.CSSProperties }) {
+function FallWords({
+                       text,
+                       style,
+                   }: {
+    text: string;
+    style?: React.CSSProperties;
+}) {
     return (
         <>
             {text.split(" ").map((word, i) => (
                 <motion.span
                     key={i}
                     variants={wordFall}
-                    style={{ display: "inline-block", marginRight: "0.3em", ...style }}
+                    style={{
+                        display: "inline-block",
+                        marginRight: "0.3em",
+                        whiteSpace: "nowrap", // ← prevent word breaking
+                        ...style,
+                    }}
                 >
                     {word}
                 </motion.span>
@@ -57,7 +72,10 @@ const charFall = {
     show: {
         opacity: 1,
         y: 0,
-        transition: { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] },
+        transition: {
+            duration: 0.5,
+            ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number],
+        },
     },
 };
 
@@ -66,295 +84,296 @@ const headingContainer = {
     show: { transition: { staggerChildren: 0.045 } },
 };
 
-function FallChars({ text, style }: { text: string; style?: React.CSSProperties }) {
+// ─── KEY FIX: wrap each word in a nowrap span, animate per char inside ───────
+function FallChars({
+                       text,
+                       style,
+                   }: {
+    text: string;
+    style?: React.CSSProperties;
+}) {
+    const words = text.split(" ");
     return (
         <>
-            {text.split("").map((ch, i) => (
-                <motion.span
-                    key={i}
-                    variants={charFall}
-                    style={{ display: "inline-block", whiteSpace: "pre", ...style }}
+            {words.map((word, wi) => (
+                // nowrap wrapper keeps each word on one line — no mid-word breaks
+                <span
+                    key={wi}
+                    style={{ display: "inline-block", whiteSpace: "nowrap" }}
                 >
-                    {ch}
-                </motion.span>
+          {word.split("").map((ch, ci) => (
+              <motion.span
+                  key={ci}
+                  variants={charFall}
+                  style={{
+                      display: "inline-block",
+                      whiteSpace: "pre",
+                      ...style,
+                  }}
+              >
+                  {ch}
+              </motion.span>
+          ))}
+                    {/* space between words — rendered outside the nowrap span so line can break here */}
+                    {wi < words.length - 1 && (
+                        <motion.span
+                            variants={charFall}
+                            style={{ display: "inline-block", whiteSpace: "pre" }}
+                        >
+                            {" "}
+                        </motion.span>
+                    )}
+        </span>
             ))}
         </>
     );
 }
+
 function Stars({ count }: { count: number }) {
-  return (
-    <div style={{ display: "flex", gap: 3 }}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <svg
-          key={i}
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill={i < count ? "#6c7e7f" : "#e5e7eb"}
-        >
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-        </svg>
-      ))}
-    </div>
-  );
+    return (
+        <div style={{ display: "flex", gap: 3 }}>
+            {Array.from({ length: 5 }).map((_, i) => (
+                <svg
+                    key={i}
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill={i < count ? "#6c7e7f" : "#e5e7eb"}
+                >
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+            ))}
+        </div>
+    );
 }
 
 export default function TestimonialsSection() {
-  const [items, setItems] = useState<Testimonial[]>([]);
-  const [idx, setIdx] = useState(0);
-  const [dir, setDir] = useState(1);
+    const [items, setItems] = useState<Testimonial[]>([]);
+    const [idx, setIdx] = useState(0);
+    const [dir, setDir] = useState(1);
 
-  useEffect(() => {
-    fetch(`${API_BASE}/testimonial`)
-      .then((r) => r.json())
-      .then((json) => {
-        const data = json?.data ?? [];
+    useEffect(() => {
+        fetch(`${API_BASE}/testimonial`)
+            .then((r) => r.json())
+            .then((json) => {
+                const data = json?.data ?? [];
+                if (Array.isArray(data) && data.length > 0) {
+                    setItems(data);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
 
-        if (Array.isArray(data) && data.length > 0) {
-          setItems(data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+    const go = useCallback(
+        (d: 1 | -1) => {
+            if (items.length === 0) return;
+            setDir(d);
+            setIdx((prev) => (prev + d + items.length) % items.length);
+        },
+        [items.length],
+    );
 
-  const go = useCallback(
-    (d: 1 | -1) => {
-      if (items.length === 0) return;
+    useEffect(() => {
+        const t = setInterval(() => go(1), 6000);
+        return () => clearInterval(t);
+    }, [go]);
 
-      setDir(d);
-      setIdx((prev) => (prev + d + items.length) % items.length);
-    },
-    [items.length],
-  );
+    const current = items[idx];
+    if (!current) return null;
 
-  useEffect(() => {
-    const t = setInterval(() => go(1), 6000);
-    return () => clearInterval(t);
-  }, [go]);
-
-  const current = items[idx];
-
-  if (!current) return null;
-  const imgSrc = current.avatar ? `${IMG_BASE}${current.avatar}` : null;
-
-  return (
-    <section style={{ background: "#f8f9fa", padding: "100px 0" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          style={{ textAlign: "center", marginBottom: 64 }}
-        >
+    return (
+        <section style={{ background: "#f8f9fa", padding: "100px 0" }}>
+            <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
+                {/* Header */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                    style={{ textAlign: "center", marginBottom: 64 }}
+                >
           <span
-            style={{
-              display: "inline-block",
-              background: "#6c7e7f1a",
-              color: "#6c7e7f",
-              borderRadius: 40,
-              padding: "6px 20px",
-              fontSize: 12,
-              fontWeight: 700,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              marginBottom: 16,
-            }}
+              style={{
+                  display: "inline-block",
+                  background: "#6c7e7f1a",
+                  color: "#6c7e7f",
+                  borderRadius: 40,
+                  padding: "6px 20px",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  marginBottom: 16,
+              }}
           >
             Testimonials
           </span>
 
-            <motion.h2
-                initial="hidden"
-                whileInView="show"
-
-                viewport={{ once: true }}
-                variants={headingContainer}
-                style={{
-                    fontFamily: "'Venus Rising'",
-                    fontSize: "clamp(24px, 4vw, 44px)",
-                    color: "#1f2937",
-                    margin: 0,
-                    lineHeight: 1.1,
-                }}
-
-            >
-                <FallChars text="What Readers & Clients   Are Saying" />
-
-            </motion.h2>
-
-        </motion.div>
-
-        {/* Slider */}
-        <div style={{ position: "relative", maxWidth: 1020, margin: "0 auto" }}>
-          <Swiper
-            modules={[Autoplay, Pagination]}
-            spaceBetween={24}
-            loop={true}
-            speed={1200}
-            autoplay={{
-              delay: 3000,
-              disableOnInteraction: false,
-            }}
-            breakpoints={{
-              0: {
-                slidesPerView: 1,
-              },
-              768: {
-                slidesPerView: 1,
-              },
-              1024: {
-                slidesPerView: 2,
-              },
-            }}
-          >
-            {items.map((current) => {
-              const imgSrc = current.avatar
-                ? `${IMG_BASE}${current.avatar}`
-                : null;
-
-              return (
-                <SwiperSlide
-                  key={current.id}
-                  style={{ height: "auto", display: "flex" }}
-                >
-                  <div
-                    style={{
-                      background: "#fff",
-                      border: "1px solid #e5e7eb",
-                      borderRadius: 10,
-                      padding: "48px 40px",
-                      boxShadow: "0 8px 40px rgba(108,126,127,.08)",
-
-                      width: "100%",
-                      minHeight: 380, // অথবা 400
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Quote
-                      size={52}
-                      color="#6c7e7f"
-                      style={{ opacity: 0.12 }}
-                    />
-
-                    <p
-                      style={{
-                        fontFamily: "Xolonium",
-                        lineHeight: 1.8,
-                        margin: "24px 0",
-                        fontStyle: "italic",
-                        flex: 1,
-                      }}
-                    >
-                      "{current.quote}"
-                    </p>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 14,
-                      }}
-                    >
-                      <div
+                    <motion.h2
+                        initial="hidden"
+                        whileInView="show"
+                        viewport={{ once: true }}
+                        variants={headingContainer}
                         style={{
-                          width: 54,
-                          height: 54,
-                          borderRadius: "50%",
-                          overflow: "hidden",
-                          background: "#6c7e7f",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
+                            fontFamily: "'Venus Rising'",
+                            fontSize: "clamp(20px, 4vw, 44px)",
+                            color: "#1f2937",
+                            margin: 0,
+                            lineHeight: 1.3,
+                            // ← allow the h2 itself to wrap at word boundaries only
+                            wordBreak: "keep-all",
+                            overflowWrap: "normal",
                         }}
-                      >
-                        {imgSrc ? (
-                          <img
-                            src={imgSrc}
-                            alt={current.name}
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                            }}
-                          />
-                        ) : (
-                          <span
-                            style={{
-                              color: "#fff",
-                              fontWeight: 700,
-                              fontSize: 18,
-                            }}
-                          >
-                            {current.name.charAt(0)}
+                    >
+                        <FallChars text="What Readers & Clients Are Saying" />
+                    </motion.h2>
+                </motion.div>
+
+                {/* Slider */}
+                <div style={{ position: "relative", maxWidth: 1020, margin: "0 auto" }}>
+                    <Swiper
+                        modules={[Autoplay, Pagination]}
+                        spaceBetween={24}
+                        loop={true}
+                        speed={1200}
+                        autoplay={{
+                            delay: 3000,
+                            disableOnInteraction: false,
+                        }}
+                        breakpoints={{
+                            0:    { slidesPerView: 1 },
+                            768:  { slidesPerView: 1 },
+                            1024: { slidesPerView: 2 },
+                        }}
+                    >
+                        {items.map((item) => {
+                            const imgSrc = item.avatar ? `${IMG_BASE}${item.avatar}` : null;
+
+                            return (
+                                <SwiperSlide
+                                    key={item.id}
+                                    style={{ height: "auto", display: "flex" }}
+                                >
+                                    <div
+                                        style={{
+                                            background: "#fff",
+                                            border: "1px solid #e5e7eb",
+                                            borderRadius: 10,
+                                            padding: "48px 40px",
+                                            boxShadow: "0 8px 40px rgba(108,126,127,.08)",
+                                            width: "100%",
+                                            minHeight: 380,
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            justifyContent: "space-between",
+                                        }}
+                                    >
+                                        <Quote size={52} color="#6c7e7f" style={{ opacity: 0.12 }} />
+
+                                        <p
+                                            style={{
+                                                fontFamily: "Xolonium",
+                                                lineHeight: 1.8,
+                                                margin: "24px 0",
+                                                fontStyle: "italic",
+                                                flex: 1,
+                                                wordBreak: "break-word", // quotes can be long
+                                            }}
+                                        >
+                                            "{item.quote}"
+                                        </p>
+
+                                        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                                            <div
+                                                style={{
+                                                    width: 54,
+                                                    height: 54,
+                                                    borderRadius: "50%",
+                                                    overflow: "hidden",
+                                                    background: "#6c7e7f",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    flexShrink: 0,
+                                                }}
+                                            >
+                                                {imgSrc ? (
+                                                    <img
+                                                        src={imgSrc}
+                                                        alt={item.name}
+                                                        style={{
+                                                            width: "100%",
+                                                            height: "100%",
+                                                            objectFit: "cover",
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <span
+                                                        style={{ color: "#fff", fontWeight: 700, fontSize: 18 }}
+                                                    >
+                            {item.name.charAt(0)}
                           </span>
-                        )}
-                      </div>
+                                                )}
+                                            </div>
 
-                      <div>
-                        <h4>{current.name}</h4>
+                                            <div>
+                                                <h4 style={{ margin: 0 }}>{item.name}</h4>
+                                                <p style={{ margin: "4px 0" }}>
+                                                    {item.role}
+                                                    {item.company && ` • ${item.company}`}
+                                                </p>
+                                                <Stars count={item.rating ?? 5} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </SwiperSlide>
+                            );
+                        })}
+                    </Swiper>
 
-                        <p className="mt-10">
-                          {current.role}
-                          {current.company && ` • ${current.company}`}
-                        </p>
-
-                        <Stars count={current.rating ?? 5} />
-                      </div>
+                    {/* Dots */}
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: 16,
+                            marginTop: 40,
+                        }}
+                    >
+                        <div style={{ display: "flex", gap: 8 }}>
+                            {items.map((_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => {
+                                        setDir(i > idx ? 1 : -1);
+                                        setIdx(i);
+                                    }}
+                                    style={{
+                                        width: i === idx ? 28 : 8,
+                                        height: 8,
+                                        borderRadius: 4,
+                                        border: "none",
+                                        padding: 0,
+                                        cursor: "pointer",
+                                        background: i === idx ? "#6c7e7f" : "#d1d5db",
+                                        transition: "all 0.35s ease",
+                                    }}
+                                />
+                            ))}
+                        </div>
                     </div>
-                  </div>
-                </SwiperSlide>
-              );
-            })}
-          </Swiper>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 16,
-              marginTop: 40,
-            }}
-          >
-            {" "}
-            {/* Dots */}{" "}
-            <div style={{ display: "flex", gap: 8 }}>
-              {" "}
-              {items.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => {
-                    setDir(i > idx ? 1 : -1);
-                    setIdx(i);
-                  }}
-                  style={{
-                    width: i === idx ? 28 : 8,
-                    height: 8,
-                    borderRadius: 4,
-                    border: "none",
-                    padding: 0,
-                    cursor: "pointer",
-                    background: i === idx ? "#6c7e7f" : "#d1d5db",
-                    transition: "all 0.35s ease",
-                  }}
-                />
-              ))}{" "}
-            </div>{" "}
-          </div>
-        </div>
-      </div>
+                </div>
+            </div>
 
-      <style>{`
+            <style>{`
         .testi-ctrl:hover { background: #6c7e7f !important; border-color: #6c7e7f !important; color: #fff !important; }
         @media (max-width: 640px) {
           section > div > div:last-child > div { padding: 32px 24px !important; }
         }
       `}</style>
-    </section>
-  );
+        </section>
+    );
 }

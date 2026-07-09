@@ -157,9 +157,9 @@ function ConcernCard({
                 position: "relative",
                 background: "#fff",
                 borderRadius: "6px",
-                padding: "22px 16px",
+                padding: "10px 5px",
                 display: "flex",
-                flexDirection: "column",
+
                 alignItems: "center",
                 textAlign: "center",
                 gap: "12px",
@@ -167,14 +167,13 @@ function ConcernCard({
                 transition: "box-shadow 0.3s",
             }}
         >
-            {/* Corner accent — top-left */}
 
 
             {/* Logo */}
             <div
                 style={{
-                    width: "56px",
-                    height: "56px",
+                    width: "65px",
+                    height: "65px",
                     borderRadius: "50%",
                     background: "rgba(108,126,127,0.08)",
                     display: "flex",
@@ -188,8 +187,8 @@ function ConcernCard({
                     <Image
                         src={logo}
                         alt={name}
-                        width={56}
-                        height={56}
+                        width={65}
+                        height={65}
                         style={{ objectFit: "contain" }}
                     />
                 ) : (
@@ -200,7 +199,7 @@ function ConcernCard({
             <h4
                 className="font-rising"
                 style={{
-                    fontSize: "13px",
+                    fontSize: "10px",
                     fontWeight: 700,
                     color: "#1a2a2a",
                     letterSpacing: "0.03em",
@@ -220,8 +219,8 @@ function ConcernsGrid() {
         <div
             style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-                gap: "16px",
+                gridTemplateColumns: "repeat(auto-fit, minmax(190px, 2fr))",
+                gap: "10px",
             }}
         >
             {CONCERNS.map((c, i) => (

@@ -3,6 +3,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import {
     ArrowUp,
+    CalendarDays,
+    HeartHandshake,
     Award,
     BookOpen,
     Home,
@@ -10,6 +12,7 @@ import {
     Menu,
     Rss,
     User,
+    NotebookPen,
     X,
     type LucideIcon,
 } from "lucide-react";
@@ -35,6 +38,9 @@ const navItems: NavItem[] = [
     { label: "Home", href: "/", icon: Home },
     { label: "About", href: "/about", icon: User },
     { label: "Books", href: "/books", icon: BookOpen },
+    { label: "Courses", href: "/courses", icon: NotebookPen },
+    { label: "Events", href: "/events", icon: CalendarDays },
+    { label: "CSR", href: "/csr", icon: HeartHandshake },
     { label: "Blog", href: "/blog", icon: Rss },
     { label: "Achievement", href: "/achievements", icon: Award },
     { label: "Contact", href: "/contact", icon: Mail },
@@ -100,7 +106,7 @@ export default function Navbar() {
                 style={{
                     padding: "10px",
                 }}
-                className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
+                className={`fixed top-0 left-0 right-0 z-[100] w-full transition-all duration-300 ${
                     isHome
                         ? scrolled
                             ? "bg-white/90 backdrop-blur-md border-b border-gray-200 py-4"
@@ -108,8 +114,8 @@ export default function Navbar() {
                         : "bg-white backdrop-blur-md border-b border-gray-200 py-4"
                 }`}
             >
-                <div className="mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-8">
-                    <Link href="/" style={{ marginLeft: "16px" }}>
+                <div className="mx-auto relative flex max-w-7xl items-center  px-5 sm:px-8" style={{ maxWidth: 1850, margin: "0 auto", padding: "0 24px" }}>
+                    <Link href="/">
                         <div className="relative w-[200px] h-[60px] sm:w-[250px] sm:h-[38px] md:w-[360px] md:h-[44px]">
                             {showWhiteLogo ? (
                                 <Image
@@ -131,12 +137,12 @@ export default function Navbar() {
                         </div>
                     </Link>
 
-                    {/* Menu toggle — stays on top of the panel */}
+                    {/* Menu toggle — pinned to the right, logo stays centered */}
                     <button
                         onClick={() => setMenuOpen((v) => !v)}
                         aria-label={menuOpen ? "Close menu" : "Open menu"}
                         aria-expanded={menuOpen}
-                        className="relative z-[110] cursor-pointer flex h-12 w-12 items-center justify-center rounded-full text-white shadow-lg transition-transform hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                        className="absolute right-5 sm:right-8 z-[110] cursor-pointer flex h-12 w-12 items-center justify-center rounded-full text-white shadow-lg transition-transform hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                         style={{ background: LIME }}
                     >
                         <AnimatePresence mode="wait" initial={false}>
@@ -191,7 +197,7 @@ export default function Navbar() {
                             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                             className="fixed right-0 top-0 z-[95] h-full w-full max-w-[240px] overflow-y-auto bg-[#141414] pb-24 pt-28 shadow-2xl"
                         >
-                            <nav className="flex gap-4 flex-col px-6">
+                            <nav className="flex gap-4 flex-col px-2">
                                 {navItems.map((item, i) => {
                                     const active = pathname === item.href;
                                     return (
@@ -206,7 +212,7 @@ export default function Navbar() {
                                                 className="group flex items-center gap-4  py-6"
                                             >
                         <span
-                            className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg border transition-colors"
+                            className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border transition-colors"
                             style={{
                                 background: active ? `#fff` : "#1f1f1f",
                                 borderColor: active
@@ -215,7 +221,7 @@ export default function Navbar() {
                                 color: active ? LIME : "rgba(255,255,255,0.6)",
                             }}
                         >
-                          <item.icon size={18} />
+                          <item.icon size={15} />
                         </span>
                                                 <span
                                                     className="text-sm md:text-lg font-bold uppercase tracking-widest transition-colors"

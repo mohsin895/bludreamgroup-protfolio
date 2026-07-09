@@ -196,69 +196,77 @@ export default function Hero() {
         <section
             style={{
                 padding: "20px 10px",
+
             }}
-            className="relative my-16 overflow-hidden bg-black pt-32 pb-16 sm:pt-40"
+            className="relative w-full my-16 overflow-hidden bg-black pt-32 pb-16 sm:pt-40"
         >
             <canvas
                 ref={canvasRef}
                 className="pointer-events-none absolute inset-0 h-full w-full"
             />
             {/* Ambient grid + glow background */}
-            <div
-                className="pointer-events-none absolute inset-0 opacity-[0.05]"
-                style={{
-                    backgroundImage: `linear-gradient(${LIME} 1px, transparent 1px), linear-gradient(90deg, ${LIME} 1px, transparent 1px)`,
-                    backgroundSize: "48px 48px",
-                }}
-            />
-            <div
-                className="pointer-events-none absolute -right-40 top-0 h-[560px] w-[560px] rounded-full blur-[120px]"
-                style={{ background: `${LIME}22` }}
-            />
+       <div >
 
-            <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-16 px-5 sm:px-8 lg:grid-cols-2">
-                {/* ── Left: copy ── */}
-                <motion.div
-                    variants={container}
-                    initial="hidden"
-                    animate="show"
-                    className="relative z-10"
-                >
-                    {/* Name with ghost depth text */}
-                    <div className="relative mb-6">
-                        <motion.h1 variants={item} className="hero-title">
-                            {hero?.title}
-                        </motion.h1>
-                    </div>
+           <div
+               className="pointer-events-none absolute inset-0 opacity-[0.05]"
+               style={{ maxWidth: 1850, margin: "0 auto", padding: "0 24px",
+                   backgroundImage: `linear-gradient(${LIME} 1px, transparent 1px), linear-gradient(90deg, ${LIME} 1px, transparent 1px)`,
+                   backgroundSize: "48px 48px",
+               }}
+           />
+           <div
+               className="pointer-events-none absolute -right-40 top-0 h-[560px] w-[560px] rounded-full blur-[120px]"
+               style={{ background: `${LIME}22` }}
+           />
 
-                    <motion.p variants={item} className="hero-subtitle">
-                        {hero?.sub_title}
-                    </motion.p>
-                </motion.div>
+           <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-16 px-5 sm:px-8 lg:grid-cols-2" style={{maxWidth: 1850, margin: "0 auto", padding: "0 24px",}}>
+               {/* ── Left: copy ── */}
+               <motion.div
+                   variants={container}
+                   initial="hidden"
+                   animate="show"
+                   className="relative z-10"
+               >
+                   {/* Name with ghost depth text */}
+                   <div className="relative mb-10" style={{marginBottom:"30px"}}>
+                       <motion.h1 variants={item} className="hero-title">
+                           {hero?.title}
+                       </motion.h1>
+                   </div>
+                   <motion.p
+                       variants={item}
+                       className="hero-subtitle"
+                       style={{ textAlign: "justify" }}
+                   >
+                       {hero?.sub_title}
+                   </motion.p>
+               </motion.div>
 
-                {/* ── Right: portrait + floating tech badges ── */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.94 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                    className="relative mx-auto aspect-[4/5] w-full max-w-md lg:max-w-lg"
-                >
-                    {/* radial glow behind portrait */}
-                    <div className="hero-person-glow" />
+               {/* ── Right: portrait + floating tech badges ── */}
+               <motion.div
+                   initial={{ opacity: 0, scale: 0.94 }}
+                   animate={{ opacity: 1, scale: 1 }}
+                   transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                   className="relative mx-auto aspect-[4/5] w-full "
+               >
+                   {/* radial glow behind portrait */}
+                   <div className="hero-person-glow" />
 
-                    <div className="relative h-full w-full ">
-                        {image && (
-                            <Image
-                                src={`${IMG_BASE}${image.large || image.original}`}
-                                alt={hero?.title || ""}
-                                fill
-                                sizes="(max-width:1024px) 100vw, 50vw"
-                                className="object-cover grayscale z-10"
-                            />
-                        )}
-                    </div>
-                </motion.div>
-            </div>
+                   <div className="relative h-full w-full ">
+                       {image && (
+                           <Image
+                               src={`${IMG_BASE}${image.large || image.original}`}
+                               alt={hero?.title || ""}
+                               fill
+                               sizes="(max-width:1024px) 100vw, 50vw"
+                               className="object-cover grayscale z-10"
+                               style={{ objectPosition: "right top" }}
+                           />
+                       )}
+                   </div>
+               </motion.div>
+           </div>
+       </div>
             <style>{`
 
 .hero-person-glow {
@@ -274,7 +282,7 @@ export default function Hero() {
 }
     .hero-title {
   font-family: "Rising", sans-serif;
-  font-size: 120px;
+  font-size: 80px;
   line-height: 0.9;
   color: #fff;
 }

@@ -1,10 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Heart, Lightbulb, Target } from "lucide-react";
+import {motion, useInView} from "framer-motion";
+import {Building2, Heart, Lightbulb, Target} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 
 interface AboutData {
   id: number;
@@ -113,6 +113,118 @@ const qualities = [
     desc: "Believes every person carries extraordinary untapped potential.",
   },
 ];
+
+const CONCERNS: { name: string; logo?: string }[] = [
+    { name: "Blue Dream Co. Ltd.", logo:"/logo/logo1.jpeg" },
+    { name: "Blue Dream Fabric Ltd." , logo:"/logo/logo2.jpeg" },
+    { name: "Blue Dream Interior Design Ltd." , logo:"/logo/logo3.jpeg"},
+    { name: "Blue Dream Real Estate" , logo:"/logo/logo4.jpeg"},
+    { name: "Blue Dream Leather" , logo:"/logo/logo6.webp" },
+    { name: "Blue Dream Fabric Lab", logo:"/logo/logo.png" },
+    { name: "Blue Dream Showroom", logo:"/logo/logo7.jpeg" },
+    { name: "Blue Dream Factory" , logo:"/logo/logo8.webp"},
+    { name: "Volcan" , logo:"/logo/logo9.webp" },
+    { name: "Asian Life Foundation" , logo:"/logo/logo10.jpeg" },
+    { name: "Chowdhury Banglo Mini Park" , logo:"/logo/logo11.webp"},
+];
+
+// ─── Concern Card (logo + 2-corner accent) ────────────────────────────────────
+function ConcernCard({
+                         name,
+                         logo,
+                         index,
+                     }: {
+    name: string;
+    logo?: string;
+    index: number;
+}) {
+    const ref = useRef(null);
+    const inView = useInView(ref, { once: true, margin: "-40px" });
+
+    return (
+        <motion.div
+            ref={ref}
+            initial={{ opacity: 0, y: 16 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: index * 0.05, duration: 0.45, ease: "easeOut" as const }}
+            whileHover={{ y: -3, boxShadow: "0 10px 30px rgba(108,126,127,0.14)" }}
+            style={{
+                position: "relative",
+                background: "#fff",
+                borderRadius: "6px",
+                padding: "22px 16px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
+                gap: "12px",
+                boxShadow: "0 3px 16px rgba(108,126,127,0.06)",
+                transition: "box-shadow 0.3s",
+            }}
+        >
+            {/* Corner accent — top-left */}
+
+
+            {/* Logo */}
+            <div
+                style={{
+                    width: "56px",
+                    height: "56px",
+                    borderRadius: "50%",
+                    background: "rgba(108,126,127,0.08)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "hidden",
+                    flexShrink: 0,
+                }}
+            >
+                {logo ? (
+                    <Image
+                        src={logo}
+                        alt={name}
+                        width={56}
+                        height={56}
+                        style={{ objectFit: "contain" }}
+                    />
+                ) : (
+                    <Building2 size={26} style={{ color: "#6c7e7f" }} />
+                )}
+            </div>
+
+            <h4
+                className="font-rising"
+                style={{
+                    fontSize: "13px",
+                    fontWeight: 700,
+                    color: "#1a2a2a",
+                    letterSpacing: "0.03em",
+                    textTransform: "uppercase",
+                    margin: 0,
+                    lineHeight: 1.4,
+                }}
+            >
+                {name}
+            </h4>
+        </motion.div>
+    );
+}
+
+function ConcernsGrid() {
+    return (
+        <div
+            style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+                gap: "16px",
+            }}
+        >
+            {CONCERNS.map((c, i) => (
+                <ConcernCard key={c.name} name={c.name} logo={c.logo} index={i} />
+            ))}
+        </div>
+    );
+}
 export default function AboutMe() {
   const [about, setAbout] = useState<AboutData | null>(null);
 
@@ -133,7 +245,7 @@ export default function AboutMe() {
       }}
       className="relative overflow-hidden bg-[#F8F9FA] py-20 sm:py-28"
     >
-      <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-16 px-5 sm:px-8 lg:grid-cols-2">
+      <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 24px" }}  className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-16 px-5 sm:px-8 lg:grid-cols-2">
         {/* ── Left: portrait ── */}
 
 
@@ -256,74 +368,22 @@ export default function AboutMe() {
             </motion.p>
 
           {/* Info list */}
-          {/*<motion.div*/}
-          {/*  variants={stagger}*/}
-          {/*  style={{*/}
-          {/*    display: "flex",*/}
-          {/*    flexDirection: "column",*/}
-          {/*    gap: 16,*/}
-          {/*    marginBottom: 40,*/}
-          {/*    marginTop: "15px",*/}
-          {/*  }}*/}
-          {/*>*/}
-          {/*  {qualities.map((q) => (*/}
-          {/*    <motion.div*/}
-          {/*      key={q.title}*/}
-          {/*      variants={fadeUp}*/}
-          {/*      style={{*/}
-          {/*        display: "flex",*/}
-          {/*        alignItems: "flex-start",*/}
-          {/*        gap: 16,*/}
-          {/*        padding: "16px 20px",*/}
-          {/*        background: "#ffffff",*/}
-          {/*        borderRadius: 12,*/}
-          {/*        border: "1px solid #e5e7eb",*/}
-          {/*        transition: "border-color 0.2s, transform 0.2s",*/}
-          {/*      }}*/}
-          {/*      className="about-quality-card"*/}
-          {/*    >*/}
-          {/*      <div*/}
-          {/*        style={{*/}
-          {/*          width: 40,*/}
-          {/*          height: 40,*/}
-          {/*          flexShrink: 0,*/}
-          {/*          background: "#6c7e7f15",*/}
-          {/*          borderRadius: 10,*/}
-          {/*          display: "flex",*/}
-          {/*          alignItems: "center",*/}
-          {/*          justifyContent: "center",*/}
-          {/*        }}*/}
-          {/*      >*/}
-          {/*        <q.icon size={20} color="#95a49a" />*/}
-          {/*      </div>*/}
-          {/*      <div>*/}
-          {/*        <div*/}
-          {/*          className="font-rising"*/}
-          {/*          style={{*/}
-          {/*            fontSize: 12,*/}
-          {/*            fontWeight: 500,*/}
-          {/*            color: "#1f2937",*/}
-          {/*            marginBottom: 2,*/}
-          {/*          }}*/}
-          {/*        >*/}
-          {/*          {q.title}*/}
-          {/*        </div>*/}
-          {/*        <div*/}
-          {/*          className="font-xolonium"*/}
-          {/*          style={{*/}
-          {/*            fontSize: 13,*/}
-          {/*            color: "#6b7280",*/}
-          {/*            lineHeight: 1.6,*/}
-          {/*          }}*/}
-          {/*        >*/}
-          {/*          {q.desc}*/}
-          {/*        </div>*/}
-          {/*      </div>*/}
-          {/*    </motion.div>*/}
-          {/*  ))}*/}
-          {/*</motion.div>*/}
+            <motion.div variants={fadeUp} style={{ marginBottom: "30px" }}>
+                <h4
+                    className="font-rising"
+                    style={{
+                        fontSize: "15px",
+                        color: "#1a2a2a",
+                        marginBottom: "16px",
+                    }}
+                >
+                    All Blue Dream Group Concerns
+                </h4>
+                <ConcernsGrid />
+            </motion.div>
 
-          <motion.div variants={fadeUp}>
+
+            <motion.div variants={fadeUp}>
             <Link
               href="/about"
               style={{

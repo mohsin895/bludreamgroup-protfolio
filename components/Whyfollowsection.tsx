@@ -2,43 +2,43 @@
 
 import { motion } from "framer-motion";
 import {
-  BookMarked,
-  Brain,
-  Briefcase,
-  Flame,
-  Handshake,
-  TrendingUp,
-  type LucideIcon,
+    BookMarked,
+    Brain,
+    Briefcase,
+    Flame,
+    Handshake,
+    TrendingUp,
+    type LucideIcon,
 } from "lucide-react";
 
 /* ----------------------------- design tokens ---------------------------- */
 
 const palette = {
-  bg: "#0A0B0D",
-  cardBg: "rgba(255,255,255,0.02)",
-  cardBorder: "rgba(255,255,255,0.08)",
-  ink: "#F5F6F5",
-  inkSoft: "#9CA3A6",
-  accent: "#6C7E7F",
+    bg: "#0A0B0D",
+    cardBg: "rgba(255,255,255,0.02)",
+    cardBorder: "rgba(255,255,255,0.08)",
+    ink: "#F5F6F5",
+    inkSoft: "#9CA3A6",
+    accent: "#6C7E7F",
 };
 
 /* -------------------------------- motion --------------------------------- */
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 32 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+    hidden: { opacity: 0, y: 32 },
+    show: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.6,
+            ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+        },
     },
-  },
 };
 
 const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
+    hidden: {},
+    show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
 };
 const wordFall = {
     hidden: { opacity: 0, y: -40 },
@@ -84,17 +84,40 @@ const headingContainer = {
     show: { transition: { staggerChildren: 0.045 } },
 };
 
+/**
+ * FallChars
+ * ---------
+ * Splits text into words, then into characters within each word.
+ * Each WORD is wrapped in an inline-block + white-space:nowrap span so the
+ * browser treats it as a single unbreakable unit when wrapping lines.
+ * Individual characters still animate independently inside that wrapper.
+ * A separate breakable space is rendered between words so normal line
+ * wrapping (at word boundaries) still works.
+ */
 function FallChars({ text, style }: { text: string; style?: React.CSSProperties }) {
+    const words = text.split(" ");
+
     return (
         <>
-            {text.split("").map((ch, i) => (
-                <motion.span
-                    key={i}
-                    variants={charFall}
-                    style={{ display: "inline-block", whiteSpace: "pre", ...style }}
+            {words.map((word, wIndex) => (
+                <span
+                    key={wIndex}
+                    style={{
+                        display: "inline-block",
+                        whiteSpace: "nowrap",
+                        marginRight: "0.28em",
+                    }}
                 >
-                    {ch}
-                </motion.span>
+          {word.split("").map((ch, cIndex) => (
+              <motion.span
+                  key={cIndex}
+                  variants={charFall}
+                  style={{ display: "inline-block", ...style }}
+              >
+                  {ch}
+              </motion.span>
+          ))}
+        </span>
             ))}
         </>
     );
@@ -103,132 +126,126 @@ function FallChars({ text, style }: { text: string; style?: React.CSSProperties 
 /* content ager WhyFollowSection theke i rakha hoyeche, shudhu design change */
 
 interface Reason {
-  icon: LucideIcon;
-  title: string;
-  desc: string;
+    icon: LucideIcon;
+    title: string;
+    desc: string;
 }
 
 const reasons: Reason[] = [
-  {
-    icon: Flame,
-    title: "Entrepreneurial Expertise",
-    desc: "As Managing Director of Blue Dream Group, he shares invaluable insights into building and scaling successful ventures, offering practical advice for navigating the complex world of modern apparel manufacturing.",
-  },
-  {
-    icon: TrendingUp,
-    title: "Mentorship for Beginners",
-    desc: "He actively mentors young professionals, breaking down complex business strategies into actionable steps. His guidance helps aspiring entrepreneurs overcome early challenges and build strong foundations for their startup journeys.",
-  },
-  {
-    icon: Briefcase,
-    title: "Philanthropic Vision",
-    desc: "Leading the Asian Life Foundation demonstrates his deep commitment to social welfare. Following him provides a powerful look at how corporate success can actively fund meaningful community development initiatives.",
-  },
-  {
-    icon: Brain,
-    title: "Authorship and Resources",
-    desc: "As a published author, he distills years of hands-on experience into accessible reading material. Followers gain direct access to his thought leadership, book updates, and proven frameworks for success.",
-  },
-  {
-    icon: BookMarked,
-    title: "Tech-Driven Leadership",
-    desc: "Utilizing a software engineering background, he provides unique perspectives on integrating technology into traditional industries. He highlights how digital transformation drives efficiency, modernization, and innovation across corporate business landscapes.",
-  },
-  {
-    icon: Handshake,
-    title: "Daily Motivation and Mindset",
-    desc: "His journey from technical expert to leading industrialist serves as daily motivation. He consistently posts about maintaining a resilient mindset, balancing dedicated hard work with purpose and ongoing personal growth.",
-  },
+    {
+        icon: Flame,
+        title: "Entrepreneurial Expertise",
+        desc: "As Managing Director of Blue Dream Group, he shares invaluable insights into building and scaling successful ventures, offering practical advice for navigating the complex world of modern apparel manufacturing.",
+    },
+    {
+        icon: TrendingUp,
+        title: "Mentorship for Beginners",
+        desc: "He actively mentors young professionals, breaking down complex business strategies into actionable steps. His guidance helps aspiring entrepreneurs overcome early challenges and build strong foundations for their startup journeys.",
+    },
+    {
+        icon: Briefcase,
+        title: "Philanthropic Vision",
+        desc: "Leading the Asian Life Foundation demonstrates his deep commitment to social welfare. Following him provides a powerful look at how corporate success can actively fund meaningful community development initiatives.",
+    },
+    {
+        icon: Brain,
+        title: "Authorship and Resources",
+        desc: "As a published author, he distills years of hands-on experience into accessible reading material. Followers gain direct access to his thought leadership, book updates, and proven frameworks for success.",
+    },
+    {
+        icon: BookMarked,
+        title: "Tech-Driven Leadership",
+        desc: "Utilizing a software engineering background, he provides unique perspectives on integrating technology into traditional industries. He highlights how digital transformation drives efficiency, modernization, and innovation across corporate business landscapes.",
+    },
+    {
+        icon: Handshake,
+        title: "Daily Motivation and Mindset",
+        desc: "His journey from technical expert to leading industrialist serves as daily motivation. He consistently posts about maintaining a resilient mindset, balancing dedicated hard work with purpose and ongoing personal growth.",
+    },
 ];
 
 /* --------------------------------- card --------------------------------- */
 
 function ReasonCard({ reason }: { reason: Reason }) {
-  const Icon = reason.icon;
-  return (
-    <motion.div variants={fadeUp} className="wf-card" whileHover={{ y: -6 }}>
-      <div className="wf-icon-box">
-        <Icon size={26} color={"#fff"} strokeWidth={1.6} />
-      </div>
-        <motion.h2
-            initial="hidden"
-            whileInView="show"
-            className="wf-title"
-            viewport={{ once: true }}
-            variants={headingContainer}
+    const Icon = reason.icon;
+    return (
+        <motion.div variants={fadeUp} className="wf-card" whileHover={{ y: -6 }}>
+            <div className="wf-icon-box">
+                <Icon size={26} color={"#fff"} strokeWidth={1.6} />
+            </div>
+            <motion.h2
+                initial="hidden"
+                whileInView="show"
+                className="wf-title"
+                viewport={{ once: true }}
+                variants={headingContainer}
+            >
+                <FallChars text={reason.title} />
+            </motion.h2>
 
-        >
-            <FallChars text={reason.title} />
-
-        </motion.h2>
-
-      <p className="wf-desc">{reason.desc}</p>
-    </motion.div>
-  );
+            <p className="wf-desc" style={{textAlign:"justify"}}>{reason.desc}</p>
+        </motion.div>
+    );
 }
 
 /* --------------------------------- section -------------------------------- */
 
 export default function WhyFollowSection() {
-  return (
-    <section className="wf-section">
-      <div className="wf-container">
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          variants={stagger}
-          className="wf-header"
-        >
+    return (
+        <section className="wf-section">
+            <div className="wf-container">
+                <motion.div
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true }}
+                    variants={stagger}
+                    className="wf-header"
+                >
+                    <motion.h2
+                        initial="hidden"
+                        whileInView="show"
+                        viewport={{ once: true }}
+                        variants={headingContainer}
+                        style={{
+                            fontFamily: "'Venus Rising'",
+                            fontSize: "clamp(24px, 4vw, 44px)",
+                            color: "#1f2937",
+                            margin: 0,
+                            lineHeight: 1.1,
+                        }}
+                    >
+                        <FallChars text="Why You Should Follow" />
+                        <FallChars
+                            text="K.S.M. Shopnill Chowdhury Shohag"
+                            style={{ color: "#6c7e7f", fontStyle: "italic" }}
+                        />
+                    </motion.h2>
 
+                    <motion.p
+                        initial="hidden"
+                        whileInView="show"
+                        viewport={{ once: true }}
+                        variants={wordContainer}
+                        className="wf-subhead"
+                    >
+                        <FallWords text="Follow K.S.M. Shopnill Chowdhury Shohag for daily inspiration on business, philanthropy, and personal growth from a proven industry leader." />
+                    </motion.p>
+                </motion.div>
 
-            <motion.h2
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: true }}
-                variants={headingContainer}
-                style={{
-                    fontFamily: "'Venus Rising'",
-                    fontSize: "clamp(24px, 4vw, 44px)",
-                    color: "#1f2937",
-                    margin: 0,
-                    lineHeight: 1.1,
-                }}
-            >
-                <FallChars text="Why You Should Follow " />
-                <FallChars
-                    text=" K.S.M. Shopnill Chowdhury Shohag"
-                    style={{ color: "#6c7e7f", fontStyle: "italic" }}
-                />
-            </motion.h2>
+                <motion.div
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true, amount: 0.15 }}
+                    variants={stagger}
+                    className="wf-grid"
+                >
+                    {reasons.map((reason) => (
+                        <ReasonCard key={reason.title} reason={reason} />
+                    ))}
+                </motion.div>
+            </div>
 
-            <motion.p
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: true }}
-                variants={wordContainer}
-                className="wf-subhead"
-            >
-                <FallWords text="Follow K.S.M. Shopnill Chowdhury Shohag for daily inspiration on business, philanthropy, and personal growth from a proven industry leader." />
-            </motion.p>
-
-
-        </motion.div>
-
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.15 }}
-          variants={stagger}
-          className="wf-grid"
-        >
-          {reasons.map((reason) => (
-            <ReasonCard key={reason.title} reason={reason} />
-          ))}
-        </motion.div>
-      </div>
-
-      <style>{`
+            <style>{`
         .wf-section {
           position: relative;
           background: #FAF7F2;
@@ -269,7 +286,6 @@ export default function WhyFollowSection() {
         }
 
         .wf-heading-accent {
-        
           font-style: italic;
           color: ${palette.accent};
         }
@@ -297,11 +313,6 @@ export default function WhyFollowSection() {
           padding: 40px 32px;
           transition: border-color 0.35s ease, background 0.35s ease;
         }
-
-        // .wf-card:hover {
-        //   border-color: color-mix(in srgb, ${palette.accent} 55%, transparent);
-        //   background: rgba(255,255,255,0.035);
-        // }
 
         .wf-icon-box {
           width: 64px;
@@ -341,6 +352,6 @@ export default function WhyFollowSection() {
           .wf-card { padding: 28px 22px; }
         }
       `}</style>
-    </section>
-  );
+        </section>
+    );
 }
